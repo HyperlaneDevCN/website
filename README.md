@@ -1,77 +1,77 @@
-# Hyperlane Docs
+# Hyperlane 文档
 
-This website is built using [Docusaurus 3](https://docusaurus.io/), a modern static website generator.
+本网站使用 [Docusaurus 3](https://docusaurus.io/) 构建，这是一个现代化的静态网站生成器。
 
-## Generated Content
+## 生成的内容
 
-The `static` directory includes generated content.
+`static` 目录包含生成的内容。
 
-Most of this is simply serialized content from `@hyperlane-xyz` NPM packages (see `devDependencies`). Eventually this should be part of the build process.
+大部分内容只是从 `@hyperlane-xyz` NPM 包序列化的内容的中文化（参见 `devDependencies`）。最终这应该成为构建过程的一部分。
 
-### Installation
+### 安装
 
 ```
 yarn install
 ```
 
-### Local Development
+### 本地开发
 
 ```
 yarn start
 ```
 
-This command starts a local development server and opens up a browser window. Most changes are reflected live without having to restart the server.
+此命令启动本地开发服务器并打开浏览器窗口。大多数更改无需重启服务器即可实时显示。
 
-### Build
+### 构建
 
 ```
 yarn build
 ```
 
-This command generates static content into the `build` directory and can be served using any content hosting service.
+此命令将静态内容生成到 `build` 目录中，可以使用任何内容托管服务进行部署。
 
-**Important Note:** Always ensure your build completes successfully before pushing changes. Broken builds disrupt the deployment process. Use `yarn build` locally to verify everything works as expected.
+**重要提示：** 在推送更改之前，请确保构建成功完成。构建失败会中断部署过程。使用 `yarn build` 在本地验证一切按预期工作。
 
-### Deployment
+### 部署
 
-Vercel GitHub Action is used to deploy the website. The action is triggered on every push to the `main` branch.
+使用 Vercel GitHub Action 部署网站。该操作在每次推送到 `main` 分支时触发。
 
-## Contribution Guidelines
+## 贡献指南
 
-Thank you for your interest in contributing to improve the documentation!
+感谢您有兴趣为改进文档做出贡献！
 
-There are two types of contributions you can make:
+您可以做出两种类型的贡献：
 
-- Fix errors or add new pages to the current documentation content.
-- Fix bugs or introduce new features to the documentation website (within the Docusaurus codebase).
+- 修复错误或为当前文档内容添加新页面。
+- 修复文档网站的错误或引入新功能（在 Docusaurus 代码库中）。
 
-### Content contributions
+### 内容贡献
 
-The documentation content is written in MDX format and is located in the `docs` folder.
+文档内容以 MDX 格式编写，位于 `docs` 文件夹中。
 
-- MDX Files: Combine Markdown with React. Learn more in the [Docusaurus docs](https://docusaurus.io/docs/markdown-features/react).
-- Markdown Basics: If you’re new to Markdown, refer to this [guide](https://guides.github.com/features/mastering-markdown/) or this [cheat sheet](https://www.markdownguide.org/cheat-sheet/) to get started.
+- MDX 文件：将 Markdown 与 React 结合。在 [Docusaurus 文档](https://docusaurus.io/docs/markdown-features/react) 中了解更多信息。
+- Markdown 基础：如果您不熟悉 Markdown，请参考此 [指南](https://guides.github.com/features/mastering-markdown/) 或此 [速查表](https://www.markdownguide.org/cheat-sheet/) 开始使用。
 
-#### Existing content
+#### 现有内容
 
-If you find anything that is confusing or can be improved in an existing document, you can click **"Edit this page" at the bottom of the page**, which will redirect to the GitHub edit form of that document. Submit a pull request (PR) with your changes.
+如果您发现现有文档中有任何令人困惑或可以改进的地方，可以点击页面底部的**"编辑此页面"**，这将重定向到该文档的 GitHub 编辑表单。提交包含您更改的拉取请求（PR）。
 
-#### New content
+#### 新内容
 
-When adding a new page:
+添加新页面时：
 
-1. Fork the repository.
-2. Create a new branch and make your changes in your repository.
-3. Submit a pull request (PR) to the Hyperlane Documentation repository.
-   - Make sure your PR includes a clear title and description of your changes.
+1. Fork 仓库。
+2. 创建新分支并在您的仓库中进行更改。
+3. 向 Hyperlane 中文社区文档仓库提交拉取请求（PR）。
+   - 确保您的 PR 包含清晰的标题和对更改的描述。
 
-### Configuration
+### 配置
 
-- `docusaurus.config.js` - This file contains the Docusaurus configuration. Here you can manage site metadata, links in the header and footer, and theme configuration. You can visit [Docusaurus docs](https://docusaurus.io/docs/configuration) to learn more about the Docusaurus settings.
-- `sidebars.js` - This specifies the sidebars for your documentation. If you are adding a new page make sure to include it in the sidebar.
+- `docusaurus.config.js` - 此文件包含 Docusaurus 配置。在这里，您可以管理站点元数据、页眉和页脚中的链接以及主题配置。您可以访问 [Docusaurus 文档](https://docusaurus.io/docs/configuration) 了解更多关于 Docusaurus 设置的信息。
+- `sidebars.js` - 这指定了文档的侧边栏。如果您添加新页面，请确保将其包含在侧边栏中。
 
-  The full documentation for this file is available on the [Docusaurus website](https://docusaurus.io/docs/sidebar).
+  有关此文件的完整文档，请访问 [Docusaurus 网站](https://docusaurus.io/docs/sidebar)。
 
-If there's something overlooked in this `README.md` or if any instructions are unclear, remember you can also contribute to improve it. **Fork, modify and PR to our repository!**
+如果本 `README.md` 中有任何遗漏或说明不清楚的地方，请记住您也可以贡献改进它。**Fork、修改并向我们的仓库提交 PR！**
 
-All contributions are welcome!
+欢迎所有贡献！

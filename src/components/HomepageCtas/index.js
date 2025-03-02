@@ -16,7 +16,7 @@ function Home() {
               paddingTop: "15px",
             }}
           >
-            Hyperlane Docs
+            Hyperlane 中文社区
           </h1>
           <p
             style={{
@@ -25,9 +25,10 @@ function Home() {
               marginBottom: "40px",
             }}
           >
-            Explore our tools, guides and references for building cross-chain
-            applications apps.
+            汇聚 Hyperlane BUIDLer
+            与我们一起了解、加入、热爱、建设 Hyperlane!
           </p>
+          {/* TODO: 主页的填充内容,需要修改 */}
           <div className={styles.cardContainer}>
             <Link to={links.intro} className={styles.card}>
               <h3>

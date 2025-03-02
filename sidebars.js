@@ -20,34 +20,34 @@ const sidebars = {
     {
       type: "doc",
       id: "intro",
-      label: "Overview",
+      label: "概述",
     },
     {
       type: "category",
-      label: "Quickstart",
+      label: "快速开始",
       collapsed: false,
       collapsible: true,
       items: [
         {
           type: "doc",
           id: "deploy-hyperlane",
-          label: "Deploy to a New Chain",
+          label: "部署到新链",
         },
         {
           type: "doc",
           id: "guides/deploy-warp-route",
-          label: "Bridge a Token",
+          label: "桥接代币",
         },
         {
           type: "doc",
           id: "deploy-hyperlane-troubleshooting",
-          label: "Troubleshooting",
+          label: "故障排除",
         },
       ],
     },
     {
       type: "category",
-      label: "Warp Routes",
+      label: "Warp 路由",
       link: {
         type: "doc",
         id: "protocol/warp-routes/warp-routes-overview",
@@ -58,87 +58,87 @@ const sidebars = {
         {
           type: "doc",
           id: "reference/applications/warp-routes",
-          label: "Warp Routes Interface",
+          label: "Warp 路由接口",
         },
         {
           type: "doc",
           id: "protocol/warp-routes/warp-routes-types",
-          label: "Warp Route Types",
+          label: "Warp 路由类型",
         },
         {
           type: "doc",
           id: "protocol/warp-routes/warp-routes-example-usage",
-          label: "Warp Route Example Usage",
+          label: "Warp 路由使用示例",
         },
       ],
     },
     {
       type: "doc",
       id: "reference/applications/interchain-account",
-      label: "Interchain Accounts",
+      label: "跨链账户",
     },
     {
       type: "category",
-      label: "Guides",
+      label: "指南",
       collapsible: true,
       collapsed: true,
       items: [
         {
           type: "doc",
           id: "guides/deploy-warp-route-UI",
-          label: "Deploy a Bridge UI",
+          label: "部署桥接UI",
         },
         {
           type: "doc",
           id: "guides/local-testnet-setup",
-          label: "Local Setup: Sending Messages between Anvil Nodes",
+          label: "本地设置：在Anvil节点间发送消息",
         },
         {
           type: "category",
-          label: "Warp Routes",
+          label: "Warp 路由",
           collapsible: true,
           collapsed: true,
           items: [
             {
               type: "doc",
               id: "protocol/warp-routes/warp-routes-yield-routes",
-              label: "Deploy Yield Routes",
+              label: "部署收益路由",
             },
             {
               type: "doc",
               id: "protocol/warp-routes/warp-routes-custom-gas-fast-native",
-              label: "Fast Native Transfer via Custom Gas Tokens",
+              label: "通过自定义Gas代币快速原生转账",
             },
             {
               type: "doc",
               id: "guides/extending-warp-route",
-              label: "Extending a Warp Route",
+              label: "扩展Warp路由",
             },
             {
               type: "doc",
               id: "guides/xerc20-warp-route-guide",
-              label: "Deploy an xERC20 Warp Route",
+              label: "部署xERC20 Warp路由",
             },
             {
               type: "doc",
               id: "guides/deploy-svm-warp-route",
-              label: "Deploy an SVM Warp Route",
+              label: "部署SVM Warp路由",
             },
             {
               type: "doc",
               id: "guides/deploy-evm-svm-warp-route",
-              label: "Deploy an EVM <> SVM Warp Route",
+              label: "部署EVM <> SVM Warp路由",
             },
             {
               type: "doc",
               id: "guides/manage-warp-route-limits",
-              label: "Mangaging Warp Route Limits",
+              label: "管理Warp路由限制",
             },
           ],
         },
         {
           type: "category",
-          label: "Go to Production",
+          label: "投入生产",
           link: {
             type: "doc",
             id: "production",
@@ -148,37 +148,37 @@ const sidebars = {
           items: [
             {
               type: "category",
-              label: "Core Deployment",
+              label: "核心部署",
               collapsible: true,
               collapsed: true,
               items: [
                 {
                   type: "doc",
                   id: "guides/update-mailbox-default-ism",
-                  label: "Update Mailbox Default ISM",
+                  label: "更新邮箱默认ISM",
                 },
                 {
                   type: "doc",
                   id: "guides/transfer-mailbox-ownership",
-                  label: "Transfer Mailbox Ownership",
+                  label: "转移邮箱所有权",
                 },
               ],
             },
             {
               type: "category",
-              label: "Warp Route Deployment",
+              label: "Warp路由部署",
               collapsible: true,
               collapsed: true,
               items: [
                 {
                   type: "doc",
                   id: "guides/remove-trusted-relayer",
-                  label: "Remove Trusted Relayer",
+                  label: "移除受信任中继器",
                 },
                 {
                   type: "doc",
                   id: "guides/transfer-warp-route-ownership",
-                  label: "Transfer Ownership",
+                  label: "转移所有权",
                 },
               ],
             },
@@ -186,7 +186,7 @@ const sidebars = {
         },
         {
           type: "category",
-          label: "Hyperlane Explorer",
+          label: "Hyperlane浏览器",
           link: {
             type: "doc",
             id: "guides/explorer/explorer",
@@ -197,7 +197,7 @@ const sidebars = {
             {
               type: "doc",
               id: "guides/explorer/configuring-pi-chains",
-              label: "Configuring New Chains in the Hyperlane Explorer",
+              label: "在Hyperlane浏览器中配置新链",
             },
             {
               type: "doc",
@@ -209,12 +209,12 @@ const sidebars = {
         {
           type: "doc",
           id: "guides/create-custom-hook-and-ism",
-          label: "Create a Hook/ISM",
+          label: "创建Hook/ISM",
         },
         {
           type: "doc",
           id: "guides/deploy-hyperlane-local-agents",
-          label: "Deploy Hyperlane with Local Agents",
+          label: "使用本地代理部署Hyperlane",
         },
       ],
     },
@@ -223,17 +223,17 @@ const sidebars = {
     {
       type: "doc",
       id: "protocol/protocol-overview",
-      label: "Overview",
+      label: "概述",
     },
     {
       type: "category",
-      label: "Protocol",
+      label: "协议",
       collapsible: true,
       collapsed: true,
       items: [
         {
           type: "category",
-          label: "Mailbox",
+          label: "邮箱",
           link: {
             type: "doc",
             id: "protocol/mailbox",
@@ -243,26 +243,26 @@ const sidebars = {
           items: [
             {
               type: "category",
-              label: "General Message Passing",
+              label: "通用消息传递",
               collapsible: true,
               collapsed: true,
               items: [
                 {
                   type: "doc",
                   id: "reference/messaging/send",
-                  label: "Send a message",
+                  label: "发送消息",
                 },
                 {
                   type: "doc",
                   id: "reference/messaging/receive",
-                  label: "Receive a message",
+                  label: "接收消息",
                 },
               ],
             },
             {
               type: "doc",
               id: "protocol/interchain-gas-payment",
-              label: "Interchain Gas Payment",
+              label: "跨链 Gas 支付",
             },
             {
               type: "category",
@@ -277,7 +277,7 @@ const sidebars = {
                 {
                   type: "doc",
                   id: "reference/hooks/interchain-gas",
-                  label: "Interchain Gas",
+                  label: "跨链 Gas",
                 },
                 {
                   type: "doc",
@@ -287,7 +287,7 @@ const sidebars = {
                 {
                   type: "doc",
                   id: "reference/hooks/arbitrum-L2-to-L1",
-                  label: "Arbitrum L2 to L1",
+                  label: "Arbitrum L2 到 L1",
                 },
                 {
                   type: "doc",
@@ -300,7 +300,7 @@ const sidebars = {
         },
         {
           type: "category",
-          label: "Interchain Security Modules",
+          label: "跨链安全模块",
           link: {
             type: "doc",
             id: "protocol/ISM/modular-security",
@@ -311,22 +311,22 @@ const sidebars = {
             {
               type: "doc",
               id: "protocol/ISM/sequence-diagram",
-              label: "Sequence Diagram",
+              label: "时序图",
             },
             {
               type: "doc",
               id: "protocol/ISM/custom-ISM",
-              label: "Override the Default ISM",
+              label: "覆盖默认ISM",
             },
             {
               type: "category",
-              label: "Standard ISMs",
+              label: "标准ISM",
               collapsible: true,
               collapsed: true,
               items: [
                 {
                   type: "category",
-                  label: "Multisig ISM",
+                  label: "多重签名ISM",
                   link: {
                     type: "doc",
                     id: "protocol/ISM/multisig-ISM",
@@ -335,19 +335,19 @@ const sidebars = {
                     {
                       type: "doc",
                       id: "reference/latencies",
-                      label: "Latencies",
+                      label: "延迟",
                     },
                   ],
                 },
                 {
                   type: "doc",
                   id: "protocol/ISM/routing-ISM",
-                  label: "Routing ISM",
+                  label: "路由 ISM",
                 },
                 {
                   type: "doc",
                   id: "protocol/ISM/aggregation-ISM",
-                  label: "Aggregation ISM",
+                  label: "聚合 ISM",
                 },
                 {
                   type: "doc",
@@ -358,7 +358,7 @@ const sidebars = {
             },
             {
               type: "category",
-              label: "Community ISMs",
+              label: "社区 ISM",
               collapsible: true,
               collapsed: true,
               items: [
@@ -385,13 +385,13 @@ const sidebars = {
                 {
                   type: "doc",
                   id: "protocol/ISM/third-party-ISMs/arbitrum-L2-to-L1-ISM",
-                  label: "Arbitrum L2 to L1 ISM",
+                  label: "Arbitrum L2 到 L1 ISM",
                 },
               ],
             },
             {
               type: "category",
-              label: "Economic Security",
+              label: "经济安全",
               link: {
                 type: "doc",
                 id: "protocol/economic-security/economic-security",
@@ -408,7 +408,7 @@ const sidebars = {
         },
         {
           type: "category",
-          label: "Agents",
+          label: "代理",
           link: {
             type: "doc",
             id: "protocol/agents",
@@ -419,12 +419,12 @@ const sidebars = {
             {
               type: "doc",
               id: "protocol/agents/relayer",
-              label: "Relayer",
+              label: "中继器",
             },
             {
               type: "doc",
               id: "protocol/agents/validators",
-              label: "Validators",
+              label: "验证器",
             },
           ],
         },
@@ -432,14 +432,14 @@ const sidebars = {
     },
     {
       type: "category",
-      label: "Developer Tools",
+      label: "开发者工具",
       collapsible: true,
       collapsed: true,
       items: [
         {
           type: "doc",
           id: "reference/cli",
-          label: "CLI",
+          label: "命令行工具",
         },
         {
           type: "doc",
@@ -448,52 +448,52 @@ const sidebars = {
         },
         {
           type: "category",
-          label: "Libraries",
+          label: "库",
           collapsible: true,
           collapsed: true,
           items: [
             {
               type: "doc",
               id: "reference/libraries/mailboxclient",
-              label: "Mailbox Client",
+              label: "邮箱客户端",
             },
             {
               type: "doc",
               id: "reference/libraries/router",
-              label: "Router",
+              label: "路由器",
             },
             {
               type: "doc",
               id: "reference/libraries/typecasts",
-              label: "TypeCasts",
+              label: "类型转换",
             },
             {
               type: "doc",
               id: "reference/libraries/message",
-              label: "Message",
+              label: "消息",
             },
             {
               type: "doc",
               id: "reference/libraries/hookmetadata",
-              label: "Standard Hook Metadata",
+              label: "标准 Hook 元数据",
             },
           ],
         },
         {
           type: "category",
-          label: "Developer Tips",
+          label: "开发者提示",
           collapsible: true,
           collapsed: true,
           items: [
             {
               type: "doc",
               id: "guides/developer-tips/unit-testing",
-              label: "Unit Testing",
+              label: "单元测试",
             },
             {
               type: "doc",
               id: "guides/token-faucets",
-              label: "Token Faucets",
+              label: "代币水龙头",
             },
           ],
         },
@@ -502,114 +502,114 @@ const sidebars = {
 
     {
       type: "category",
-      label: "Alt-VM Implementations & Guides",
+      label: "Alt-VM 实现与指南",
       collapsible: true,
       collapsed: true,
       items: [
         {
           type: "doc",
           id: "protocol/non-evm-implementations",
-          label: "Alt-VM implementations",
+          label: "Alt-VM 实现",
         },
         {
           type: "doc",
           id: "guides/implementation-guide",
-          label: "Implementation Guide",
+          label: "实现指南",
         },
       ],
     },
     {
       type: "category",
-      label: "Deployments",
+      label: "部署",
       items: [
         {
           type: "category",
-          label: "Contract Addresses",
+          label: "合约地址",
           items: [
             {
               type: "doc",
               id: "reference/addresses/mailbox-addresses",
-              label: "Mailbox",
+              label: "邮箱",
             },
             {
               type: "doc",
               id: "reference/addresses/interchain-gas-paymaster",
-              label: "Interchain Gas Paymaster (Hook)",
+              label: "跨链 gas 支付主管（Hook）",
             },
             {
               type: "doc",
               id: "reference/addresses/storage-gas-oracle",
-              label: "Storage Gas Oracle",
+              label: "存储 Gas 预言机",
             },
             {
               type: "doc",
               id: "reference/addresses/merkle-tree",
-              label: "Merkle Tree (Hook)",
+              label: "默克尔树（Hook）",
             },
             {
               type: "doc",
               id: "reference/addresses/validator-announce",
-              label: "Validator Announce",
+              label: "验证器公告",
             },
             {
               type: "doc",
               id: "reference/addresses/proxy-admin",
-              label: "Proxy Admin",
+              label: "代理管理员",
             },
             {
               type: "doc",
               id: "reference/addresses/test-recipient",
-              label: "Test Recipient",
+              label: "测试接收者",
             },
             {
               type: "doc",
               id: "reference/addresses/interchain-account-router",
-              label: "Interchain Account Router",
+              label: "跨链账户路由器",
             },
           ],
         },
         {
           type: "doc",
           id: "reference/default-ism-validators",
-          label: "Default ISM Validators",
+          label: "默认 ISM 验证器",
         },
         {
           type: "doc",
           id: "reference/domains",
-          label: "Domains",
+          label: "域",
         },
         {
           type: "doc",
           id: "reference/registries",
-          label: "Registries",
+          label: "注册表",
         },
       ],
     },
     {
       type: "category",
-      label: "Resources",
+      label: "资源",
       collapsible: true,
       collapsed: true,
       items: [
         {
           type: "doc",
           id: "guides/message-debugging",
-          label: "Debugging Message Delivery",
+          label: "消息传递调试",
         },
         {
           type: "doc",
           id: "reference/glossary",
-          label: "Glossary",
+          label: "术语表",
         },
         {
           type: "doc",
           id: "faq",
-          label: "FAQ",
+          label: "常见问题",
         },
         {
           type: "doc",
           id: "reference/audits",
-          label: "Audits",
+          label: "审计",
         },
       ],
     },
@@ -619,12 +619,12 @@ const sidebars = {
     {
       type: "doc",
       id: "guides/deploy-hyperlane-local-agents",
-      label: "Deploy Hyperlane with Local Agents",
+      label: "使用本地代理部署 Hyperlane",
     },
     {
       type: "doc",
       id: "guides/implementation-guide",
-      label: "Implementation Guide",
+      label: "实现指南",
     },
   ],*/
 
@@ -632,16 +632,16 @@ const sidebars = {
     {
       type: "doc",
       id: "operate/overview-agents",
-      label: "Overview",
+      label: "概述",
     },
     {
       type: "doc",
       id: "operate/set-up-agent-keys",
-      label: "Key Management",
+      label: "密钥管理",
     },
     {
       type: "category",
-      label: "Run Validators",
+      label: "运行验证器",
       link: {
         type: "doc",
         id: "operate/validators/run-validators",
@@ -652,18 +652,18 @@ const sidebars = {
         {
           type: "doc",
           id: "operate/validators/validator-signatures-aws",
-          label: "AWS Signatures Bucket Setup",
+          label: "AWS 签名存储桶设置",
         },
         {
           type: "doc",
           id: "operate/validators/monitoring-alerting",
-          label: "Monitoring & Alerting",
+          label: "监控与警报",
         },
       ],
     },
     {
       type: "category",
-      label: "Run Relayer",
+      label: "运行中继器",
       link: {
         type: "doc",
         id: "operate/relayer/run-relayer",
@@ -674,18 +674,18 @@ const sidebars = {
         {
           type: "doc",
           id: "operate/relayer/message-filtering",
-          label: "Message Filtering",
+          label: "消息过滤",
         },
         {
           type: "doc",
           id: "operate/relayer/monitoring-alerting",
-          label: "Monitoring & Alerting",
+          label: "监控与警报",
         },
       ],
     },
     {
       type: "category",
-      label: "Agent Config",
+      label: "代理配置",
       link: {
         type: "doc",
         id: "operate/agent-config",
@@ -696,31 +696,31 @@ const sidebars = {
         {
           type: "doc",
           id: "operate/config-reference",
-          label: "Config Reference",
+          label: "配置参考",
         },
       ],
     },
 
     {
       type: "category",
-      label: "Guides",
+      label: "指南",
       collapsible: true,
       collapsed: true,
       items: [
         {
           type: "doc",
           id: "operate/docker-quickstart",
-          label: "Docker Quickstart",
+          label: "Docker 快速入门",
         },
         {
           type: "doc",
           id: "operate/deploy-with-terraform",
-          label: "Deploy with Terraform",
+          label: "使用 Terraform 部署",
         },
         {
           type: "doc",
           id: "guides/avs-operator-guide",
-          label: "AVS Operator Guide",
+          label: "AVS 操作员指南",
         },
       ],
     },

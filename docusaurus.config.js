@@ -11,20 +11,20 @@ const darkCodeTheme = themes.dracula;
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: "Hyperlane Docs",
+  title: "Hyperlane 中文社区",
   tagline: "the open interoperability framework",
   favicon: "img/favicon.ico",
 
   // Set the production url of your site here
-  url: "https://docs.hyperlane.xyz",
+  url: "https://hyperlane.cc",
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl: "/",
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
-  organizationName: "hyperlane-xyz", // Usually your GitHub org/user name.
-  projectName: "hyperlane-monorepo", // Usually your repo name.
+  organizationName: "HyperlaneDevCN", // Usually your GitHub org/user name.
+  projectName: "website", // Usually your repo name.
 
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "warn",
@@ -33,8 +33,8 @@ const config = {
   // metadata like html lang. For example, if your site is Chinese, you may want
   // to replace "en" with "zh-Hans".
   i18n: {
-    defaultLocale: "en",
-    locales: ["en"],
+    defaultLocale: "zh-Hans",
+    locales: ["zh-Hans"],
   },
 
   plugins: [
@@ -42,6 +42,7 @@ const config = {
     [
       "@docusaurus/plugin-client-redirects",
       {
+        // 重定向, 把当前网站的From的链接重定向
         redirects: [
           {
             from: ["/docs/reference/addresses/ism-validator"],
@@ -372,7 +373,7 @@ const config = {
           ],
           rehypePlugins: [[rehypeKatex, { strict: false }]],
           sidebarPath: require.resolve("./sidebars.js"),
-          editUrl: "https://github.com/hyperlane-xyz/v3-docs/tree/main/",
+          editUrl: "https://github.com/HyperlaneDevCN/website/tree/master/",
         },
         theme: {
           customCss: require.resolve("./src/css/custom.css"),
@@ -403,12 +404,13 @@ const config = {
           alt: "Hyperlane logo",
           src: "img/logo.svg",
         },
+        // TODO: 主页顶部栏,需要修改
         items: [
           {
             type: "docSidebar",
             sidebarId: "getstartedSidebar",
             position: "left",
-            label: "⏩ Get Started",
+            label: "⏩ 快速开始",
           },
           /*
           {
@@ -427,13 +429,13 @@ const config = {
             type: "docSidebar",
             sidebarId: "protocolSidebar",
             position: "left",
-            label: "📖 Learn",
+            label: "📖 学习",
           },
           {
             type: "docSidebar",
             sidebarId: "operateSidebar",
             position: "left",
-            label: "⚙️ Agent Operators",
+            label: "⚙️  代理操作",
           },
           {
             href: "https://github.com/hyperlane-xyz",
@@ -445,20 +447,20 @@ const config = {
       footer: {
         links: [
           {
-            title: "Docs",
+            title: "文档",
             items: [
               {
-                label: "Get Started",
+                label: "快速开始",
                 to: "/docs/intro",
               },
               {
-                label: "Contract Interfaces",
+                label: "合约接口",
                 to: "/docs/protocol/mailbox",
               },
             ],
           },
           {
-            title: "Read",
+            title: "阅览",
             items: [
               {
                 label: "Blog",
@@ -466,12 +468,12 @@ const config = {
               },
               {
                 label: "GitHub",
-                href: "https://github.com/hyperlane-xyz",
+                href: "https://github.com/HyperlaneDevCN",
               },
             ],
           },
           {
-            title: "Community",
+            title: "社区",
             items: [
               {
                 label: "Discord",
@@ -484,14 +486,14 @@ const config = {
             ],
           },
           {
-            title: "Contribute",
+            title: "贡献",
             items: [
               {
-                label: "Bounties",
+                label: "悬赏",
                 to: "https://github.com/search?q=org%3Ahyperlane-xyz+label%3Abounty+is%3Aopen+is%3Aissue&type=issues&s=&o=desc",
               },
               {
-                label: "Careers",
+                label: "工作机会",
                 href: "https://jobs.lever.co/Hyperlane",
               },
             ],

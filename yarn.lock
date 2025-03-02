@@ -19979,8 +19979,8 @@ __metadata:
 
 "my-loaders@file:plugins/my-loaders::locator=hyperlane-v3-docs%40workspace%3A.":
   version: 0.0.0
-  resolution: "my-loaders@file:plugins/my-loaders#plugins/my-loaders::hash=8c1b5c&locator=hyperlane-v3-docs%40workspace%3A."
-  checksum: 941eb6d4bfcecc5c83df65a997479e47d321ef0c004c9e0bc5d68f690e857e6b93b524a64f10cdc1990223a3cd5944668b139f106291858b068215b9b46c3387
+  resolution: "my-loaders@file:plugins/my-loaders#plugins/my-loaders::hash=8226a8&locator=hyperlane-v3-docs%40workspace%3A."
+  checksum: b442a230b330ce02c2afdf738a70fcc404bf9d5d61d131d3527375e33c9a1ea66adad56d46a6bccb59d57873d8c945d0f93c68829657ea1d6cb01028a4fb22d1
   languageName: node
   linkType: hard
 
