@@ -1,12 +1,12 @@
-# Unit testing - EVM
+# 单元测试 - EVM
 
-Unit testing can prove to be challenging for a multichain setup with Foundry. Hence, we've provided a lightweight test environment [`MockHyperlaneEnvironment`](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/main/solidity/contracts/mock/MockHyperlaneEnvironment.sol) for you to unit test your cross-chain app while avoiding the need to fork multiple networks.
+对于使用Foundry的多链设置来说，单元测试可能具有挑战性。因此，我们提供了一个轻量级的测试环境 [`MockHyperlaneEnvironment`](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/main/solidity/contracts/mock/MockHyperlaneEnvironment.sol)，让你能够对跨链应用进行单元测试，而无需分叉多个网络。
 
-Most multichain apps will be built on top of our Mailbox contract. So, we've abstracted away the details of a deployed mailbox with a `MockMailbox` and our environment contains an `originMailbox` and a `destinationMailbox` on the same chain. Internally, we store the messages arriving to the destination in the `inboundMessages` mapping on the destination mailbox. We simulate message delivery by enqueuing messages and increment the `inboundProcessedNonce` with `MockMailbox.processNextInboundMessage()`.
+大多数多链应用将基于我们的Mailbox合约构建。因此，我们使用`MockMailbox`抽象了已部署邮箱的细节，我们的环境在同一条链上包含`originMailbox`和`destinationMailbox`。在内部，我们将到达目的地的消息存储在目的地邮箱的`inboundMessages`映射中。我们通过将消息入队并使用`MockMailbox.processNextInboundMessage()`增加`inboundProcessedNonce`来模拟消息传递。
 
-The setup for the simple messaging forge test is as following:
+简单消息传递forge测试的设置如下：
 
-### Sending a message
+### 发送消息
 
 ```solidity
 contract SimpleMessagingTest is Test {
@@ -43,9 +43,9 @@ contract SimpleMessagingTest is Test {
 }
 ```
 
-### Testing Router-based apps
+### 测试基于 Router 的应用
 
-Assuming you're testing `TestCrosschainApp` which inherits from `Router`:
+假设你正在测试继承自`Router`的`TestCrosschainApp`：
 
 ```solidity
 contract CrosschainAppTest is Test {
@@ -67,7 +67,7 @@ contract CrosschainAppTest is Test {
 }
 ```
 
-Call `processNextPendingMessage()` and `processNextPendingMessageFromDestination()` to process inbound messages for destination and origin mailboxes respectively. Now, you can make your cross-chain calls from origin to destination and vice-versa:
+调用`processNextPendingMessage()`和`processNextPendingMessageFromDestination()`分别处理目的地和源邮箱的入站消息。现在，你可以进行从源到目的地以及反向的跨链调用：
 
 ```solidity
     function testRemoteTelephoneCallFromOrigin() public {
@@ -97,8 +97,9 @@ Call `processNextPendingMessage()` and `processNextPendingMessageFromDestination
     }
 ```
 
-If you want to use your own ISM for your app, you can override the `defaultIsm` mailbox provides by passing it to the Router's `initialize` method like following:
+如果你想为你的应用使用自己的 ISM，你可以通过将其传递给 Router 的 `initialize` 方法来覆盖邮箱提供的 `defaultIsm`，如下所示：
 
+{/* TODO: 代码中的注释翻译成中文 */}
 ```solidity
 contract CrosschainAppTest is Test {
     // origin and destination domains (recommended to be the chainId)
@@ -125,6 +126,6 @@ contract CrosschainAppTest is Test {
 
 :::tip
 
-You can find examples of our unit testing setup here: [InterchainAccountRouterTest](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/dae8b26ed65383844e4fbed7585deeb52da4e454/solidity/test/InterchainAccountRouter.t.sol#L38)
+你可以在这里找到我们单元测试设置的示例：[InterchainAccountRouterTest](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/dae8b26ed65383844e4fbed7585deeb52da4e454/solidity/test/InterchainAccountRouter.t.sol#L38)
 
 :::

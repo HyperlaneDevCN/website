@@ -1,37 +1,37 @@
-# How to Use the Hyperlane Explorer
+# 如何使用 Hyperlane 浏览器
 
-The [Hyperlane Explorer](https://explorer.hyperlane.xyz/) can be used to find messages on any network with a Hyperlane deployment. Drill down into messages for more details about their properties and status.
+[Hyperlane 浏览器](https://explorer.hyperlane.xyz/)可用于查找任何已部署 Hyperlane 的网络上的消息。深入了解消息以获取有关其属性和状态的更多详细信息。
 
-Messages to/from [core chains](/docs/reference/domains.mdx) will be searchable by transaction hash, message ID, or sender/recipient address. For other chains, the explorer can be configured to search for messages by providing it a chain config.
+来自/发往[核心链](/docs/reference/domains.mdx)的消息可以通过交易哈希、消息ID或发送者/接收者地址进行搜索。对于其他链，可以通过提供链配置来配置浏览器以搜索消息。
 
-### Searching for messages
+### 搜索消息
 
-The [Hyperlane Explorer](https://explorer.hyperlane.xyz/) supports searching for messages using any of the following values:
+[Hyperlane 浏览器](https://explorer.hyperlane.xyz/)支持使用以下任何值搜索消息：
 
-- Hash of the transaction that initiated the message (origin tx)
-- Hash of the transaction that delivered message (destination tx)
-- Address of the account that sent the origin transaction
-- Address of the account that sent the destination transaction
-- Address of the message sender
-- Address of the message recipient
-- ID of the message
+- 发起消息的交易哈希（源交易）
+- 传递消息的交易哈希（目标交易）
+- 发送源交易的账户地址
+- 发送目标交易的账户地址
+- 消息发送者的地址
+- 消息接收者的地址
+- 消息的ID
 
-To search, enter your query into the top search bar. You can use the Origin Chain, Destination Chain, and Time filter options to narrow down your search.
+要搜索，请在顶部搜索栏中输入您的查询。您可以使用源链、目标链和时间过滤器选项来缩小搜索范围。
 
-![Explorer search bar](/img/explorersearchbar.png)
+![浏览器搜索栏](/img/explorersearchbar.png)
 
 :::info
 
-Note, by default the explorer will only find message on [core Hyperlane chains](/docs/reference/domains.mdx).
+注意，默认情况下，浏览器只会在[核心 Hyperlane 链](/docs/reference/domains.mdx)上查找消息。
 
-To view messages sent to and/or from other chains, see [Configuring PI Chains](./configuring-pi-chains.mdx).
+要查看发送到和/或来自其他链的消息，请参阅[配置 PI 链](./configuring-pi-chains.mdx)。
 
 :::
 
-### Permissionless Interoperability
+### 无许可互操作性
 
-The explorer can be configured to search for messages on any chain with a Hyperlane deployment. See [configuring PI Chains](./configuring-pi-chains.mdx) for details.
+浏览器可以配置为搜索任何已部署 Hyperlane 的链上的消息。有关详细信息，请参阅[配置 PI 链](./configuring-pi-chains.mdx)。
 
-### Debugging Messages
+### 调试消息
 
-If you're trying to debug a problem with message delivery, the [explorer debugging](./explorer-debugging.mdx) page has useful tips.
+如果您正在尝试调试消息传递问题，[浏览器调试](./explorer-debugging.mdx)页面有一些有用的提示。

@@ -1,56 +1,55 @@
-# Explorer debugging
+# Explorer 调试
 
-## Debugging failed messages
+## 调试失败的消息
 
-You'll know that a message failed to process because the message status near the top of the page will show as "Error" and the upper right section of the page will specify a reason why the message wasn't able to be processed.
+当消息处理失败时，您会在页面顶部看到消息状态显示为"Error"，并且页面右上角会说明消息无法处理的原因。
 
 <figure>
   ![](/img/explorer-debugging/tx-failing.png)
-  <figcaption>Failed transaction from Alfajores to Base Goerli.</figcaption>
+  <figcaption>从 Alfajores 到 Base Goerli 的失败交易。</figcaption>
 </figure>
 
-If your message was not delivered it can be due to several factors.
+如果您的消息未能传递，可能是由于以下几个因素。
 
-### Invalid destination
+### 无效的目标链
 
-If the destination domain identifier (`uint32`) is not known to relay clients they will have no way to deliver your message. Refer to the [domains](../../reference/domains.mdx) for known domains and the canonical identifiers to use when sending messages to these destinations.
+如果中继客户端不知道目标域标识符（`uint32`），他们将无法传递您的消息。请参考[域](../../reference/domains.mdx)文档了解已知域及向这些目标发送消息时使用的规范标识符。
 
-### Invalid recipient
+### 无效的接收者
 
-If the recipient address (`bytes32`) is not a contract address that implements the `IMessageRecipient`, the relayer will not be able to deliver your message.
+如果接收者地址（`bytes32`）不是实现了 `IMessageRecipient` 的合约地址，中继器将无法传递您的消息。
 
 ```solidity file=<rootDir>/node_modules/@hyperlane-xyz/core/contracts/interfaces/IMessageRecipient.sol
 
 ```
 
 :::warning
-EVM addresses (`address`) must be left-padded with zeroes to be compliant. Refer to the [TypeCasts library](../../reference/libraries/typecasts.mdx) for a `pure addressToBytes32` utility function, and the message [dispatch](../../reference/messaging/send.mdx#dispatch) section for other details.
+EVM 地址（`address`）必须用零左填充才能符合要求。请参考 [TypeCasts 库](../../reference/libraries/typecasts.mdx)中的 `pure addressToBytes32` 工具函数，以及消息[发送](../../reference/messaging/send.mdx#dispatch)部分的其他详细信息。
 :::
 
-### Unprocessable
+### 无法处理
 
-If the gas estimation of the message recipient's `IMessageRecipient.handle()` function fails, [relayers](../../protocol/agents/relayer.mdx) will not be able to deliver the message. Relayers will continue to estimate gas for message delivery, as state changes may allow for successful delivery of a previously undeliverable message.
+如果消息接收者的 `IMessageRecipient.handle()` 函数的 gas 估算失败，[中继器](../../protocol/agents/relayer.mdx)将无法传递消息。中继器会继续估算消息传递所需的 gas，因为状态变化可能会使之前无法传递的消息变得可以成功传递。
 
 <figure>
   ![](/img/explorer-debugging/call-revert-exception.png)
   <figcaption>
-    Example exception of a transaction signed by validators but unprocessable by
-    the relayer.
+    由验证者签名但中继器无法处理的交易异常示例。
   </figcaption>
 </figure>
 
 :::info
-If you have a use case which is not accommodated by this behavior, **please reach out** [on Discord](https://discord.com/invite/hyperlane).
+如果您有此行为无法满足的用例，请**在 Discord 上联系我们**[加入 Discord](https://discord.com/invite/hyperlane)。
 :::
 
-### Underfunded
+### 资金不足
 
-An underfunded message implies the [interchain gas payments](../../reference/hooks/interchain-gas.mdx) made to deliver this message are insufficient.
+资金不足的消息意味着为传递此消息所做的[跨链 gas 支付](../../reference/hooks/interchain-gas.mdx)不足。
 
-Relayers use the [`eth_estimateGas`](https://ethereum.github.io/execution-apis/api-documentation/) RPC on the destination chain to determine the absolute cost of relaying a message. If this amount exceeds the total amount of gas paid for on the origin chain, relayers will typically refuse to deliver a message.
+中继器使用目标链上的 [`eth_estimateGas`](https://ethereum.github.io/execution-apis/api-documentation/) RPC 来确定中继消息的绝对成本。如果这个数额超过了在源链上支付的总 gas 数额，中继器通常会拒绝传递消息。
 
-You can [manually pay for interchain gas](../../reference/hooks/interchain-gas.mdx#retrying) to resolve this.
+您可以[手动支付跨链 gas](../../reference/hooks/interchain-gas.mdx#retrying)来解决这个问题。
 
-## Using Etherscan
+## 使用 Etherscan
 
-You can also look at the [Etherscan](https://etherscan.io/) page of the recipient on the destination chain however be aware that the processing transaction won't show up on list of transactions as you would typically imagine. The reason for that is that relayers actually call the Mailbox contracts which in turn call the `handle` function on the recipient. Thus, you will find evidence of processing under the `Internal Txns` tab instead
+您也可以查看目标链上接收者的 [Etherscan](https://etherscan.io/) 页面，但请注意处理交易不会像您通常想象的那样出现在交易列表中。这是因为中继器实际上是调用 Mailbox 合约，然后 Mailbox 合约再调用接收者的 `handle` 函数。因此，您会在 `Internal Txns` 标签下找到处理的证据
