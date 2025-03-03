@@ -1,28 +1,28 @@
-# Deploy an EVM \<-> SVM Warp Route
+# 部署 EVM \<-> SVM Warp 路由
 
-## Prerequisites
+## 前提条件
 
-Ensure you have the following installed and configured:
+确保你已安装并配置以下内容：
 
-- [Hyperlane Monorepo](https://github.com/hyperlane-xyz/hyperlane-monorepo)
-- Rust (latest stable version)
-- Yarn and Node.js (latest stable version)
-- Solana CLI tools
+- [Hyperlane 代码仓库](https://github.com/hyperlane-xyz/hyperlane-monorepo)
+- Rust（最新稳定版本）
+- Yarn 和 Node.js（最新稳定版本）
+- Solana CLI 工具
 
-## Walkthrough
+## 步骤详解
 
-### Step 1: Create the Warp Route Directory
+### 步骤 1：创建 Warp 路由目录
 
-1. In `./rust/sealevel/environments/${environment}`, create a directory called `warp-routes`
-2. Inside `warp-routes`, create a new directory for your Warp Route deployment, e.g., e.g. `environments/mainnet3/warp-routes/pzeth`
-3. **Optional:** If you want to, open a PR to the `hyperlane-registry` with metadata to associate with the synthetic token in the Warp Route. Example [here](https://github.com/hyperlane-xyz/hyperlane-registry/pull/142).
+1. 在 `./rust/sealevel/environments/${environment}` 中，创建一个名为 `warp-routes` 的目录
+2. 在 `warp-routes` 内，为你的 Warp 路由部署创建一个新目录，例如 `environments/mainnet3/warp-routes/pzeth`
+3. **可选：** 如果你想，可以向 `hyperlane-registry` 提交 PR，添加与 Warp 路由中的合成代币相关的元数据。示例[在此](https://github.com/hyperlane-xyz/hyperlane-registry/pull/142)。
 
-   - **Tip:** Although not critical, for the `image` field try to pick a source that is unlikely to break the URL
+   - **提示：** 虽然不是关键，但对于 `image` 字段，尽量选择一个不太可能导致 URL 失效的源
 
-### Step 2: Deploy on the SVM Side
+### 步骤 2：在 SVM 端部署
 
-4. From here on, to deploy on the SVM side you can also follow our official guide for tips: [Deploy SVM Warp Route](https://docs.hyperlane.xyz/docs/guides/deploy-svm-warp-route)
-5. Create `token-config.json` for the SVM configuration, e.g.
+4. 从这里开始，要在 SVM 端部署，你也可以参考我们的官方指南获取提示：[部署 SVM Warp 路由](https://docs.hyperlane.xyz/docs/guides/deploy-svm-warp-route)
+5. 为 SVM 配置创建 `token-config.json`，例如
 
    ```bash
    {
@@ -38,9 +38,9 @@ Ensure you have the following installed and configured:
    }
    ```
 
-   - Often EVM tokens have 18 decimals, which are too large for the SVM. The pattern is to bridge them into SOL as 9 decimals. This can be done using `remoteDecimals: 18`.
+   - 通常 EVM 代币有 18 个小数位，这对 SVM 来说太大了。常见的模式是将它们作为 9 个小数位桥接到 SOL。这可以通过使用 `remoteDecimals: 18` 来实现。
 
-6. Run the deployment command:
+6. 运行部署命令：
 
    ```bash
    cargo run -- -k ~/solana-mainnet-deployer-keypair.json warp-route deploy \
@@ -53,17 +53,17 @@ Ensure you have the following installed and configured:
    --ata-payer-funding-amount 50000000
    ```
 
-### Step 3: Deploy on the Ethereum Side
+### 步骤 3：在以太坊端部署
 
-7. Deploy the Ethereum Warp Route contract, which will also enroll the SVM router based on the yaml token config.
+7. 部署以太坊 Warp 路由合约，这也将根据 yaml 代币配置注册 SVM 路由器。
 
-   1. Check out the monorepo branch from this [PR#4447](https://github.com/hyperlane-xyz/hyperlane-monorepo/pull/4447)
-   2. Build the TS code from project root: `yarn && yarn build`
-   3. Run the CLI from source: `yarn workspace @hyperlane-xyz/cli hyperlane`
-   4. Create a YAML Warp Route configuration file using this template and steps:
+   1. 从这个 [PR#4447](https://github.com/hyperlane-xyz/hyperlane-monorepo/pull/4447) 检出代码仓库分支
+   2. 从项目根目录构建 TS 代码：`yarn && yarn build`
+   3. 从源代码运行 CLI：`yarn workspace @hyperlane-xyz/cli hyperlane`
+   4. 使用此模板和步骤创建 YAML Warp 路由配置文件：
 
-      - Set `interchainSecurityModule: "0x0000000000000000000000000000000000000000"` to use the default ISM set in the destination chain Mailbox
-      - Set the `gas` to a ceiling of the compute units you expect the SVM message delivery transaction to take. For instance, Hyperlane Warp Routes have gas set to `300`. It's important for this to be an upper limit - the relayer will not deliver Warp Route transfer messages otherwise, because senders would pay an insufficient amount to have them delivered.
+      - 设置 `interchainSecurityModule: "0x0000000000000000000000000000000000000000"` 以使用目标链邮箱中设置的默认 ISM
+      - 将 `gas` 设置为你预期 SVM 消息传递交易所需的计算单元上限。例如，Hyperlane Warp 路由的 gas 设置为 `300`。这个值必须是上限 - 否则中继器将不会传递 Warp 路由传输消息，因为发送者支付的金额不足以传递它们。
 
       ```json
       ethereum:
@@ -83,20 +83,20 @@ Ensure you have the following installed and configured:
         gas: 300000
       ```
 
-   5. Deploy using the Hyperlane CLI:
-      - Run the deploy command, pointing to your YAML Warp Route config: `yarn workspace @hyperlane-xyz/cli hyperlane warp deploy --config /path/to/config/warp-route-deployment.yaml`
-      - You’ll have the deployment artifact logged by the command, and also stored in your filesystem registry (currently `~/.hyperlane`).
-   6. Confirm the deployment using the Hyperlane CLI:
+   5. 使用 Hyperlane CLI 部署：
+      - 运行部署命令，指向你的 YAML Warp 路由配置：`yarn workspace @hyperlane-xyz/cli hyperlane warp deploy --config /path/to/config/warp-route-deployment.yaml`
+      - 命令会记录部署结果，并将其存储在你的文件系统注册表中（当前为 `~/.hyperlane`）。
+   6. 使用 Hyperlane CLI 确认部署：
       ```bash
       $ cast call 0x1D622da2ce4C4D9D4B0611718cb3BcDcAd008DD4 'routers(uint32)(bytes32)' $DESTINATION_DOMAIN --rpc-url $(rpc ethereum) 1399811149
       0xe9792265ec273ffc17731af890d3e9963e9d744e7b99f02491911ce1bb75b8cb
       ```
 
-### Step 4: Update the SVM token-config.json
+### 步骤 4：更新 SVM token-config.json
 
-8. Back to Solana tooling now, update the `token-config.json` with the foreign deployment:
+8. 现在回到 Solana 工具，用外部部署更新 `token-config.json`：
 
-   The fields for `ethereum` should be set to values from the Warp Route contract artifact. `token` should be set to `collateralAddressOrDenom` (the address of the token being bridge), and `foreignDeployment` should be set to `addressOrDenom` (the address of the Warp Route contract, like `HypERC20Collateral`).
+   `ethereum` 的字段应设置为 Warp 路由合约构件中的值。`token` 应设置为 `collateralAddressOrDenom`（被桥接的代币地址），而 `foreignDeployment` 应设置为 `addressOrDenom`（Warp 路由合约的地址，如 `HypERC20Collateral`）。
 
    ```bash
    {
@@ -118,9 +118,9 @@ Ensure you have the following installed and configured:
    }
    ```
 
-### Step 5: Deployment
+### 步骤 5：部署
 
-9. Run the final deployment command:
+9. 运行最终部署命令：
 
 ```bash
 cargo run -- -k ~/solana-mainnet-deployer-keypair.json warp-route deploy  \

@@ -5,23 +5,23 @@ import SimpleMessagingDiagram from "@site/src/diagrams/messaging-simple.md";
 import AddressTable from "@site/src/components/AddressTable";
 import MessageQuickstart from "@site/src/components/MessageQuickstart";
 
-# Send your first interchain message
+# 发送你的第一条跨链消息
 
-This tutorial demonstrates how to [send](./reference/messaging/send.mdx) an interchain message to a pre-deployed `TestRecipient` contract.
+本教程演示如何[发送](./reference/messaging/send.mdx)跨链消息到预先部署的`TestRecipient`合约。
 
 <SimpleMessagingDiagram />
 
-Sending a message is a simple matter of calling `Mailbox.dispatch`. Make sure you have an account with funds on the origin chain.
+发送消息只需调用`Mailbox.dispatch`。请确保你在源链上有一个拥有资金的账户。
 
 <MessageQuickstart />
 
 :::tip
-You can watch the progress of your message on [explorer.hyperlane.xyz](https://explorer.hyperlane.xyz/) by searching for the **transaction hash** of your `Mailbox.dispatch` call.
+你可以在[explorer.hyperlane.xyz](https://explorer.hyperlane.xyz/)上通过搜索你的`Mailbox.dispatch`调用的**交易哈希**来查看消息的处理进度。
 :::
 
-## Check the result
+## 检查结果
 
-The `TestRecipient` has the following [handle](./reference/messaging/receive.mdx) implementation:
+`TestRecipient`有以下[handle](./reference/messaging/receive.mdx)实现：
 
 <Tabs groupId="lang">
 <TabItem value="sol" label="Solidity">
@@ -34,14 +34,14 @@ The `TestRecipient` has the following [handle](./reference/messaging/receive.mdx
 
 </Tabs>
 
-Check the logs to see your message delivery!
+查看日志以查看你的消息传递情况！
 
 <details>
-  <summary>Testnet `TestRecipient` Addresses</summary>
+  <summary>测试网`TestRecipient`地址</summary>
   <AddressTable environment="testnet" contract="testRecipient" />
 </details>
 
 <details>
-  <summary>Testnet `Mailbox` Addresses</summary>
+  <summary>测试网`Mailbox`地址</summary>
   <AddressTable environment="testnet" contract="mailbox" />
 </details>

@@ -1,40 +1,40 @@
-# How to Connect Your Chain with Hyperlane
+# 如何使用Hyperlane连接您的链
 
 :::info
 
-- This guide will help you deploy Hyperlane to your new chain as quickly as possible for testing, not production. This includes the core mailbox and ISM contracts as well as warp route contracts for assets you’re bridging.
-- To see which chains are already supported, visit the [Registry](https://github.com/hyperlane-xyz/hyperlane-registry/tree/main/chains).
-- If you need any help, reach out on #developers on Discord or [get in touch](https://forms.gle/KyRTaWvo4XNmNvrq6).
+- 本指南将帮助您尽快将Hyperlane部署到您的新链上进行测试，而非生产环境。这包括核心邮箱和ISM合约以及您正在桥接的资产的warp路由合约。
+- 要查看已支持的链，请访问[注册表](https://github.com/hyperlane-xyz/hyperlane-registry/tree/main/chains)。
+- 如果您需要任何帮助，请在Discord上的#developers频道联系我们或[与我们联系](https://forms.gle/KyRTaWvo4XNmNvrq6)。
 
 :::
 
-## Prerequisites
+## 前提条件
 
-Anyone can begin this quickstart guide once they have the following artifacts & assets available:
+任何人都可以开始这个快速入门指南，只要他们拥有以下工件和资产：
 
-- A new, custom, or pre-existing network of your choice, including the following metadata:
-  - A chain name, e.g. `ethereum`
-  - A chain ID, e.g. `1`
-  - A RPC URL, e.g. `https://eth.llamarpc.com`
-- A deployer wallet/EOA private key or seed phrase
-  - This EOA should be funded on your custom chain and any chain you will be passing messages to & from
+- 一个新的、自定义的或预先存在的网络，包括以下元数据：
+  - 链名称，例如`ethereum`
+  - 链ID，例如`1`
+  - RPC URL，例如`https://eth.llamarpc.com`
+- 部署者钱包/EOA私钥或助记词
+  - 这个EOA应该在您的自定义链和您将要传递消息的任何链上都有资金
 - [Hyperlane CLI](/docs/reference/cli.mdx)
 
-## 1. Registry
+## 1. 注册表
 
-Let’s create a custom chain config, run:
+让我们创建一个自定义链配置，运行：
 
 ```bash
 hyperlane registry init
 ```
 
-Follow the prompts to set up your chain metadata. Setting up block or gas properties is optional.
+按照提示设置您的链元数据。设置区块或gas属性是可选的。
 
-Now, under `$HOME/.hyperlane/chains` you will find a new folder named with your custom chain’s name, and a file named `metadata.yaml` within that folder.
+现在，在`$HOME/.hyperlane/chains`下，您将找到一个以您自定义链名称命名的新文件夹，以及该文件夹中名为`metadata.yaml`的文件。
 
 <details> 
   <summary>
-    Example content of this config at `$HOME/.hyperlane/chains/yourchain/metadata.yaml`
+    `$HOME/.hyperlane/chains/yourchain/metadata.yaml`中的配置示例内容
   </summary>
 
 ```yaml
@@ -67,14 +67,14 @@ rpcUrls:
 
 </details>
 
-## 2. Core
+## 2. 核心
 
-Next, let’s configure, deploy and test your custom chain’s core contracts.
+接下来，让我们配置、部署和测试您自定义链的核心合约。
 
-### Initialize configuration
+### 初始化配置
 
-1. From your local environment, set the private key or seed phrase of your funded deployer address to `HYP_KEY`. For example: `export HYP_KEY='<YOUR_PRIVATE_KEY>'`
-2. From the same terminal instance, run:
+1. 从您的本地环境，将您有资金的部署者地址的私钥或助记词设置为`HYP_KEY`。例如：`export HYP_KEY='<YOUR_PRIVATE_KEY>'`
+2. 从同一终端实例，运行：
 
 ```bash
 hyperlane core init
@@ -82,7 +82,7 @@ hyperlane core init
 
 <details>
   <summary>
-    The deployment config will be written to `./configs/core-config.yaml`
+    部署配置将写入`./configs/core-config.yaml`
   </summary>
 
 ```yaml
@@ -115,20 +115,19 @@ requiredHook:
 
 </details>
 
-### Deploy contracts
+### 部署合约
 
-To deploy contracts, run:
+要部署合约，运行：
 
 ```bash
 hyperlane core deploy
 ```
 
-Use the arrows and enter to select your custom chain from the bottom of the mainnet list. It will take a few minutes for all contracts to deploy.
+使用箭头和回车从主网列表底部选择您的自定义链。所有合约部署需要几分钟时间。
 
 <details>
   <summary>
-    Under `$HOME/.hyperlane/chains` you will find a new folder named with your
-    custom chain’s name, and a file named `addresses.yaml` within that folder
+    在`$HOME/.hyperlane/chains`下，您将找到一个以您自定义链名称命名的新文件夹，以及该文件夹中名为`addresses.yaml`的文件
   </summary>
 
 ```yaml
@@ -149,81 +148,81 @@ testRecipient: "0xa58462b1943Be1469Ed58db690C78583BA34Fd2E"
 
 :::warning
 
-`eth_getStorageAt()` Compatibility: Some chains may not utilize the [`eth_getStorageAt()`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getstorageat) API. If your deployment encounters related issues, refer to the [Troubleshooting Guide](./deploy-hyperlane-troubleshooting#eth_getstorageat-compatibility).
+`eth_getStorageAt()` 兼容性：某些链可能不使用[`eth_getStorageAt()`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getstorageat) API。如果您的部署遇到相关问题，请参阅[故障排除指南](./deploy-hyperlane-troubleshooting#eth_getstorageat-compatibility)。
 
 :::
 
-### Send test message
+### 发送测试消息
 
-To send a test message, run:
+要发送测试消息，运行：
 
 ```bash
 hyperlane send message --relay
 ```
 
-The `--relay` flag is optional and will deliver the message to the destination chain.
+`--relay`标志是可选的，它将消息传递到目标链。
 
-You can also run a relayer in the background with
+您也可以在后台运行中继器：
 
 ```bash
 hyperlane relayer --chains yourchain,sepolia
 ```
 
 :::success
-**🎉 Congrats! You have successfully sent a message to your custom chain**
+**🎉 恭喜！您已成功向您的自定义链发送了消息**
 :::
 
-## 3. Warp Route
+## 3. Warp路由
 
-Now that you have a Hyperlane mailbox and core contracts on your chain, it’s time to set up token bridging between your chain and any other Hyperlane chain.
+现在您的链上已经有了Hyperlane邮箱和核心合约，是时候在您的链和任何其他Hyperlane链之间设置代币桥接了。
 
-Continue on to the [Deploy a Warp Route](/docs/guides/deploy-warp-route.mdx) docs for more details.
+继续查看[部署Warp路由](/docs/guides/deploy-warp-route.mdx)文档了解更多详情。
 
-## 4. Submit to Registry
+## 4. 提交到注册表
 
-If you want other chains to connect with you as well as to take this to production, make a registry PR.
+如果您希望其他链也能与您连接，并将其投入生产，请提交注册表PR。
 
-### Ensure complete info
+### 确保信息完整
 
-Make sure your metadata is complete:
+确保您的元数据完整：
 
-- add a `logo.svg` file inside the folder
-- include `Deployer` information identifying the team deploying
-- indicate `isTestnet` `true` if the chain is testnet
-- add the api url `gnosisSafeTransactionServiceUrl` if you have a gnosis safe service
-- lint the yaml files and order alphabetically
+- 在文件夹内添加`logo.svg`文件
+- 包含标识部署团队的`Deployer`信息
+- 如果链是测试网，请指明`isTestnet` `true`
+- 如果您有gnosis safe服务，请添加api url `gnosisSafeTransactionServiceUrl`
+- 对yaml文件进行lint处理并按字母顺序排序
 
-### Commit to GitHub
+### 提交到GitHub
 
-First, navigate to your local instance of the registry and commit changes
+首先，导航到您的注册表本地实例并提交更改
 
 ```bash
 cd ~/.hyperlane && git init && git add . && git commit
 ```
 
-Then, sync local registry with canonical registry
+然后，将本地注册表与规范注册表同步
 
 ```bash
 git remote add canonical git@github.com:hyperlane-xyz/hyperlane-registry.git
 git pull canonical main --rebase
 ```
 
-Finally, push local registry to github fork and submit a PR. Please include a [changeset](https://github.com/changesets/changesets/blob/main/docs/adding-a-changeset.md) in your PR.
+最后，将本地注册表推送到github fork并提交PR。请在您的PR中包含一个[changeset](https://github.com/changesets/changesets/blob/main/docs/adding-a-changeset.md)。
 
 :::success
-**Congrats! You have successfully deployed Hyperlane to your chain and added your work to the Hyperlane registry**
+**恭喜！您已成功将Hyperlane部署到您的链上并将您的工作添加到Hyperlane注册表**
 
-Thank you for contributing to the future of permissionless interop 🫡
+感谢您为无需许可的互操作性未来做出贡献 🫡
 :::
 
-### Take to Production
+### 投入生产
 
-#### Community-Run Infra
+#### 社区运行的基础设施
 
-As a public good, a core dev team for Hyperlane - Abacus Works - can help take your mainnet chain to production free of charge. Feel free to request this in your PR, new chain batches are added every two weeks.
+作为公共产品，Hyperlane的核心开发团队 - Abacus Works - 可以免费帮助您的主网链投入生产。请在您的PR中提出此请求，每两周添加一批新链。
 
-This includes running a relayer connecting your chain to the network, adding your chain to the [Explorer](https://explorer.hyperlane.xyz/), and running one of the validators in your chain's default validator set. There is no ongoing cost or lock-in - at any time you can choose to migrate your relayer to a self-hosted option or change your validator set.
+这包括运行连接您的链到网络的中继器，将您的链添加到[Explorer](https://explorer.hyperlane.xyz/)，以及在您链的默认验证器集中运行一个验证器。没有持续的成本或锁定 - 您可以随时选择将中继器迁移到自托管选项或更改验证器集。
 
-#### Self-Host Infra
+#### 自托管基础设施
 
-Chains with devops experience, like Stride, choose to run their own relayer. While this does have some operations burden, this allows them to add new chains even faster at their pace. In addition, they can choose to set or subsidize the interchain gas costs related to relaying. See the [Operate](/docs/operate/relayer/run-relayer.mdx) docs for more information.
+具有devops经验的链，如Stride，选择运行自己的中继器。虽然这确实有一些运营负担，但这允许他们按照自己的节奏更快地添加新链。此外，他们可以选择设置或补贴与中继相关的链间gas成本。有关更多信息，请参阅[运营](/docs/operate/relayer/run-relayer.mdx)文档。

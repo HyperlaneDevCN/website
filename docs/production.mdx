@@ -1,15 +1,15 @@
-# How to Go to Production with your Hyperlane Deployment
+# 如何将您的Hyperlane部署推向生产环境
 
-To launch your Hyperlane deployment into a production environment, follow these steps to set up your chain’s core deployment and configure warp route deployments.
+要将您的Hyperlane部署推向生产环境，请按照以下步骤设置您链的核心部署并配置warp路由部署。
 
-### 1. Core Deployment
+### 1. 核心部署
 
-To begin you'll need to set up and productionize the core components of your Hyperlane deployment.
+首先，您需要设置并使您的Hyperlane部署的核心组件适合生产环境。
 
-- [Update Mailbox Default ISM](/guides/update-mailbox-default-ism.mdx): Update the Interchain Security Module (ISM) associated with the Mailbox contract. The ISM acts as a critical security layer, verifying messages between chains. Ensure that the default ISM settings align with your security requirements.
-- [Transfer Mailbox Ownership](/guides/transfer-mailbox-ownership.mdx): Transfer ownership of the Mailbox contract to a production-ready owner account. This step secures the Mailbox by ensuring only trusted parties have control over its configuration.
+- [更新Mailbox默认ISM](/guides/update-mailbox-default-ism.mdx)：更新与Mailbox合约关联的链间安全模块(ISM)。ISM作为关键的安全层，负责验证链间的消息。确保默认ISM设置符合您的安全要求。
+- [转移Mailbox所有权](/guides/transfer-mailbox-ownership.mdx)：将Mailbox合约的所有权转移给生产就绪的所有者账户。这一步通过确保只有受信任的方才能控制其配置来保障Mailbox的安全。
 
-### 2. Warp Route Deployment
+### 2. Warp路由部署
 
-- [Remove Trusted Relayer](/guides/remove-trusted-relayer.mdx): Remove any test or development relayers that may have been configured initially. In production, ensure that only trusted, secure relayers are used to prevent unauthorized message relaying.
-- [Transfer Warp Route Ownership](/guides/transfer-warp-route-ownership.mdx): Transfer ownership of the Warp Route to the designated production owner. This step ensures that only trusted parties have control over critical Warp Route settings, such as ISM configurations, Validator options, and relayer settings.
+- [移除受信任中继器](/guides/remove-trusted-relayer.mdx)：移除任何可能最初配置的测试或开发中继器。在生产环境中，确保只使用受信任、安全的中继器，以防止未授权的消息中继。
+- [转移Warp路由所有权](/guides/transfer-warp-route-ownership.mdx)：将Warp路由的所有权转移给指定的生产环境所有者。这一步确保只有受信任的方才能控制关键的Warp路由设置，如ISM配置、验证器选项和中继器设置。

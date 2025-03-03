@@ -1,26 +1,26 @@
-# Hyperlane Troubleshooting Guide
+# Hyperlane故障排除指南
 
-## General Troubleshooting
+## 一般故障排除
 
-### Logging
+### 日志记录
 
-Logging levels and formats can be configured for Hyperlane tooling using the following two environment variables:
+可以使用以下两个环境变量配置Hyperlane工具的日志级别和格式：
 
-- `LOG_LEVEL`: The log level to filter to. Defaults to `info`. Choices: `debug | info | warn | error | off`
-- `LOG_FORMAT`: The format of the log output. Defaults to `pretty`. Choices: `pretty | json`
+- `LOG_LEVEL`：要过滤的日志级别。默认为`info`。选项：`debug | info | warn | error | off`
+- `LOG_FORMAT`：日志输出的格式。默认为`pretty`。选项：`pretty | json`
 
-The [Hyperlane CLI](/docs/reference/cli.mdx) also allows configuring logging via the `--log` and `--verbosity` flags.
+[Hyperlane CLI](/docs/reference/cli.mdx)还允许通过`--log`和`--verbosity`标志配置日志记录。
 
-### Chain Configuration
+### 链配置
 
-Within your working directory, you may find a `chains/` yaml files organized by chain name. These `metadata.yaml` files describe the information needed to use the chain in Hyperlane deployments and apps.
+在您的工作目录中，您可能会找到按链名组织的`chains/`yaml文件。这些`metadata.yaml`文件描述了在Hyperlane部署和应用程序中使用链所需的信息。
 
-You can define a full configuration for any new chain in this file. The metadata that can be configured is defined in this [example configuration](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/main/typescript/cli/examples/chain-config.yaml). You can also find the chain metadata schema at [chainMetadataTypes.ts](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/main/typescript/sdk/src/metadata/chainMetadataTypes.ts).
+您可以在此文件中为任何新链定义完整配置。可以配置的元数据在这个[示例配置](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/main/typescript/cli/examples/chain-config.yaml)中定义。您还可以在[chainMetadataTypes.ts](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/main/typescript/sdk/src/metadata/chainMetadataTypes.ts)找到链元数据模式。
 
-Here's an example configuration for two local anvil chains:
+以下是两个本地anvil链的配置示例：
 
 <details>
-<summary>Example: Two Local Anvil Chains</summary>
+<summary>示例：两个本地Anvil链</summary>
 
 ```yaml
 anvil1:
@@ -45,7 +45,7 @@ anvil2:
 
 </details>
 
-You can also extend a core chain config by providing the fields to be overridden:
+您还可以通过提供要覆盖的字段来扩展核心链配置：
 
 ```yaml
 sepolia:
@@ -53,12 +53,12 @@ sepolia:
     confirmations: 2
 ```
 
-#### Override RPC URLs
+#### 覆盖RPC URL
 
-You can override the RPC urls by extending the core chain config.
+您可以通过扩展核心链配置来覆盖RPC URL。
 
 <details>
-<summary>Example: Define RPC URLs array and adjust retry settings</summary>
+<summary>示例：定义RPC URL数组并调整重试设置</summary>
 
 ```yaml
 demochain:
@@ -78,9 +78,9 @@ sepolia:
 
 </details>
 
-#### Override transaction settings
+#### 覆盖交易设置
 
-Transaction overrides are any properties to include when forming transaction requests. For example:
+交易覆盖是在形成交易请求时要包含的任何属性。例如：
 
 - `gasPrice`: number | string
 - `maxFeePerGas`: number | string
@@ -89,7 +89,7 @@ Transaction overrides are any properties to include when forming transaction req
 - `type`: number
 - `ccipReadEnabled`: boolean
 
-In the example below we're using a gas price of 7 gwei, hardcoding the nonce, and setting a maximum value for the base and priority fees.
+在下面的示例中，我们使用7 gwei的gas价格，硬编码nonce，并为基础费用和优先费用设置最大值。
 
 ```yaml
 sepolia:
@@ -102,63 +102,63 @@ sepolia:
 
 :::warning
 
-If you are overriding the nonce in the chain configuration, ensure you are updating the value on successful transactions.
+如果您在链配置中覆盖nonce，请确保在交易成功后更新该值。
 
 :::
 
-### Message Delivery Issues
+### 消息传递问题
 
-#### Long Message Delivery Times or Timeouts
+#### 消息传递时间长或超时
 
-Delays or timeouts in message delivery often result from RPC issues, such as overloaded endpoints, or from chains that produce blocks only on demand.
+消息传递延迟或超时通常是由RPC问题引起的，例如过载的端点，或者只在需要时产生区块的链。
 
-To identify the issue, check for logs indicating RPC-related problems such as: `Deprioritizing an inner provider in FallbackProvider`
+要识别问题，请检查日志中是否有指示RPC相关问题的内容，例如：`Deprioritizing an inner provider in FallbackProvider`
 
-To address these delays:
+要解决这些延迟：
 
-- **Check RPC Health:** Ensure RPC endpoints are responsive.
-- **Configure Chains with On-Demand Blocks:** For these chains, set the reorgPeriod to 0. This ensures that agents always look at the tip of the chain, avoiding delays caused by block finalization processes.
+- **检查RPC健康状况：** 确保RPC端点响应正常。
+- **配置按需生成区块的链：** 对于这些链，将reorgPeriod设置为0。这确保代理始终查看链的顶端，避免由区块最终确认过程引起的延迟。
 
-## Agent Troubleshooting
+## 代理故障排除
 
-### Validator Troubleshooting
+### 验证器故障排除
 
-- **`Validator has not announced any storage locations` Warning:**
+- **`Validator has not announced any storage locations` 警告：**
 
-  - **Reason**: This occurs when the relayer cannot retrieve validator signatures required to process a message.
-  - **Solution**:
-    - Ensure the validators have announced their storage locations. Check validator logs for a message such as:
+  - **原因**：当中继器无法检索处理消息所需的验证器签名时，会发生这种情况。
+  - **解决方案**：
+    - 确保验证器已宣布其存储位置。检查验证器日志中是否有如下消息：
       `Validator has announced signature storage location, locations: ["file:///tmp/hyperlane-validator-signatures-local"]`
-    - Verify that each validator has a unique signature storage path (`--checkpointSyncer.path`) to prevent overwriting.
-    - Confirm that the relayer has read access to the storage paths.
+    - 验证每个验证器都有唯一的签名存储路径（`--checkpointSyncer.path`）以防止覆盖。
+    - 确认中继器对存储路径有读取权限。
 
-- **`No ISM Found for Origin` Error**
+- **`No ISM Found for Origin` 错误**
 
-  - **Reason**: This occurs when the Interchain Security Module (ISM) does not recognize the origin chain.
-  - **Solution**:
-    - Ensure the ISM configuration includes the Validators for the origin chain.
-    - If it doesn't, add validators for the origin chain to your ISM.
-    - Restart the relayer after updating the ISM configuration.
+  - **原因**：当链间安全模块（ISM）无法识别源链时，会发生这种情况。
+  - **解决方案**：
+    - 确保ISM配置包含源链的验证器。
+    - 如果没有，请将源链的验证器添加到您的ISM中。
+    - 更新ISM配置后重启中继器。
 
-### Relayer Troubleshooting
+### 中继器故障排除
 
-#### Checking Pending Messages in the Queue
+#### 检查队列中的待处理消息
 
-If messages are stuck in the relayer queue or not being processed, use the `list_operations` endpoint to inspect the relayer's queue:
+如果消息卡在中继器队列中或未被处理，请使用`list_operations`端点检查中继器的队列：
 
 ```shell
 curl http://0.0.0.0:9090/list_operations?destination_domain=<destination_domain_id>
 ```
 
-This endpoint provides the status of messages in the queue and can help identify why they are not being delivered.
+此端点提供队列中消息的状态，可以帮助识别它们未被传递的原因。
 
-#### Debugging with Logs
+#### 使用日志进行调试
 
-For detailed insights, enable debug logging and monitor the relayer's activity: `HYP_LOG_LEVEL=debug`. Once logs are captured, you can use them to locate issues with specific message IDs.
+要获取详细信息，请启用调试日志并监控中继器的活动：`HYP_LOG_LEVEL=debug`。捕获日志后，您可以使用它们来定位特定消息ID的问题。
 
-#### Retrying Messages
+#### 重试消息
 
-After reviewing the logs, you can trigger an immediate retry of all pending messages using the `message_retry` endpoint:
+查看日志后，您可以使用`message_retry`端点触发所有待处理消息的立即重试：
 
 ```shell
 curl --location 'http://127.0.0.1:9090/message_retry' \
@@ -166,21 +166,21 @@ curl --location 'http://127.0.0.1:9090/message_retry' \
 --data '[{"messageid": "*", "origindomain": "*", "senderaddress": "*", "destinationdomain": "*", "recipientaddress": "*"}]'
 ```
 
-Make sure that you use the most recent version of the relayer and capture all logs for debugging.
+确保使用最新版本的中继器并捕获所有日志以进行调试。
 
-#### Relayer Selecting Incorrect ISM
+#### 中继器选择错误的ISM
 
-Ensure the Interchain Security Module (ISM) on your chain is configured correctly. An incorrect ISM can result in messages not being processed. Verify the ISM address in your configuration and ensure it matches your deployment setup.
+确保您链上的链间安全模块（ISM）配置正确。不正确的ISM可能导致消息无法处理。验证配置中的ISM地址并确保它与您的部署设置匹配。
 
-## Advanced Troubleshooting
+## 高级故障排除
 
-### `eth_getStorageAt()` Compatibility
+### `eth_getStorageAt()` 兼容性
 
-Some chains do not natively support the [`eth_getStorageAt()`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getstorageat) API. If you're deploying on one of these chains and encounter issues, review the changes made to the Hyperlane codebase in this [commit](https://github.com/hyperlane-xyz/hyperlane-monorepo/commit/871df7a4dce203ff5cf23ae654d03743dc00ea61).
+某些链不原生支持[`eth_getStorageAt()`](https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_getstorageat) API。如果您在这些链上部署并遇到问题，请查看在这个[提交](https://github.com/hyperlane-xyz/hyperlane-monorepo/commit/871df7a4dce203ff5cf23ae654d03743dc00ea61)中对Hyperlane代码库所做的更改。
 
-To deploy Hyperlane on these chains follow the steps:
+要在这些链上部署Hyperlane，请按照以下步骤操作：
 
-1. Clone the [repo](https://github.com/hyperlane-xyz/hyperlane-monorepo)
-2. Apply the changes in the [commit](https://github.com/hyperlane-xyz/hyperlane-monorepo/commit/871df7a4dce203ff5cf23ae654d03743dc00ea61).
-3. Build the project from the root directory: `yarn build`
-4. Run the Hyperlane CLI from the root directory: `yarn workspace @hyperlane-xyz/cli hyperlane`
+1. 克隆[仓库](https://github.com/hyperlane-xyz/hyperlane-monorepo)
+2. 应用[提交](https://github.com/hyperlane-xyz/hyperlane-monorepo/commit/871df7a4dce203ff5cf23ae654d03743dc00ea61)中的更改。
+3. 从根目录构建项目：`yarn build`
+4. 从根目录运行Hyperlane CLI：`yarn workspace @hyperlane-xyz/cli hyperlane`

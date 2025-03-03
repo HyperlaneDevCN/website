@@ -1,48 +1,48 @@
-# Hyperlane AVS Operator Guide
+# Hyperlane AVS 操作员指南
 
-## Overview
+## 概述
 
-Hyperlane validators are light offchain agents responsible for security - they observe messages on an origin chain's [Mailbox](../protocol/mailbox.mdx) and if needed sign a merkle root that attests the current state of the mailbox.
+Hyperlane 验证者是负责安全的轻量级链下代理 - 它们观察源链上的 [Mailbox](../protocol/mailbox.mdx) 消息，并在需要时签署一个默克尔根，以证明邮箱的当前状态。
 
-This signature is stored and made publicly available (e.g. in an S3 bucket), which is then used by the offchain Relayer and Interchain Security Modules onchain. Validators are _not_ networked together and do not need to reach consensus.
+这个签名会被存储并公开（例如在 S3 存储桶中），然后由链下中继器和链上的跨链安全模块使用。验证者之间**不需要**网络连接，也不需要达成共识。
 
-As you follow this guide, you'll run a Hyperlane validator on [**any of the chains**](https://github.com/hyperlane-xyz/hyperlane-registry/tree/main/chains) the protocol is live on, including Arbitrum, Optimism, BSC, Base, Blast, Linea, Mode, and Polygon. After that you'll link your validator with your EigenLayer Operator by interacting with the AVS contract on Ethereum Mainnet or Holesky. This process, like the entire Hyperlane framework, is open source and permissionless - no whitelisting or staking minimums needed.
+按照本指南，你将在 Hyperlane 协议运行的[**任何链**](https://github.com/hyperlane-xyz/hyperlane-registry/tree/main/chains)上运行一个 Hyperlane 验证者，包括 Arbitrum、Optimism、BSC、Base、Blast、Linea、Mode 和 Polygon。之后，你将通过与以太坊主网或 Holesky 上的 AVS 合约交互，将你的验证者与你的 EigenLayer 操作员关联起来。这个过程，就像整个 Hyperlane 框架一样，是开源且无需许可的 - 不需要白名单或最低质押要求。
 
-## 1. Install CLI
+## 1. 安装 CLI
 
-Install the latest version of the `@hyperlane-xyz/cli` package with `npm install -g @hyperlane-xyz/cli`. Detailed CLI install instructions are available [here](https://docs.hyperlane.xyz/docs/reference/cli).
+使用 `npm install -g @hyperlane-xyz/cli` 安装最新版本的 `@hyperlane-xyz/cli` 包。详细的 CLI 安装说明可在[这里](https://docs.hyperlane.xyz/docs/reference/cli)找到。
 
-## 2. Run the validator
+## 2. 运行验证者
 
-Operators that want to quickly deploy a production ready environment using Docker Compose and AWS may wish to use the [Docker Compose quickstart guide](../operate/docker-quickstart.mdx).
+希望使用 Docker Compose 和 AWS 快速部署生产就绪环境的操作员可能希望使用 [Docker Compose 快速入门指南](../operate/docker-quickstart.mdx)。
 
-Follow the validator guide [here](../operate/validators/run-validators.mdx) with the AWS setup to run the validator on [any chain](https://github.com/hyperlane-xyz/hyperlane-registry/tree/main/chains) within the Hyperlane network. You can also easily generalize for other storage providers like [GCP](https://github.com/hyperlane-xyz/hyperlane-monorepo/pull/3156) and Azure, or other key management solutions.
+按照[这里](../operate/validators/run-validators.mdx)的验证者指南，使用 AWS 设置在 Hyperlane 网络内的[任何链](https://github.com/hyperlane-xyz/hyperlane-registry/tree/main/chains)上运行验证者。你也可以轻松地推广到其他存储提供商，如 [GCP](https://github.com/hyperlane-xyz/hyperlane-monorepo/pull/3156) 和 Azure，或其他密钥管理解决方案。
 
-Ensure that your KMS key has funds on that chain to announce itself.
+确保你的 KMS 密钥在该链上有资金以宣布自己。
 
-### Monitoring
+### 监控
 
-You can monitor EigenLayer specific endpoints via the `--metrics` port you specified in the validator configuration. Read more about the example endpoints and what should be expected [here](https://docs.eigenlayer.xyz/eigenlayer/avs-guides/spec/api/).
+你可以通过在验证者配置中指定的 `--metrics` 端口监控 EigenLayer 特定的端点。在[这里](https://docs.eigenlayer.xyz/eigenlayer/avs-guides/spec/api/)阅读更多关于示例端点及预期内容的信息。
 
-The supported endpoints are:
+支持的端点有：
 
-| Endpoint                     | Description                                |
-| ---------------------------- | ------------------------------------------ |
-| **GET /eigen/node**          | for node info                              |
-| **GET /eigen/node/health**   | for node health                            |
-| **GET /eigen/node/services** | for a list of services the node is running |
+| 端点                         | 描述                       |
+| ---------------------------- | -------------------------- |
+| **GET /eigen/node**          | 节点信息                   |
+| **GET /eigen/node/health**   | 节点健康状况               |
+| **GET /eigen/node/services** | 节点正在运行的服务列表     |
 
-You'll need the validator address (address of the signing key) for the next step.
+你需要验证者地址（签名密钥的地址）用于下一步。
 
-## 3. Set up keys
+## 3. 设置密钥
 
-There is a distinction between the operator key and the AVS signing key. The operator key is meant for just interacting with the AVS contracts whereas the AVS signing key is used for active operations, which in our case will be signing checkpoints with a Hyperlane validator.
+操作员密钥和 AVS 签名密钥之间有区别。操作员密钥仅用于与 AVS 合约交互，而 AVS 签名密钥用于活跃操作，在我们的情况下，将用于使用 Hyperlane 验证者签署检查点。
 
-## 4. Register your operator
+## 4. 注册你的操作员
 
-First, make sure you're registered with your operator key [as an EigenLayer operator](https://docs.eigenlayer.xyz/eigenlayer/operator-guides/operator-installation#operator-configuration-and-registration) on Mainnet or Holesky. You'll only need the ECDSA key.
+首先，确保你已经在主网或 Holesky 上[作为 EigenLayer 操作员](https://docs.eigenlayer.xyz/eigenlayer/operator-guides/operator-installation#operator-configuration-and-registration)注册了你的操作员密钥。你只需要 ECDSA 密钥。
 
-Next, to register your operator to Hyperlane AVS, you can use the Hyperlane CLI. Register your operator key (generated via the EigenLayer CLI) by creating an ECDSA signature and submitting it along with the AVS signing key, which is your Hyperlane validator address from above (not a private key).
+接下来，要向 Hyperlane AVS 注册你的操作员，你可以使用 Hyperlane CLI。通过创建 ECDSA 签名并将其与 AVS 签名密钥（即上面的 Hyperlane 验证者地址，而不是私钥）一起提交，来注册你的操作员密钥（通过 EigenLayer CLI 生成）。
 
 ```bash
  hyperlane avs register --operatorKeyPath <PATH_TO_OPERATOR_KEY> \
@@ -50,24 +50,24 @@ Next, to register your operator to Hyperlane AVS, you can use the Hyperlane CLI.
     --avsSigningKeyAddress <AVS_SIGNING_ADDRESS>
 ```
 
-The `AVS_NETWORK` is the network you're registering on, which can be `Ethereum` or `Holesky`.
+`AVS_NETWORK` 是你注册的网络，可以是 `Ethereum` 或 `Holesky`。
 
-Your AVS signing key can be reused across multiple validators and doesn't require additional registration for each. If you use different AVS signing keys for each validator, you'll need to register each as an operator.
+你的 AVS 签名密钥可以在多个验证者之间重复使用，不需要为每个验证者额外注册。如果你为每个验证者使用不同的 AVS 签名密钥，你需要将每个密钥注册为操作员。
 
-### Confirming registration
+### 确认注册
 
-To confirm you are registered on mainnet, run `hyperlane avs check --chain ethereum --operatorAddress <EIGENLAYER_OPERATOR_ADDRESS>` using the Hyperlane CLI and see if your validator address is there. This query may take a few minutes to complete.
+要确认你已在主网上注册，请使用 Hyperlane CLI 运行 `hyperlane avs check --chain ethereum --operatorAddress <EIGENLAYER_OPERATOR_ADDRESS>` 并查看你的验证者地址是否存在。此查询可能需要几分钟才能完成。
 
-Additionally, you can search your address under the `operatorRegistry` function [on Etherscan](https://etherscan.io/address/0x272CF0BB70D3B4f79414E0823B426d2EaFd48910#readProxyContract#F12) or check on EigenLayer's UI for [Ethereum](https://app.eigenlayer.xyz/avs/0xe8e59c6c8b56f2c178f63bcfc4ce5e5e2359c8fc) or [Holesky](https://holesky.eigenlayer.xyz/avs/0xc76e477437065093d353b7d56c81ff54d167b0ab).
+此外，你可以在 [Etherscan 上的 `operatorRegistry` 函数](https://etherscan.io/address/0x272CF0BB70D3B4f79414E0823B426d2EaFd48910#readProxyContract#F12)下搜索你的地址，或在 EigenLayer 的 UI 上查看 [以太坊](https://app.eigenlayer.xyz/avs/0xe8e59c6c8b56f2c178f63bcfc4ce5e5e2359c8fc) 或 [Holesky](https://holesky.eigenlayer.xyz/avs/0xc76e477437065093d353b7d56c81ff54d167b0ab)。
 
 :::success
 
-Congrats on registering with the Hyperlane AVS!
+恭喜你注册了 Hyperlane AVS！
 
-Now any Hyperlane message receiver can leverage your validator signatures, helping secure rollup interop.
+现在任何 Hyperlane 消息接收者都可以利用你的验证者签名，帮助保护 rollup 互操作性。
 
 :::
 
-## Learn more
+## 了解更多
 
-You can read more about the AVS protocol design [here](/docs/protocol/economic-security/hyperlane-avs.mdx).
+你可以在[这里](/docs/protocol/economic-security/hyperlane-avs.mdx)阅读更多关于 AVS 协议设计的信息。
