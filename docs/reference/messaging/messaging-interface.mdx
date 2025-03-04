@@ -5,24 +5,24 @@ import SimpleMessagingDiagram from "@site/src/diagrams/messaging-simple.md";
 
 # Mailbox
 
-Hyperlane's generalized message passing (GMP) interface is implemented as a smart contract called the Mailbox. This contract encodes and decodes [message headers](#message-headers), ensures global message [uniqueness](#uniqueness), and prevents [replay attacks](#replay-protection).
+Hyperlane 的通用消息传递(GMP)接口是通过一个名为 Mailbox 的智能合约实现的。该合约负责编码和解码[消息头](#message-headers)，确保消息的[全局唯一性](#uniqueness)，并防止[重放攻击](#replay-protection)。
 
-## Message Headers
+## 消息头
 
-The Mailbox prepends message bodies with a header containing the following fields:
+Mailbox 会在消息体前添加包含以下字段的消息头:
 
-- `version`: The version of the Mailbox contract
-- `nonce`: A unique identifier for each message sent from a given Mailbox
-- `origin`: The domain of the origin chain
-- `sender`: The address of the sender on the origin chain
-- `destination`: The domain of the destination chain
-- `recipient`: The address of the recipient on the destination chain
+- `version`: Mailbox 合约的版本号
+- `nonce`: 从指定 Mailbox 发送的每条消息的唯一标识符
+- `origin`: 源链的域 ID
+- `sender`: 源链上发送者的地址
+- `destination`: 目标链的域 ID
+- `recipient`: 目标链上接收者的地址
 
-See the [`Message` library](../libraries/message.mdx) for more information on the message encoding.
+查看 [`Message` 库](../libraries/message.mdx)获取更多关于消息编码的信息。
 
-## Uniqueness
+## 唯一性
 
-The `nonce` is a monotonically increasing integer for each message sent from a given Mailbox. It is incremented each time a message is dispatched to serve as a separator for otherwise identical messages.
+`nonce` 是每个 Mailbox 发送消息时递增的整数。每次发送消息时它都会递增,用于区分相同的消息。
 
 <Tabs groupId="lang">
 <TabItem value="sol" label="Solidity">
@@ -35,11 +35,11 @@ The `nonce` is a monotonically increasing integer for each message sent from a g
 
 </Tabs>
 
-The `messageId` is a globally unique message identifier, returned from the `dispatch` call, computed as the `keccak256` hash of the message (with headers).
+`messageId` 是一个全局唯一的消息标识符,在调用 `dispatch` 时返回,它是消息(包含消息头)的 `keccak256` 哈希值。
 
-## Replay Protection
+## 重放保护
 
-The Mailbox maintains a mapping of already delivered `messageId` values to prevent replay attacks. If a message is received with a `messageId` that has already been delivered, the message is rejected.
+Mailbox 维护了一个已投递 `messageId` 的映射,用于防止重放攻击。如果收到一个已经投递过的 `messageId` 的消息,该消息会被拒绝。
 
 <Tabs groupId="lang">
 <TabItem value="sol" label="Solidity">

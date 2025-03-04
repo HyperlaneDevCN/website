@@ -2,17 +2,17 @@ import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
 import ReorgPeriodTable from "@site/src/components/ReorgPeriodTable";
 
-# Latencies
+# 延迟
 
-Validators must wait a certain number of blocks to be mined before they are considered valid and [reorg-safe](https://www.alchemy.com/overviews/what-is-a-reorg). Without this, validators could be slashed since they may have signed a checkpoint that is no longer valid.
+验证者必须等待一定数量的区块被挖出后才能被认为是有效的且[重组安全](https://www.alchemy.com/overviews/what-is-a-reorg)的。如果没有这个等待,验证者可能会被惩罚,因为他们可能签署了一个不再有效的检查点。
 
-Refer to the following sections for block finality configuration used by the Hyperlane validators.
+请参考以下部分了解 Hyperlane 验证者使用的区块最终确定性配置。
 
 <Tabs groupId="environment">
-<TabItem value="mainnet" label="Mainnet">
+<TabItem value="mainnet" label="主网">
 <ReorgPeriodTable environment="mainnet"/>
 </TabItem>
-<TabItem value="testnet" label="Testnet">
+<TabItem value="testnet" label="测试网">
 <ReorgPeriodTable environment="testnet"/>
 </TabItem>
 </Tabs>

@@ -1,21 +1,21 @@
 ---
-description: Create token routes between any chains
+description: 在任意链之间创建代币路由
 ---
 
-# Warp Route Interface
+# Warp 路由接口
 
-## Interface
+## 接口
 
-Hyperlane Warp Routes leverage the `IHypERC20` token interface. Warp Route tokens implement this interface, which extends the standard `ERC20` interface.
+Hyperlane Warp 路由利用 `IHypERC20` 代币接口。Warp 路由代币实现了该接口，该接口扩展了标准的 `ERC20` 接口。
 
 ```solidity
-/// @notice An interchain extension of the ERC20 interface
+/// @notice ERC20 接口的跨链扩展
 interface IHypERC20 is IERC20 {
   /**
-    * @notice Transfers tokens to the specified recipient on a remote chain
-    * @param _destination The domain ID of the destination chain
-    * @param _recipient The address of the recipient, encoded as bytes32
-    * @param _amount The amount of tokens to transfer
+    * @notice 将代币转移到远程链的指定接收者
+    * @param _destination 目标链的域 ID
+    * @param _recipient 接收者的地址，编码为 bytes32
+    * @param _amount 要转移的代币数量
     */
   function transferRemote(
     uint32 _destination,
@@ -25,14 +25,14 @@ interface IHypERC20 is IERC20 {
 }
 ```
 
-## Security considerations
+## 安全考虑
 
-The deployer of a Warp Route can optionally specify the interchain security modules (ISMs) that are used to verify interchain transfer messages.
+Warp 路由的部署者可以选择性地指定用于验证跨链转移消息的跨链安全模块（ISM）。
 
-This means that each Warp Route may have a unique security configuration. Users transferring interchain tokens should understand the trust assumptions of a Route before using it.
+这意味着每个 Warp 路由可能具有独特的安全配置。用户在使用跨链代币时，应了解路由的信任假设。
 
-Similarly, Warp frontends should manually curate their warp routes to avoid supporting insecure ones. See the [Warp UI deployment docs](../../guides/deploy-warp-route-UI.mdx) details.
+同样，Warp 前端应手动策划其 Warp 路由，以避免支持不安全的路由。有关详细信息，请参见 [Warp UI 部署文档](../../guides/deploy-warp-route-UI.mdx)。
 
-## Deploy your Warp Route
+## 部署您的 Warp 路由
 
-Ready to deploy your Warp Route? It's easy - follow the [step-by-step guide](../../guides/deploy-warp-route.mdx).
+准备好部署您的 Warp 路由了吗？很简单 - 请按照 [逐步指南](../../guides/deploy-warp-route.mdx) 操作。

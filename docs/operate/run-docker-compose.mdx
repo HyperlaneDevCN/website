@@ -1,8 +1,8 @@
-# Running with Docker Compose
+# 使用 Docker Compose 运行
 
-Sometimes it is nice to not rely on long docker commands. Running with Docker compose is very similar to using raw Docker and you can find a full specification of the format in the [Docker docs](https://docs.Docker.com/compose/compose-file/).
+有时候，不依赖于冗长的 Docker 命令是很方便的。使用 Docker Compose 的方式与使用原始 Docker 非常相似，您可以在 [Docker 文档](https://docs.Docker.com/compose/compose-file/) 中找到格式的完整说明。
 
-This is an example `docker-compose` file for running a validator that should get you most of the way.
+这是一个用于运行验证者的示例 `docker-compose` 文件，应该能帮助您完成大部分工作。
 
 ```json
 {
@@ -46,8 +46,8 @@ configs:
     file: ./ethereum_validator.json
 ```
 
-The above has a lot of filler values, you will of course need to update those with real ones.
+上述内容包含了许多占位符值，您当然需要将其更新为真实的值。
 
-You can also specify multiple services, so if you are running several validators, you can specify each one under `services`.
+您还可以指定多个服务，因此如果您正在运行多个验证者，可以在 `services` 下为每个验证者指定一个。
 
-To run the compose configuration use `docker compose up` and `docker compose down` to clean up after. Full documentation on the command line can be found on the [docker website](https://docs.docker.com/engine/reference/commandline/compose/).
+要运行 Compose 配置，请使用 `docker compose up`，并使用 `docker compose down` 进行清理。有关命令行的完整文档，请参见 [docker 网站](https://docs.docker.com/engine/reference/commandline/compose/)。

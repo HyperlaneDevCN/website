@@ -3,37 +3,37 @@ import TabItem from "@theme/TabItem";
 
 import CosmosMessageDelivered from "@site/src/components/CosmosMessageDelivered";
 
-# Message debugging
+# 消息调试
 
 ###
 
 <details>
-  <summary>**Finding a message ID from an origin transaction**</summary>
+  <summary>**从原始交易中查找消息 ID**</summary>
   <div>
     <Tabs groupId="finding-message-id">
     <TabItem value="evm" label="EVM Origin">
-    The easiest way is to use the [Hyperlane Explorer](https://explorer.hyperlane.xyz), if your chain is supported. If your chain isn't supported, the message ID can be found by looking at the originating transaction.
+    最简单的方法是使用 [Hyperlane Explorer](https://explorer.hyperlane.xyz)，如果您的链被支持。如果您的链不被支持，可以通过查看原始交易来找到消息 ID。
 
-    When viewing the origin transaction on the origin chain's block explorer, navigate to the **Logs** tab.
+    在原始链的区块浏览器上查看原始交易时，导航到 **日志** 标签。
 
-    The **`DispatchId`** log contains the message ID as the topic number 1 (the second topic).
+    **`DispatchId`** 日志包含消息 ID，作为主题编号 1（第二个主题）。
 
-    Sometimes, chain block explorers won't show the human-friendly "DispatchId" name. In this case, you can find the log by it's topic 0: `0x788dbc1b7152732178210e7f4d9d010ef016f9eafbe66786bd7169f56e0c353a`.
+    有时，链区块浏览器不会显示人性化的 "DispatchId" 名称。在这种情况下，您可以通过其主题 0 查找日志：`0x788dbc1b7152732178210e7f4d9d010ef016f9eafbe66786bd7169f56e0c353a`。
 
     <figure>
     ![](/img/message-debugging/dispatch-id-log-evm.png)
-    <figcaption>Example on Arbiscan showing the DispatchId log on an origin transaction.</figcaption>
+    <figcaption>在原始交易上显示 DispatchId 日志的 Arbiscan 示例。</figcaption>
     </figure>
 
     </TabItem>
     <TabItem value="cosmos" label="Cosmos Origin">
-    When viewing the origin transaction on the origin chain's block explorer, navigate to the **Event Logs** tab.
+    在原始链的区块浏览器上查看原始交易时，导航到 **事件日志** 标签。
 
-    The **Wasm Mailbox Dispatch Id** log contains the message ID.
+    **Wasm Mailbox Dispatch Id** 日志包含消息 ID。
 
     <figure>
     ![](/img/message-debugging/dispatch-id-log-cosmos.png)
-    <figcaption>Example on Mintscan showing the log on an origin transaction.</figcaption>
+    <figcaption>在原始交易上显示日志的 Mintscan 示例。</figcaption>
     </figure>
     </TabItem>
     </Tabs>
@@ -41,73 +41,73 @@ import CosmosMessageDelivered from "@site/src/components/CosmosMessageDelivered"
 </details>
 
 <details>
-  <summary>**Debugging a message to a Cosmos chain**</summary>
+  <summary>**调试发送到 Cosmos 链的消息**</summary>
   <div>
-    At the moment, the [Hyperlane Explorer](https://explorer.hyperlane.xyz) doesn't support non-EVM chains.
+    目前，[Hyperlane Explorer](https://explorer.hyperlane.xyz) 不支持非 EVM 链。
 
-    To check if your message has been delivered, select the destination chain and input your message ID below:
+    要检查您的消息是否已送达，请选择目标链并在下面输入您的消息 ID：
 
     <CosmosMessageDelivered />
   </div>
 </details>
 
 <details>
-  <summary>**My warp route transfer says it was delivered, but I don’t see it**</summary>
+  <summary>**我的 Warp Route 转账显示已送达，但我没有看到**</summary>
   <div>
-    We can debug this with two steps:
+    我们可以通过两个步骤来调试这个问题：
 
-    **Verifying if the funds were received:**
+    **验证资金是否已收到：**
 
     <Tabs groupId="verifying-received-funds">
     <TabItem value="evm" label="EVM Destination">
-    1. Open the block explorer for the destination chain, and navigate to your expected recipient address.
-    2. If you expect to receive a token (e.g. an ERC-20), check the Token Transfers tab for the token being transferred to your address.
-    3. If you expect to receive the native token (e.g. ETH, on Ethereum), check the "Internal Transactions" tab for the native token being transferred to your address.
+    1. 打开目标链的区块浏览器，导航到您预期的接收地址。
+    2. 如果您期望收到代币（例如 ERC-20），请检查代币转账标签，查看转账到您地址的代币。
+    3. 如果您期望收到原生代币（例如 ETH，在以太坊上），请检查 "内部交易" 标签，查看转账到您地址的原生代币。
     </TabItem>
     <TabItem value="cosmos" label="Cosmos Destination">
-    1. Open the block explorer for the destination chain, and navigate to your expected recipient address.
-    2. View your "Coins" or "Tokens" tab, and look for the expected balance.
-    3. If it's not clear if your balance is what you expect, the check the list of transactions. Look for any transactions that include "Process".
+    1. 打开目标链的区块浏览器，导航到您预期的接收地址。
+    2. 查看您的 "Coins" 或 "Tokens" 标签，查找预期的余额。
+    3. 如果不清楚您的余额是否符合预期，请检查交易列表。查找任何包含 "Process" 的交易。
     </TabItem>
     </Tabs>
 
-    **Verifying the recipient of your transfer**
+    **验证您的转账接收者**
 
     <Tabs groupId="verifying-recipient">
     <TabItem value="evm" label="EVM Origin">
-    When viewing the origin transaction on the origin chain's block explorer, navigate to the **Logs** tab.
+    在原始链的区块浏览器上查看原始交易时，导航到 **日志** 标签。
 
-    The **`SentTransferRemote`** log contains the recipient as the topic number 1 (the second topic).
+    **`SentTransferRemote`** 日志包含接收者，作为主题编号 1（第二个主题）。
 
-    Sometimes, chain block explorers won't show the human-friendly "SentTransferRemote" name. In this case, you can find the log by it's topic 0: `0xd229aacb94204188fe8042965fa6b269c62dc5818b21238779ab64bdd17efeec`.
+    有时，链区块浏览器不会显示人性化的 "SentTransferRemote" 名称。在这种情况下，您可以通过其主题 0 查找日志：`0xd229aacb94204188fe8042965fa6b269c62dc5818b21238779ab64bdd17efeec`。
 
-    The recipient address is the account on the destination chain that will receive the warped tokens. Zeroes are padded to the left of the address if needed.
+    接收者地址是将在目标链上接收扭曲代币的账户。如果需要，地址左侧会填充零。
 
-    If your destination chain is an EVM chain, the log will display `0x0000000000000000000000ffffffffffffffffffffffffffffffffffffffff` to mean that `0xffffffffffffffffffffffffffffffffffffffff` is the transfer recipient.
+    如果您的目标链是 EVM 链，日志将显示 `0x0000000000000000000000ffffffffffffffffffffffffffffffffffffffff`，表示 `0xffffffffffffffffffffffffffffffffffffffff` 是转账接收者。
 
-    If your destination chain is a Cosmos chain, you can take the hexadecimal content and convert it to a bech32 address using tools like [this one](https://www.bech32converter.com). Some Cosmos chains have different address lengths, so be conscious of how many characters to copy in.
+    如果您的目标链是 Cosmos 链，您可以将十六进制内容转换为 bech32 地址，使用像 [这个工具](https://www.bech32converter.com) 这样的工具。一些 Cosmos 链有不同的地址长度，因此请注意复制多少个字符。
 
     <figure>
     ![](/img/message-debugging/transfer-remote-evm.png)
-    <figcaption>Example on Arbiscan showing the DispatchId log on an origin transaction.</figcaption>
+    <figcaption>在原始交易上显示 DispatchId 日志的 Arbiscan 示例。</figcaption>
     </figure>
 
     </TabItem>
     <TabItem value="cosmos" label="Cosmos Origin">
 
-    When viewing the origin transaction on the origin chain's block explorer, navigate to the **Event Logs** tab.
+    在原始链的区块浏览器上查看原始交易时，导航到 **事件日志** 标签。
 
-    The log including **Transfer Remote** contains the message ID, for example: `Wasm Hpl Warp Native Transfer Remote`.
+    包含 **Transfer Remote** 的日志包含消息 ID，例如：`Wasm Hpl Warp Native Transfer Remote`。
 
-    The recipient address is the account on the destination chain that will receive the warped tokens. Zeroes are padded to the left of the address if needed.
+    接收者地址是将在目标链上接收扭曲代币的账户。如果需要，地址左侧会填充零。
 
-    If your destination chain is an EVM chain, the log will display `0x0000000000000000000000ffffffffffffffffffffffffffffffffffffffff` to mean that `0xffffffffffffffffffffffffffffffffffffffff` is the transfer recipient.
+    如果您的目标链是 EVM 链，日志将显示 `0x0000000000000000000000ffffffffffffffffffffffffffffffffffffffff`，表示 `0xffffffffffffffffffffffffffffffffffffffff` 是转账接收者。
 
-    If your destination chain is a Cosmos chain, you can take the hexadecimal content and convert it to a bech32 address using tools like [this one](https://www.bech32converter.com). Some Cosmos chains have different address lengths, so be conscious of how many characters to copy in.
+    如果您的目标链是 Cosmos 链，您可以将十六进制内容转换为 bech32 地址，使用像 [这个工具](https://www.bech32converter.com) 这样的工具。一些 Cosmos 链有不同的地址长度，因此请注意复制多少个字符。
 
     <figure>
     ![](/img/message-debugging/transfer-remote-cosmos.png)
-    <figcaption>Example on Mintscan showing the log on an origin transaction.</figcaption>
+    <figcaption>在原始交易上显示日志的 Mintscan 示例。</figcaption>
     </figure>
     </TabItem>
     </Tabs>
@@ -115,26 +115,26 @@ import CosmosMessageDelivered from "@site/src/components/CosmosMessageDelivered"
 </details>
 
 <details>
-  <summary>**My Warp Route transfer recipient isn't the address I wanted**</summary>
+  <summary>**我的 Warp Route 转账接收者不是我想要的地址**</summary>
   <div>
-    Sometimes browser extension wallets can contend with one another, and the address of a wallet you don't typically use takes precedence over your intended wallet. We've seen this happen a few times with **OKX Wallet**. Please check all your wallet addresses for your recipient address.
+    有时浏览器扩展钱包之间可能会相互竞争，您不常用的钱包的地址优先于您想要的钱包。我们已经看到这种情况发生在 **OKX Wallet** 上。请检查您所有的钱包地址以找到您的接收地址。
   </div>
 </details>
 
 <details>
-  <summary>**Relaying an EVM → EVM message yourself**</summary>
+  <summary>**自己中继 EVM → EVM 消息**</summary>
   <div>
-    Using the [Hyperlane CLI](/docs/reference/cli.mdx), it's possible to relay your message yourself if it's between two EVM chains.
+    使用 [Hyperlane CLI](/docs/reference/cli.mdx)，如果在两个 EVM 链之间，可以自己中继消息。
 
-    1. Set up the CLI locally following [these instructions](/docs/reference/cli.mdx).
-    2. Find your message ID following the [above instructions](#finding-a-message-id-from-an-origin-transaction)
-    3. Obtain a private key for an account with funds on your destination chain.
-    3. Run the command to relay the message:
+    1. 按照 [这些说明](/docs/reference/cli.mdx) 在本地设置 CLI。
+    2. 按照 [上述说明](#finding-a-message-id-from-an-origin-transaction) 查找您的消息 ID。
+    3. 获取一个在目标链上有资金的账户的私钥。
+    3. 运行命令以中继消息：
     ```
     HYP_KEY=<your-private-key> hyperlane status --relay --origin <origin-chain> --destination <destination-chain> --id <message-id>
     ```
 
-    For example:
+    例如：
     ```
     HYP_KEY=0xffff00000000000000000000000000000000000000000000000000000000ffff hyperlane status --relay --origin base --destination blast --id 0xabcd00000000000000000000000000000000000000000000000000000000abcd
     ```
@@ -142,8 +142,8 @@ import CosmosMessageDelivered from "@site/src/components/CosmosMessageDelivered"
 </details>
 
 <details>
-  <summary>**I still need help with my message not being delivered**</summary>
+  <summary>**我仍然需要帮助我的消息未送达**</summary>
   <div>
-    If the above steps haven't helped, you can join our [Discord](https://discord.com/invite/hyperlane) and create a new post in the **#support-forum** channel.
+    如果上述步骤没有帮助，您可以加入我们的 [Discord](https://discord.com/invite/hyperlane) 并在 **#support-forum** 频道创建新帖子。
   </div>
 </details>

@@ -1,30 +1,29 @@
-# Multisig Module
-_Verify messages using validator signatures_
+# 多重签名模块
+_使用验证者签名验证消息_
 
-The `MultisigISM` is one of the most commonly used ISM types. These ISMs verify that `m` of `n` Validators have attested to the validity of a particular interchain message.
+`MultisigISM` 是最常用的 ISM 类型之一。这些 ISM 验证 `n` 个验证者中的 `m` 个是否已经证实了特定跨链消息的有效性。
 
-## Interface
+## 接口
 
-`MultisigISMs` must implement the `IMultisigIsm` interface.
+`MultisigISM` 必须实现 `IMultisigIsm` 接口。
 
 ```solidity file=<rootDir>/node_modules/@hyperlane-xyz/core/contracts/interfaces/isms/IMultisigIsm.sol
 ```
 
-## Configure
+## 配置
 
-The hyperlane-monorepo contains [`MultisigISM` implementations](https://github.com/hyperlane-xyz/hyperlane-monorepo/tree/main/solidity/contracts/isms/multisig) (including a [legacy](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/main/solidity/contracts/isms/multisig/LegacyMultisigIsm.sol) version and more gas-efficient [versions](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/main/solidity/contracts/isms/multisig/StaticMultisigIsm.sol) deployable via factories) that application developers can deploy off-the-shelf, specifying their desired configuration.
+hyperlane-monorepo 包含 [`MultisigISM` 实现](https://github.com/hyperlane-xyz/hyperlane-monorepo/tree/main/solidity/contracts/isms/multisig)（包括[旧版本](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/main/solidity/contracts/isms/multisig/LegacyMultisigIsm.sol)和更节省 gas 的[版本](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/main/solidity/contracts/isms/multisig/StaticMultisigIsm.sol)，可通过工厂合约部署），应用开发者可以直接部署这些现成的实现，并指定所需的配置。
 
-Developers can configure, for each origin chain, a set of `n` Validators, and the number of validator signatures (`m`) needed to verify a message.
+开发者可以为每个源链配置一组 `n` 个验证者，以及验证消息所需的验证者签名数量（`m`）。
 
-Validator signatures are **not** specific to an ISM. In other words, developers can configure their `MultisigISM` to use **any** validator that's running on Hyperlane and it will "just work".
+验证者签名**不**是特定于某个 ISM 的。换句话说，开发者可以配置他们的 `MultisigISM` 使用在 Hyperlane 上运行的**任何**验证者，它都能正常工作。
 
+## 自定义
 
-## Customize
+hyperlane-monorepo 包含一个抽象的 `MultisigISM` 实现，应用开发者可以基于此进行扩展。
 
-The hyperlane-monorepo contains an abstract `MultisigISM` implementation that application developers can fork.
+开发者只需要实现 `validatorsAndThreshold()` 函数即可。
 
-Developers simply need to implement the `validatorsAndThreshold()` function.
+通过创建自定义实现，应用开发者可以根据其应用需求定制 `MultisigISM` 提供的安全性。
 
-By creating a custom implementation, application developers can tailor the security provided by a `MultisigISM` to the needs of their application.
-
-For example, a custom implementation could vary the number of signatures required, based on the content of the message being verified.
+例如，自定义实现可以根据待验证消息的内容来改变所需的签名数量。

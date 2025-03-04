@@ -2,27 +2,27 @@ import PrerequisitesPartial from "/docs/partials/core/_prerequisites-config-arti
 import CoreReadChainPartial from "/docs/partials/core/commands/_core-read-chain.mdx";
 import CoreApplyChainPartial from "/docs/partials/core/commands/_core-apply-chain.mdx";
 
-# How to Transfer Ownership from Hyperlane Mailbox
+# 如何从 Hyperlane 邮箱转移所有权
 
-This guide explains how to change the owner of your Hyperlane Mailbox using the Hyperlane CLI. Transferring ownership is necessary when you want to give control to a different address, such as for security reasons or when making changes to who manages the Mailbox.
+本指南解释了如何使用 Hyperlane CLI 更改 Hyperlane 邮箱的所有者。转移所有权在您希望将控制权交给其他地址时是必要的，例如出于安全原因或在更改邮箱管理者时。
 
-As the new owner, you will have full control over the Mailbox settings, including managing hooks, ISM configurations, and permissions for message handling. We’ll guide you through updating the owner address, applying the change, and confirming everything is set correctly.
+作为新所有者，您将完全控制邮箱设置，包括管理钩子、ISM 配置和消息处理权限。我们将指导您更新所有者地址、应用更改并确认一切设置正确。
 
-# Using the Hyperlane CLI
+# 使用 Hyperlane CLI
 
-One of the quickest way to transfer a mailbox ownership is by using the [Hyperlane CLI](https://docs.hyperlane.xyz/docs/reference/cli).
+使用 [Hyperlane CLI](https://docs.hyperlane.xyz/docs/reference/cli) 转移邮箱所有权是最快的方法之一。
 
 <PrerequisitesPartial />
 
 :::info
-If you followed the [How to Connect Your Chain with Hyperlane](/docs/deploy-hyperlane) guide, you may have deployed a mailbox with the owner set to the single private key. In production, it is advisable to use a multisig.
+如果您遵循了 [如何将您的链与 Hyperlane 连接](/docs/deploy-hyperlane) 的指南，您可能已经部署了一个所有者设置为单个私钥的邮箱。在生产环境中，建议使用多签名。
 :::
 
-To confirm using the Hyperlane CLI, execute the following with `--chain` set to the name of your chain that the mailbox is deployed on:
+要确认使用 Hyperlane CLI，请执行以下命令，`--chain` 设置为您部署邮箱的链的名称：
 
 <CoreReadChainPartial />
 
-After running `core read`, you should see a similar config with `owner` set to private key's address:
+运行 `core read` 后，您应该会看到类似的配置，其中 `owner` 设置为私钥的地址：
 
 ```yaml {8}
 defaultHook:
@@ -42,13 +42,13 @@ requiredHook:
   type: "protocolFee"
 ```
 
-The output is saved to `CURRENT_DIR/configs/core-config.yaml`.
+输出将保存到 `CURRENT_DIR/configs/core-config.yaml`。
 
-Follow these steps using the CLI to transfer the existing ownership to another address.
+请按照以下步骤使用 CLI 将现有所有权转移到另一个地址。
 
-## Step 1: Update Config
+## 第一步：更新配置
 
-Update `owner` address in the `core-config.yaml`
+在 `core-config.yaml` 中更新 `owner` 地址
 
 ```diff title="core-config.yaml"
 defaultHook:
@@ -69,21 +69,21 @@ requiredHook:
   type: protocolFee
 ```
 
-## Step 2: Apply
+## 第二步：应用
 
-Using the CLI, execute:
+使用 CLI 执行：
 
 <CoreApplyChainPartial />
 
-You should see a batch of transactions executed on chain, and a final message indicating that the mailbox has been updated.
+您应该会看到一批交易在链上执行，并且最后一条消息指示邮箱已更新。
 
-## Step 3: Confirm
+## 第三步：确认
 
-To confirm using the Hyperlane CLI, execute the following:
+要确认使用 Hyperlane CLI，请执行以下命令：
 
 <CoreReadChainPartial />
 
-After running `core read`, you should see a similar config with the now updated `owner`:
+运行 `core read` 后，您应该会看到类似的配置，其中现在更新的 `owner` 为：
 
 ```yaml {8}
 defaultHook:
@@ -103,4 +103,4 @@ requiredHook:
   type: "protocolFee"
 ```
 
-By completing these steps, you have successfully transferred and verified ownership of your mailbox to a new address.
+通过完成这些步骤，您已成功将邮箱的所有权转移并验证到新地址。

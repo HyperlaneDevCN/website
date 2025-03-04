@@ -1,34 +1,34 @@
-# Warp Routes: Fast Native Transfers via Custom Gas Tokens
+# Warp Routes: 通过自定义燃气代币实现快速本地转账
 
-This document will walk you through how to use Hyperlane to enable fast native transfers to and from your L2 via a custom gas token.
+本文将指导您如何使用 Hyperlane 启用通过自定义燃气代币进行快速本地转账到您的 L2 网络。
 
-## Primary Motives
+## 主要动机
 
-1. Create a custom gas token to use on your L2 of choice.
-2. Use this gas token to enable fast native transfers, instead of long wait times for settlement via canonical bridges.
+1. 创建一个自定义燃气代币，以便在您选择的 L2 上使用。
+2. 使用该燃气代币实现快速本地转账，而不是通过规范桥接进行长时间的结算等待。
 
-## Pre-Requisites
+## 前提条件
 
-To complete the following walkthrough, you should have the following available:
+要完成以下操作指南，您需要具备以下条件：
 
-1. A L2 network (”yourchain”) on which you are able to specify a [custom gas token](https://docs.arbitrum.io/launch-orbit-chain/how-tos/use-a-custom-gas-token) and would like to enable fast native transfers to and from.
-2. A sole deployer or authorized owner to receive mint of the receipt token (more information on this token below).
-3. An installed instance of the [Hyperlane CLI](https://docs.hyperlane.xyz/docs/reference/cli) and a wallet private key sourced as `HYP_KEY`, funded on all relevant networks.
+1. 一个 L2 网络（"yourchain"），您可以在其上指定一个 [自定义燃气代币](https://docs.arbitrum.io/launch-orbit-chain/how-tos/use-a-custom-gas-token)，并希望启用快速本地转账。
+2. 一个唯一的部署者或授权所有者，以接收收据代币的铸造（有关该代币的更多信息见下文）。
+3. 安装了 [Hyperlane CLI](https://docs.hyperlane.xyz/docs/reference/cli) 的实例，并且有一个作为 `HYP_KEY` 的钱包私钥，已在所有相关网络上获得资金。
 
-## Walkthrough: Fast Native Transfers
+## 操作指南：快速本地转账
 
 :::info
 
-- Note that a “receipt token” below is a (one-time) mintable “dummy” token used to collateralize a warp-route on yourchain's corresponding L1. You will burn the minting rights to the token after creating it.
-- Also, depending on your L2, the token symbol of your custom gas token may be assigned the same symbol as your receipt token. If deploying on ethereum, you may want to set your symbol to `ETH`.
+- 请注意，下面提到的"收据代币"是一个（一次性）可铸造的"虚拟"代币，用于抵押您链上对应 L1 的传输路线。创建后，您将销毁该代币的铸造权。
+- 此外，根据您的 L2，您自定义燃气代币的代币符号可能与您的收据代币相同。如果在以太坊上部署，您可能希望将符号设置为 `ETH`。
 
 :::
 
-### 1) Deploy a Receipt Token
+### 1) 部署收据代币
 
-Deploy an `ETH` receipt token to ethereum to become your L2's custom gas token.
+在以太坊上部署一个 `ETH` 收据代币，以成为您 L2 的自定义燃气代币。
 
-1. For example, you may deploy your receipt token via [Remix](https://remix.ethereum.org/) with a funded wallet and a contract similar to below:
+1. 例如，您可以通过 [Remix](https://remix.ethereum.org/) 使用一个有资金的钱包和类似下面的合约来部署您的收据代币：
 
    ```solidity
    // SPDX-License-Identifier: MIT
@@ -43,34 +43,34 @@ Deploy an `ETH` receipt token to ethereum to become your L2's custom gas token.
    }
    ```
 
-2. Ensure 100% of the total supply of your `ETH` receipt token is minted to the deployer or authorized address of choice. This must be a one-time mint event in order to avoid value dilution of the ethereum ↔ yourchain native warp route, below.
-3. Once deployed, save the address of the contract for use below.
+2. 确保您 `ETH` 收据代币的总供应量 100% 铸造给部署者或授权地址。这必须是一次性铸造事件，以避免以太坊 ↔ yourchain 本地传输路线的价值稀释。
+3. 部署后，保存合约地址以供后续使用。
 
-### 2) Set the Custom Gas Token
+### 2) 设置自定义 Gas Token
 
-Set the custom gas token on yourchain to the newly deployed `ETH` ERC20 receipt token.
+将 yourchain 的自定义燃气代币设置为新部署的 `ETH` ERC20 收据代币。
 
-1. To set a custom gas token using OP stack: https://docs.optimism.io/builders/chain-operators/features/custom-gas-token
-2. To set a custom gas token using arbitrum orbit: https://docs.arbitrum.io/launch-orbit-chain/how-tos/use-a-custom-gas-token
+1. 使用 OP 堆栈设置自定义燃气代币： https://docs.optimism.io/builders/chain-operators/features/custom-gas-token
+2. 使用 Arbitrum Orbit 设置自定义燃气代币： https://docs.arbitrum.io/launch-orbit-chain/how-tos/use-a-custom-gas-token
 
-### 3) Transfer All Receipt Tokens
+### 3) 转移所有收据代币
 
-Use your L2's canonical bridge to transfer 100% of the `ETH` receipt token from ethereum to yourchain.
+使用您 L2 的规范桥将 100% 的 `ETH` 收据代币从以太坊转移到 yourchain。
 
-1. To transfer using the OP stack standard bridge: https://docs.optimism.io/builders/app-developers/bridging/standard-bridge
-2. To transfer using the arbitrum orbit bridge: https://docs.arbitrum.io/launch-orbit-chain/how-tos/add-orbit-chain-to-bridge-ui
+1. 使用 OP 堆栈标准桥进行转移： https://docs.optimism.io/builders/app-developers/bridging/standard-bridge
+2. 使用 Arbitrum Orbit 桥进行转移： https://docs.arbitrum.io/launch-orbit-chain/how-tos/add-orbit-chain-to-bridge-ui
 
-### 4) Deploy a Native Warp Route
+### 4) 部署本地传输路线
 
-Using the Hyperlane CLI, deploy an ethereum `ETH` EvmHypNative ↔ yourchain `ETH` EvmHypNative warp route:
+使用 Hyperlane CLI，部署以太坊 `ETH` EvmHypNative ↔ yourchain `ETH` EvmHypNative 传输路线：
 
-1. Run `hyperlane warp init` and complete the following flow:
-   1. Select `ethereum` and `yourchain` using space, and hit enter.
-   2. For ethereum, select `native` and accept the mailbox.
-   3. For yourchain, select `native` and accept the mailbox.
-2. Before executing the deployment, ensure yourchain’s `metadata.yaml` has a `blockExplorers` field defined. This will be needed for contract verification in order to easily collateralize yourchain's warp route.
-3. Run `hyperlane warp deploy` and confirm the warp deploy config is as expected.
-4. After execution, your `yourchain-ethereum-config.yaml` deployment file will look similar to the following:
+1. 运行 `hyperlane warp init` 并完成以下流程：
+   1. 使用空格选择 `ethereum` 和 `yourchain`，然后按回车。
+   2. 对于以太坊，选择 `native` 并接受邮箱。
+   3. 对于 yourchain，选择 `native` 并接受邮箱。
+2. 在执行部署之前，确保 yourchain 的 `metadata.yaml` 中定义了 `blockExplorers` 字段。这将用于合约验证，以便轻松抵押 yourchain 的传输路线。
+3. 运行 `hyperlane warp deploy` 并确认传输部署配置符合预期。
+4. 执行后，您的 `yourchain-ethereum-config.yaml` 部署文件将类似于以下内容：
 
    ```solidity
    # yaml-language-server: $schema=../schema.json
@@ -94,36 +94,36 @@ Using the Hyperlane CLI, deploy an ethereum `ETH` EvmHypNative ↔ yourchain `ET
 
    ```
 
-### 5) Collateralize Your Warp Route
+### 5) 抵押您的传输路线
 
-Deposit yourchain `ETH` as collateral into yourchain's native warp route via the `receive()` function. If needed, you may use the verified contract to do this via your scanner's UI, or a wallet such as Metamask
+通过 `receive()` 函数将 yourchain 的 `ETH` 作为抵押存入 yourchain 的本地传输路线。如果需要，您可以通过扫描仪的 UI 或像 Metamask 这样的钱包使用已验证的合约来完成此操作。
 
-This collateralizes the native warp route, enabling users to bridge their native assets quickly to and from yourchain.
+这将抵押本地传输路线，使用户能够快速桥接他们的本地资产到 yourchain 和从 yourchain。
 
-### 6) Testing
+### 6) 测试
 
-You can initiate a test transfer of a single wei with the following command:
+您可以使用以下命令发起一次单个 wei 的测试转账：
 
 ```bash
 hyperlane warp send --relay --symbol ETH
 ```
 
-The `--relay` flag is optional and will relay the message to the destination chain.
+`--relay` 标志是可选的，将消息 中继 到目标链。
 
-You can also run a relayer that delivers only for your warp route in the background with:
+您还可以在后台运行一个仅为您的传输路线提供服务的中继器：
 
 ```bash
 hyperlane relayer --symbol TOKEN
 ```
 
-You can test in either direction between where you have the warp route set.
+您可以在设置了传输路线的任一方向进行测试。
 
 :::info
-By Default, your warp core config is found in the local Registry at `$HOME/.hyperlane/deployments/warp_routes` to be used with the `--warp` flag.
+默认情况下，您的传输核心配置位于本地注册表 `$HOME/.hyperlane/deployments/warp_routes` 中，可与 `--warp` 标志一起使用。
 :::
 
 :::success
-🎉 Congrats! You have now enabled fast native transfer to and from yourchain via a custom gas token on your L2.
+🎉 恭喜！您现在已通过自定义燃气代币在您的 L2 上启用快速本地转账。
 :::
 
 ```mermaid
@@ -143,15 +143,15 @@ sequenceDiagram
 ```
 
 :::warning
-Please note that this collateralization strategy takes on certain ISM trust assumptions.
+请注意，此抵押策略承担某些 ISM 信任假设。
 :::
 
-## Resources
+## 资源
 
-Take a look at the [inEVM bridge](https://bridge.inevm.com/) to see an example of these warp routes in action.
+请查看 [inEVM 桥](https://bridge.inevm.com/) 以查看这些传输路线的实际示例。
 
-Check out some additional information, published by the Hyperlane supporting team & Injective:
+查看 Hyperlane 支持团队和 Injective 发布的一些额外信息：
 
-- [inEVM Spotlight: Hyperlane](https://blog.injective.com/en/inevm-spotlight-hyperlane-2/)
-- [Connecting Injective: Hyperlane Opens the inEVM Bridge](https://medium.com/hyperlane/connecting-injective-hyperlane-opens-the-inevm-bridge-6f1d3edf0ff8)
-- [Hyperlane and Injective | Expanding opportunities](https://medium.com/@kobriyyu/hyperlane-and-injective-expanding-opportunities-8ce170b72da7)
+- [inEVM 聚焦：Hyperlane](https://blog.injective.com/en/inevm-spotlight-hyperlane-2/)
+- [连接 Injective：Hyperlane 开启 inEVM 桥](https://medium.com/hyperlane/connecting-injective-hyperlane-opens-the-inevm-bridge-6f1d3edf0ff8)
+- [Hyperlane 和 Injective | 扩展机会](https://medium.com/@kobriyyu/hyperlane-and-injective-expanding-opportunities-8ce170b72da7)

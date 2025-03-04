@@ -2,42 +2,42 @@ import IsmDiagram from "@site/src/diagrams/messaging-isms.md";
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
 
-# Modular Security
+# 模块化安全
 
-Hyperlane is secured by **Interchain Security Modules** (ISMs). ISMs are smart contracts that are responsible for verifying that interchain messages being delivered on the destination chain were _actually sent_ on the origin chain.
+Hyperlane 通过 **跨链安全模块**（ISMs）来确保安全。ISMs 是负责验证在目标链上交付的跨链消息是否 是 在源链上发送的智能合约。
 
 <IsmDiagram />
 
-## Core Concepts
+## 核心概念
 
-### Default vs Custom ISM
+### 默认与自定义 ISM
 
-Developers can either use the [Mailbox's](../mailbox.mdx) default ISM or specify their own application-specific ISM. Application-specific ISM can be:
+开发者可以使用 [邮箱](../mailbox.mdx) 的默认 ISM，或者指定自己的应用特定 ISM。应用特定的 ISM 可以是：
 
-- **Configured**: Use pre-built ISMs with custom parameters
-- **Composed**: Combine multiple ISMs together like security "legos"
-- **Customized**: Create entirely new ISMs tailored to specific needs
+- **配置**：使用带有自定义参数的预构建 ISM
+- **组合**：像安全"乐高"一样组合多个 ISM
+- **定制**：创建完全符合特定需求的新 ISM
 
-#### Configure
+#### 配置
 
-Hyperlane defines a set of pre-built ISMs. Developers can deploy any of these contracts "off-the-shelf" and configure them with their own parameters.
+Hyperlane 定义了一组预构建的 ISM。开发者可以"现成"部署这些合约，并用自己的参数进行配置。
 
-For example, application developers that want increased sovereignty over interchain security could deploy a [Multisig ISM](multisig-ISM.mdx) configured with validators sourced from their own community.
+例如，想要在跨链安全上获得更大主权的应用开发者，可以部署一个配置了来自自己社区的验证者的 [多签 ISM](multisig-ISM.mdx)。
 
-#### Compose
+#### 组合
 
-ISMs act as "security [legos](https://en.wikipedia.org/wiki/Lego)". Developers can mix and match different ISMs together to encode a security model that best fits their needs.
+ISMs 像"安全 [legos](https://en.wikipedia.org/wiki/Lego)"一样。开发者可以混合和匹配不同的 ISM，以编码最符合其需求的安全模型。
 
-For example, application developers that want additional security could deploy an [Aggregation ISM](aggregation-ISM.mdx) that requires verification by both a [Multisig ISM](multisig-ISM.mdx) configured with validators from the Hyperlane community, **and** a Wormhole ISM that verifies that a quorum of the [Wormhole](https://wormhole.com/) validator set verified the message.
+例如，想要额外安全性的应用开发者可以部署一个 [聚合 ISM](aggregation-ISM.mdx)，该 ISM 要求由来自 Hyperlane 社区的 [多签 ISM](multisig-ISM.mdx) 和一个验证消息的 Wormhole ISM 验证。
 
-#### Customize
+#### 定制
 
-ISMs are fully customizable. Developers can write their own ISMs, tailoring them to the needs of their application.
+ISMs 是完全可定制的。开发者可以编写自己的 ISM，使其符合应用的需求。
 
-For example, application developers can build ISMs that adjust security models based on message content. High value and infrequent messages (e.g. governance) could be verified by a security model that prioritizes safety over latency and gas costs. Lower value and more frequent messages could be verified by a security model that prioritizes latency and gas costs over safety.
+例如，应用开发者可以构建根据消息内容调整安全模型的 ISM。高价值且不频繁的消息（例如治理）可以通过优先考虑安全性而非延迟和燃气成本的安全模型进行验证。低价值且更频繁的消息可以通过优先考虑延迟和燃气成本而非安全性的安全模型进行验证。
 
 :::tip
 
-- Learn how to [Override the Default ISM](./custom-ISM.mdx)
+- 学习如何 [覆盖默认 ISM](./custom-ISM.mdx)
 
 :::

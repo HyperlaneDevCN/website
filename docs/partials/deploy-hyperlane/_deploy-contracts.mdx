@@ -1,86 +1,86 @@
 import CliChainsPartial from "/docs/partials/deploy-hyperlane/_cli-chains.mdx";
 
-Once you have set up deployer, validator, and relayer keys it's time to use the Hyperlane CLI to deploy smart contracts to the local and remote chains.
+一旦您设置了部署者、验证者和中继器密钥，就可以使用 Hyperlane CLI 将智能合约部署到本地和远程链上。
 
-On the local chain, we will deploy:
+在本地链上，我们将部署：
 
-- The core contracts, including a [Mailbox](/docs/reference/messaging/messaging-interface) that can be used to send and receive messages.
+- 核心合约，包括一个 [Mailbox](/docs/reference/messaging/messaging-interface)，可以用来发送和接收消息。
 
-On all chains, we will deploy:
+在所有链上，我们将部署：
 
-- A Multisig ISM that can be used to verify inbound messages from the other local & remote chains.
-- An `InterchainGasPaymaster`, which can be used to pay our relayer for delivering interchain messages.
-- A `TestRecipient`, which we will send messages to, in order to test that everything is working correctly.
+- 一个多重签名 ISM，用于验证来自其他本地和远程链的入站消息。
+- 一个 `InterchainGasPaymaster`，用于支付我们的中继器以交付跨链消息。
+- 一个 `TestRecipient`，我们将向其发送消息，以测试一切是否正常工作。
 
-### Setup
+### 设置
 
-First, install the [Hyperlane CLI](/docs/reference/cli.mdx).
+首先，安装 [Hyperlane CLI](/docs/reference/cli.mdx)。
 
 ```bash
 npm install -g @hyperlane-xyz/cli
 ```
 
-#### Chains
+#### 链
 
 <CliChainsPartial />
 
-#### Core deployment with Multisig ISM
+#### 使用多重签名 ISM 的核心部署
 
-Now the CLI will know how to interact with all your chains, but it will also need to know how to configure your Interchain Security Module (ISM).
+现在 CLI 将知道如何与您的所有链进行交互，但它还需要知道如何配置您的跨链安全模块（ISM）。
 
-To initialize a core config with multisig ISM config, you can define it manually using JSON or YAML (see [example config here](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/main/typescript/cli/examples/core-config.yaml)), or create it with the following command:
+要使用多重签名 ISM 配置初始化核心配置，您可以使用 JSON 或 YAML 手动定义它（请参见 [示例配置](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/main/typescript/cli/examples/core-config.yaml)），或使用以下命令创建它：
 
 ```bash
 hyperlane core init --advanced
 ```
 
-When asked about the ISM type, choose `messageIdMultisigIsm`. In the context of this guide, we will be using a 1/1 multisig, so choose a threshold of `1` and enter the address of your key.
+当被问及 ISM 类型时，选择 `messageIdMultisigIsm`。在本指南的上下文中，我们将使用 1/1 多重签名，因此选择阈值为 `1` 并输入您的密钥地址。
 
-When asked about the default hook type and required hook type, choose `merkleTreeHook`.
+当被问及默认钩子类型和所需钩子类型时，选择 `merkleTreeHook`。
 
-### Dry Run a Core Deployment
+### 干运行核心部署
 
 :::note
 
-In order to execute a dry-run, you will need an Anvil node running in a separate terminal instance.
-To spin up an Anvil node, run `anvil`.
-For more on Anvil and installation, check out [Foundry's Anvil docs](https://book.getfoundry.sh/anvil/).
+为了执行干运行，您需要在单独的终端实例中运行 Anvil 节点。
+要启动 Anvil 节点，请运行 `anvil`。
+有关 Anvil 和安装的更多信息，请查看 [Foundry 的 Anvil 文档](https://book.getfoundry.sh/anvil/)。
 
 :::
 
-Prior to executing a deployment, you can perform a dry-run via `--dry-run <CHAIN_NAME>`  or `-d <CHAIN_NAME>` to ensure that the deployment will be successful as well as provide analytics on the gas costs of deployment. This will not trigger any real transactions but will simulate a deployment to display a list of required contracts and their respective gas costs.
+在执行部署之前，您可以通过 `--dry-run <CHAIN_NAME>` 或 `-d <CHAIN_NAME>` 执行干运行，以确保部署成功并提供部署的燃气成本分析。这不会触发任何真实交易，而是模拟部署以显示所需合约及其各自的燃气成本列表。
 
-In addition to validating your upcoming deployment, you can optionally provide the address of the EOA you intend to deploy with via `--from-address` or `-f`.
-This will ensure you have approximately enough funds to complete the deployment.
+除了验证即将进行的部署外，您还可以选择通过 `--from-address` 或 `-f` 提供您打算使用的 EOA 地址。
+这将确保您有足够的资金完成部署。
 
 ```bash
 hyperlane core deploy --dry-run chain1 \ 
-    --from-address $YOUR_DEPLOYER_ADDRESS \ # (optional) your account address to be impersonated via Anvil; defaults to the HYP_KEY env variable
-    --registry \ # (optional) path to your primary registry; defaults to the Hyperlane github registry
-    --overrides # (optional) path to a override registry; defaults to the local ./ path
+    --from-address $YOUR_DEPLOYER_ADDRESS \ # (可选) 您的账户地址，将通过 Anvil 进行模拟；默认为 HYP_KEY 环境变量
+    --registry \ # (可选) 您的主要注册表路径；默认为 Hyperlane github 注册表
+    --overrides # (可选) 覆盖注册表的路径；默认为本地 ./ 路径
 ```
 
-### Deploy
+### 部署
 
-We're now ready to use the `core deploy` command to deploy the Hyperlane contracts. To pay for transactions, the command will need the contract deployer key from step 1, which can be provided via the `HYP_KEY` env variable or as a command argument.
+我们现在准备使用 `core deploy` 命令来部署 Hyperlane 合约。为了支付交易，命令将需要步骤 1 中的合约部署者密钥，可以通过 `HYP_KEY` 环境变量或作为命令参数提供。
 
 ```bash
 hyperlane core deploy
 ```
 
-### Verify
+### 验证
 
-Deployment contract artifacts will be written to the configured registries. By default, you'll find the new addresses in the local directory you ran the command from (e.g. `./chains/chain1/addresses.yaml`).
+部署合约的工件将写入配置的注册表。默认情况下，您将在运行命令的本地目录中找到新地址（例如 `./chains/chain1/addresses.yaml`）。
 
-### Agent configs
+### 代理配置
 
-We are now ready to generate an agent config using our deployed contracts that will be used by the agents (Validator and Relayer) in the steps below.
+我们现在准备使用已部署的合约生成代理配置，这将被代理（验证者和中继器）在以下步骤中使用。
 
 ```bash
 hyperlane registry agent-config --chains chain1
 ```
 
-Set the `CONFIG_FILES` environment variable to the path of the agent config generated.
+将 `CONFIG_FILES` 环境变量设置为生成的代理配置的路径。
 ```bash
 export CONFIG_FILES=/full/path/to/configs/agent-config.json
 ```

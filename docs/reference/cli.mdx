@@ -1,49 +1,49 @@
-# Hyperlane CLI
+# Hyperlane 命令行工具
 
-## Overview
+## 概述
 
-The Hyperlane CLI is the official command-line tool for deploying Hyperlane contracts to new chains. It also includes utilities for interacting with deployed contracts and registries.
+Hyperlane 命令行工具是用于将 Hyperlane 合约部署到新链的官方命令行工具。它还包含了与已部署合约和注册表交互的实用工具。
 
-The published version is available [on NPM](https://www.npmjs.com/package/@hyperlane-xyz/cli). The source is available [on GitHub in the monorepo](https://github.com/hyperlane-xyz/hyperlane-monorepo/tree/main/typescript/cli).
+已发布版本可在 [NPM](https://www.npmjs.com/package/@hyperlane-xyz/cli) 上获取。源代码可在 [GitHub monorepo](https://github.com/hyperlane-xyz/hyperlane-monorepo/tree/main/typescript/cli) 中找到。
 
-## Setup
+## 设置
 
 :::tip
 
- [Node 18](https://nodejs.org/en/download) or newer is required
+需要 [Node 18](https://nodejs.org/en/download) 或更新版本
 
 :::
 
-To install the CLI globally, use the `npm install -g` command. This will the `hyperlane` command available anywhere in your terminal.
+要全局安装命令行工具，请使用 `npm install -g` 命令。这将使 `hyperlane` 命令在终端的任何位置都可用。
 
 ```bash
-# Install with NPM
+# 使用 NPM 安装
 npm install -g @hyperlane-xyz/cli
-# Or uninstall old versions
+# 或卸载旧版本
 npm uninstall -g @hyperlane-xyz/cli
 ```
 
-Alternatively, for running individual commands, you can use `npx` or `dlx`:
+或者，对于运行单个命令，你可以使用 `npx` 或 `dlx`:
 
 ```bash
-# Run via NPM's npx command
+# 通过 NPM 的 npx 命令运行
 npx @hyperlane-xyz/cli
-# Or via Yarn's dlx command
+# 或通过 Yarn 的 dlx 命令
 yarn dlx @hyperlane-xyz/cli
 ```
 
-## Usage
+## 使用方法
 
-To view a list of the available commands and their arguments, run `hyperlane --help`.
+要查看可用命令及其参数的列表，运行 `hyperlane --help`。
 
-A few common command options include:
-- `--version`: Display your current installed version of the CLI
-- `--registry`: Set the registry URI to use for chain metadata and contract addresses
-- `--overrides`: Set an additional path for overrides to the canonical registry data
-- `log`: Set the log format for the CLI (defaults to pretty)
-- `verbosity`: Set the log level for the CLI (defaults to info)
-- `key`: Set the key to use for signing transactions (defaults to the HYP_KEY env var)
+一些常用的命令选项包括:
+- `--version`: 显示当前安装的命令行工具版本
+- `--registry`: 设置用于链元数据和合约地址的注册表 URI
+- `--overrides`: 设置规范注册表数据的额外覆盖路径
+- `log`: 设置命令行工具的日志格式(默认为 pretty)
+- `verbosity`: 设置命令行工具的日志级别(默认为 info)
+- `key`: 设置用于签署交易的密钥(默认为 HYP_KEY 环境变量)
 
-## Registries
+## 注册表
 
-By default, the CLI will pull chain metadata and contract addresses from the [canonical Hyperlane Registry](https://github.com/hyperlane-xyz/hyperlane-registry) but will write new configs and deployments to your local filesystem. For more information see the [Registries page](/docs/reference/registries.mdx).
+默认情况下，命令行工具将从[规范 Hyperlane 注册表](https://github.com/hyperlane-xyz/hyperlane-registry)获取链元数据和合约地址，但会将新的配置和部署写入到本地文件系统。更多信息请参见[注册表页面](/docs/reference/registries.mdx)。

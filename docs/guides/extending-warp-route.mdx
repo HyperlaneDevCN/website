@@ -6,29 +6,29 @@ import WarpApplySymbolConfigDefaultPartial from '/docs/partials/warp-routes/comm
 import WarpApplySymbolConfigDefaultStrategyPartial from '/docs/partials/warp-routes/commands/_warp-apply-symbol-config-default-strategy.mdx'
 import WarpReadSymbolSelectPartial from '/docs/partials/warp-routes/_warp-read-symbol-selection.mdx'
 
-# How to extend an existing Warp Route
+# 如何扩展现有的 Warp 路由
 
-# Using the Hyperlane CLI
+# 使用 Hyperlane CLI
 
-After deploying your warp route, you may want to extend it to a new chain. Extending a warp route involves deploying a new token contract on the target chain and enrolling existing tokens with it.
+在部署您的 warp 路由后，您可能希望将其扩展到新的链。扩展 warp 路由涉及在目标链上部署新的代币合约并将现有代币注册到其中。
 
-You can extend an existing warp route using the [Hyperlane CLI](https://docs.hyperlane.xyz/docs/reference/cli).
+您可以使用 [Hyperlane CLI](https://docs.hyperlane.xyz/docs/reference/cli) 扩展现有的 warp 路由。
 <PrerequisitesPartial />
 :::warning
-Gnosis Safe Users: The EOA that owns the warp route must either be a Safe signer or [delegate](https://docs.safe.global/core-api/transaction-service-guides/delegates) to be able to propose update transactions.
+Gnosis Safe 用户：拥有 warp 路由的 EOA 必须是 Safe 签名者或 [委托](https://docs.safe.global/core-api/transaction-service-guides/delegates)，才能提出更新交易。
 :::
 
-If you already have the warp config, skip to [Step 1](#step-1-configuration).
+如果您已经拥有 warp 配置，请跳过到 [步骤 1](#step-1-configuration)。
 
-To generate the warp route config using the Hyperlane CLI, locate your token symbol on the chain on which it is deployed:
+要使用 Hyperlane CLI 生成 warp 路由配置，请在其部署的链上找到您的代币符号：
 
 <WarpReadSymbolChainPartial />
 
 <WarpReadSymbolSelectPartial />
 
-You can then choose the warp route to extend.
+然后您可以选择要扩展的 warp 路由。
 
-After running `hyperlane warp read`, the CLI will display a config similar to the following:
+在运行 `hyperlane warp read` 后，CLI 将显示类似以下的配置：
 
 ```yaml
 basesepolia:
@@ -52,12 +52,12 @@ sepolia:
     "84532": "0x26243aaD2d03AAbafaCE785808Ae64fc32aFB8A1"
   type: "native"
 ```
-This particular config has 2 chains: basesepolia and sepolia. This means messages can be relayed between both chains. 
+此特定配置有 2 条链：basesepolia 和 sepolia。这意味着消息可以在这两条链之间中继。
 
-By default, `warp read` will save the output to `CURRENT_DIR/configs/warp-route-deployment.yaml`. Follow these steps to add a chain to the existing warp route.
+默认情况下，`warp read` 将输出保存到 `CURRENT_DIR/configs/warp-route-deployment.yaml`。请按照以下步骤将链添加到现有的 warp 路由中。
 
-## Step 1: Configuration
-Update the `warp-route-deployment.yaml` by adding a config for the new chain.
+## 步骤 1：配置
+通过添加新链的配置来更新 `warp-route-deployment.yaml`。
 
 ```diff title="warp-route-deployment.yaml"
 sepolia:
@@ -91,12 +91,12 @@ basesepolia:
 ```
 
 :::warning
-EOA Users: The extended config `owner` must match the EOA address from the prerequisites step to avoid deployment failure.
+EOA 用户：扩展配置的 `owner` 必须与先决条件步骤中的 EOA 地址匹配，以避免部署失败。
 :::
 
-## Step 2: Apply
+## 步骤 2：应用
 
-Using the CLI, execute the command applicable to your warp route owner setup:
+使用 CLI，执行适用于您的 warp 路由所有者设置的命令：
 
 <Tabs defaultValue="eoa"
   values={[
@@ -105,7 +105,7 @@ Using the CLI, execute the command applicable to your warp route owner setup:
   ]}>
     <TabItem value="eoa"><WarpApplySymbolConfigDefaultPartial /></TabItem>
     <TabItem value="gnosis">
-        Use this template to define and save a Gnosis Safe strategy:
+        使用此模板定义并保存 Gnosis Safe 策略：
         ```yaml
         basesepolia:
           submitter:
@@ -123,22 +123,22 @@ Using the CLI, execute the command applicable to your warp route owner setup:
               chain: "holesky"
               safeAddress: "0x1f9090aaE28b8a3dCeaDf281B0F12828e676c326"
         ```
-        In this case, each chain is a Gnosis Safe strategy with their respective Safe addresses. The Safe proposals **must be accepted** to complete the warp route extension.
+        在这种情况下，每条链都是具有各自 Safe 地址的 Gnosis Safe 策略。Safe 提案 **必须被接受** 才能完成 warp 路由扩展。
         <WarpApplySymbolConfigDefaultStrategyPartial />
     </TabItem>
 </Tabs>
 
 
-After executing, you should see a batch of transactions executed on chain, and a final message indicating that the warp config has been updated.
+执行后，您应该会看到一批交易在链上执行，并且最后一条消息指示 warp 配置已更新。
 
-## Step 3: Confirm
+## 步骤 3：确认
 
-To confirm that the warp route was successfully extended using the Hyperlane CLI, run the following command with your token symbol on the chain it is deployed on:
+要确认使用 Hyperlane CLI 成功扩展了 warp 路由，请在其部署的链上运行以下命令，使用您的代币符号：
 
 <WarpReadSymbolChainPartial />
 
 
-After running `warp read`, confirm that the warp route has been extended:
+在运行 `warp read` 后，确认 warp 路由已扩展：
 ```yaml {23-34} 
 basesepolia:
   mailbox: "0x6966b0E55883d49BFB24539356a2f8A673E02039"

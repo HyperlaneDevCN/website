@@ -1,88 +1,88 @@
-# Run a Relayer
+# 运行 Relayer
 
 :::tip
 
-- For an introduction on Relayers in Hyperlane, you can check out the [Overview section](/docs/operate/overview-agents.mdx).
-- We recommend you read through the [**Deploy Hyperlane Local Agents**](../../guides/deploy-hyperlane-local-agents.mdx) guide to understand how to configure and run the Relayer locally, as well as the [**Run Validators**](../validators/run-validators.mdx) documentation before trying to run a production Relayer.
+- 有关 Hyperlane 中 Relayer 的介绍，您可以查看 [概述部分](/docs/operate/overview-agents.mdx)。
+- 我们建议您阅读 [**部署 Hyperlane 本地代理**](../../guides/deploy-hyperlane-local-agents.mdx) 指南，以了解如何在本地配置和运行 Relayer，以及在尝试运行生产 Relayer 之前阅读 [**运行验证者**](../validators/run-validators.mdx) 文档。
 
 :::
 
-## Requirements
+## 需求
 
-- **RPC nodes**
-  - A Relayer uses RPC nodes to read the origin chain(s), and deliver messages to the destination chain(s). The Relayer must be configured with an RPC node for all origin and destination chains.
-- **One or more signing keys**
-  - In order to deliver messages, the Relayer must be configured with a signing key to submit transactions on each destination chain (thus need funds on those chains).
-  - The Relayer uses this key to sign `Mailbox.process()` transactions. The Hyperlane Relayer agent currently supports configuration with AWS KMS keys that are accessed via API keys/secrets or raw hexadecimal private keys.
-- **A machine to run on**
-  - Relayer operators can compile the Rust binary themselves, or run a Docker image provided by Abacus Works. The binary can be run using your favorite cloud service.
+- **RPC 节点**
+  - Relayer 使用 RPC 节点读取源链，并将消息传递到目标链。Relayer 必须为所有源链和目标链配置一个 RPC 节点。
+- **一个或多个签名密钥**
+  - 为了传递消息，Relayer 必须配置一个签名密钥，以便在每个目标链上提交交易（因此需要在这些链上有资金）。
+  - Relayer 使用此密钥对 `Mailbox.process()` 交易进行签名。Hyperlane Relayer 代理当前支持使用通过 API 密钥/秘密访问的 AWS KMS 密钥或原始十六进制私钥进行配置。
+- **运行的机器**
+  - Relayer 操作员可以自己编译 Rust 二进制文件，或运行 Abacus Works 提供的 Docker 镜像。可以使用您喜欢的云服务运行该二进制文件。
 
-## Guide
+## 指南
 
 :::info
 
-- The local agent setup shows how you can run a Relayer on your _local machine_, which is **only for testing and development purposes**.
-- We strongly encourage you to follow the [local agents guide](../../guides/deploy-hyperlane-local-agents.mdx) to understand how to configure and run the Relayer locally.
+- 本地代理设置展示了如何在您的 _本地机器_ 上运行 Relayer，这仅限于测试和开发目的。
+- 我们强烈建议您遵循 [本地代理指南](../../guides/deploy-hyperlane-local-agents.mdx)，以了解如何在本地配置和运行 Relayer。
 
-  :::
+:::
 
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
 
-### Keys
+### 密钥
 
-The Relayer needs to be able to submit transactions to many destination chains, and therefore requires access to a key for signing transactions. There are two supported key types: hexadecimal private keys (for in-memory signing), and AWS KMS based keys (best practice for production environments).
+Relayer 需要能够向多个目标链提交交易，因此需要访问用于签名交易的密钥。支持两种密钥类型：十六进制私钥（用于内存签名）和基于 AWS KMS 的密钥（生产环境的最佳实践）。
 
-#### Hexadecimal keys
+#### 十六进制密钥
 
-A hexadecimal private key used for in-memory signing can be used by your Relayer to sign transactions. This is the recommended setup for testing or development purposes, but may also be used in production.
+用于内存签名的十六进制私钥可以被您的 Relayer 用于签名交易。这是测试或开发目的的推荐设置，但也可以在生产中使用。
 
-#### AWS KMS keys
+#### AWS KMS 密钥
 
-An AWS KMS key can be used by your Relayer to sign transactions. This is the recommended setup for a production Relayer.
+AWS KMS 密钥可以被您的 Relayer 用于签名交易。这是生产 Relayer 的推荐设置。
 
 :::tip
-See the [Agent Keys](../set-up-agent-keys.mdx) page to set up your Hexadecimal or AWS KMS keys.
+请参阅 [代理密钥](../set-up-agent-keys.mdx) 页面以设置您的十六进制或 AWS KMS 密钥。
 :::
 
-### Configuration
+### 配置
 
-#### RPC Configuration
+#### RPC 配置
 
-Hyperlane Validators and Relayers can use **multiple RPC URLs** to improve reliability and redundancy. The setup varies based on the chain type.
+Hyperlane 验证者和 Relayer 可以使用 **多个 RPC URL** 来提高可靠性和冗余。设置因链类型而异。
 
 <Tabs groupId="rpc-config">
   
 <TabItem value="evm" label="EVM Chains">
 
-EVM-based chains support configuring multiple RPC endpoints for redundancy and can specify how they are used.
+基于 EVM 的链支持配置多个 RPC 端点以实现冗余，并可以指定如何使用它们。
 
-- **Configure multiple RPCs:** Use [`customRpcUrls`](../config-reference.mdx#chainschain_namecustomrpcurls).
-- **RPC Selection Mode ([`rpcConsensusType`](../config-reference.mdx#chainschain_namerpcconsensustype))**:
-  - **Fallback**: The agent tries the first URL and switches to the next if needed.
-  - **Quorum**: Requires a majority of the URLs to agree with the exception of submitting transactions.
+- **配置多个 RPC：** 使用 [`customRpcUrls`](../config-reference.mdx#chainschain_namecustomrpcurls)。
+- **RPC 选择模式 ([`rpcConsensusType`](../config-reference.mdx#chainschain_namerpcconsensustype))**：
+  - **回退**：代理尝试第一个 URL，如果需要则切换到下一个。
+  - **法定人数**：要求大多数 URL 同意，提交交易时除外。
 
 </TabItem>
 
 <TabItem value="cosmos" label="Cosmos Chains">
 
-Cosmos-based chains require both **RPC and gRPC endpoints** for proper operation.
+基于 Cosmos 的链需要 **RPC 和 gRPC 端点** 以确保正常运行。
 
-- **Configure multiple RPCs:** Use [`customRpcUrls`](../config-reference.mdx#chainschain_namecustomrpcurls).
-- **Configure gRPC endpoints:** Use [`customGrpcUrls`].
-- **Fallback Mechanism:** Cosmos agents always use **fallback mode**.
+- **配置多个 RPC：** 使用 [`customRpcUrls`](../config-reference.mdx#chainschain_namecustomrpcurls)。
+- **配置 gRPC 端点：** 使用 [`customGrpcUrls`]。
+- **回退机制：** Cosmos 代理始终使用 **回退模式**。
 
 </TabItem>
 
 <TabItem value="svm" label="SVM Chains">
 
-SVM-based chains support configuring multiple RPC endpoints, but **only a single RPC is used**.
+基于 SVM 的链支持配置多个 RPC 端点，但 **仅使用单个 RPC**。
 
-- **Configure RPCs:** Use [`customRpcUrls`](../config-reference.mdx#chainschain_namecustomrpcurls).
+- **配置 RPC：** 使用 [`customRpcUrls`](../config-reference.mdx#chainschain_namecustomrpcurls)。
 
 :::caution
 
-For **SVM chains**, only a **single RPC URL** is used. There is no fallback or quorum-based selection mechanism.
+对于 **SVM 链**，仅使用 **单个 RPC URL**。没有回退或基于法定人数的选择机制。
 
 :::
 
@@ -90,61 +90,61 @@ For **SVM chains**, only a **single RPC URL** is used. There is no fallback or q
 
 </Tabs>
 
-#### Configuration Settings
+#### 配置设置
 
-Like the local setup, there are a few base arguments you should provide when configuring your Relayer.
+与本地设置一样，在配置 Relayer 时，您应该提供一些基本参数。
 
-| Argument                        | Description                                                                                                                                                                                                                                                                                                                                               |
+| 参数                        | 描述                                                                                                                                                                                                                                                                                                                                               |
 | ------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `--relayChains`                 | Comma separated names of the origin and destination chains to relay messages between. For example: `ethereum,polygon,avalanche`.                                                                                                                                                                                                                          |
-| `--db`                          | The path to where the Relayer should write persistent data to disk. Ensure this path to be persistent when using cloud setups. When using Docker, make sure to mount the persistent path/volume into the container. See [config-reference](../config-reference.mdx#db) for more info.                                                                     |
-| `--allowLocalCheckpointSyncers` | If `true`, this will allow the Relayer to look for Validator signatures on the Relayer's local filesystem. In a production environment, this should be `false`. If you're running a Validator on the same machine by following the Validator local setup instructions, set this to `true` so that your Relayer can access the local Validator signatures. |
+| `--relayChains`                 | 用逗号分隔的源链和目标链的名称，以便在它们之间传递消息。例如：`ethereum,polygon,avalanche`。                                                                                                                                                                                                                          |
+| `--db`                          | Relayer 应该将持久数据写入磁盘的路径。确保在使用云设置时此路径是持久的。在使用 Docker 时，请确保将持久路径/卷挂载到容器中。有关更多信息，请参见 [config-reference](../config-reference.mdx#db)。                                                                     |
+| `--allowLocalCheckpointSyncers` | 如果为 `true`，这将允许 Relayer 在 Relayer 的本地文件系统上查找验证者签名。在生产环境中，这应该为 `false`。如果您在同一台机器上运行验证者，并按照验证者本地设置说明进行操作，请将其设置为 `true`，以便您的 Relayer 可以访问本地验证者签名。 |
 
 :::info
 
-Your Relayer takes both command line arguments and environment variables as configuration. Take a look at the [agent configuration](../agent-config.mdx) page and the [configuration reference](../config-reference.mdx) for a full list of configuration possibilities.
+您的 Relayer 同时接受命令行参数和环境变量作为配置。请查看 [代理配置](../agent-config.mdx) 页面和 [配置参考](../config-reference.mdx) 以获取完整的配置可能性列表。
 
 :::
 
-You can also provide the path to additional configuration files as a comma separated list with the [`CONFIG_FILES` environment variable](../config-reference.mdx#config_files). If you choose to run in Docker, see the docker section of [agent configuration](../agent-config.mdx) for tips on mounting your config files into your Docker container.
+您还可以通过 [`CONFIG_FILES` 环境变量](../config-reference.mdx#config_files) 提供额外配置文件的路径，使用逗号分隔的列表。如果您选择在 Docker 中运行，请参见代理配置的 Docker 部分，以获取将配置文件挂载到 Docker 容器中的提示。
 
-### Setup-specific configuration
+### 特定于设置的配置
 
-These configurations requirements differ depending on which key setup instructions you followed.
+这些配置要求因您遵循的密钥设置说明而异。
 
 <Tabs groupId="keys">
   <TabItem value="hexadecimal" label="Hexadecimal Key">
-If you created a [hexadecimal key](../set-up-agent-keys.mdx), configure the default signer like so:
+如果您创建了 [十六进制密钥](../set-up-agent-keys.mdx)，请按如下方式配置默认签名者：
 
-| Argument              | Description                                                                                        |
+| 参数              | 描述                                                                                        |
 | --------------------- | -------------------------------------------------------------------------------------------------- |
-| `--defaultSigner.key` | A hexadecimal private key used to sign transactions for all chains. For example: `1b3dead...beef`. |
+| `--defaultSigner.key` | 用于为所有链签名交易的十六进制私钥。例如：`1b3dead...beef`。 |
 
   </TabItem>
   <TabItem value="aws-kms" label="AWS KMS Key">
-If you created an [AWS KMS key](../set-up-agent-keys.mdx), configure the default signer like so:
+如果您创建了 [AWS KMS 密钥](../set-up-agent-keys.mdx)，请按如下方式配置默认签名者：
 
-| Argument                 | Description                                                                                                |
+| 参数                 | 描述                                                                                                |
 | ------------------------ | ---------------------------------------------------------------------------------------------------------- |
-| `--defaultSigner.type`   | Set to `aws`.                                                                                              |
-| `--defaultSigner.id`     | The alias of your Relayer's AWS KMS key, prefixed with `alias/`. For example: `alias/hyperlane-relayer-1`. |
-| `--defaultSigner.region` | The region of your AWS KMS key. For example: `us-east-1`.                                                  |
+| `--defaultSigner.type`   | 设置为 `aws`。                                                                                              |
+| `--defaultSigner.id`     | 您 Relayer 的 AWS KMS 密钥的别名，前缀为 `alias/`。例如：`alias/hyperlane-relayer-1`。 |
+| `--defaultSigner.region` | 您的 AWS KMS 密钥的区域。例如：`us-east-1`。                                                  |
 
   </TabItem>
 </Tabs>
 
-For chain-specific signers (i.e. to customize the key to use for each chain) take a look at the [configuration reference](../config-reference.mdx)
+对于链特定的签名者（即自定义每条链使用的密钥），请查看 [配置参考](../config-reference.mdx)
 
-## Start Relaying
+## 开始中继
 
-### Setup
+### 设置
 
-The recommended installation method for a production environment is using a Docker image.
+在生产环境中，推荐的安装方法是使用 Docker 镜像。
 
 <Tabs groupId="docker">
   <TabItem value="docker" label="Docker image">
 
-First download the docker image:
+首先下载 Docker 镜像：
 
 ```bash
 docker pull --platform linux/amd64 gcr.io/abacus-labs-dev/hyperlane-agent:agents-v1.1.0
@@ -153,25 +153,25 @@ docker pull --platform linux/amd64 gcr.io/abacus-labs-dev/hyperlane-agent:agents
   </TabItem>
   <TabItem value="from-source" label="Building from source">
 
-**Clone and setup**
+**克隆和设置**
 
-First, clone the Hyperlane monorepo:
+首先，克隆 Hyperlane 单体仓库：
 
 ```sh
 git clone git@github.com:hyperlane-xyz/hyperlane-monorepo.git
 ```
 
-Then follow the [setup instructions](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/main/rust/README.md) in the `rust` directory. This should setup `rustup` as well as Rosetta 2 if you are on Apple Silicon.
+然后按照 `rust` 目录中的 [设置说明](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/main/rust/README.md) 进行操作。这将设置 `rustup`，如果您使用的是 Apple Silicon，还会安装 Rosetta 2。
 
 ```sh
-# install rustup
+# 安装 rustup
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
-# (apple silicon only) install rosetta 2
+# （仅限 Apple Silicon）安装 Rosetta 2
 softwareupdate --install-rosetta --agree-to-license
 ```
 
-Build the Relayer:
+构建 Relayer：
 
 ```sh
 cargo build --release bin relayer
@@ -180,21 +180,21 @@ cargo build --release bin relayer
   </TabItem>
 </Tabs>
 
-### Running the agent
+### 运行代理
 
-If the Relayer's keys have been configured with AWS KMS, you will have to provide the AWS access key and secret as environment variables.
+如果 Relayer 的密钥已使用 AWS KMS 配置，您需要提供 AWS 访问密钥和秘密作为环境变量。
 
-| Environment variable    | Description                                           |
+| 环境变量    | 描述                                           |
 | ----------------------- | ----------------------------------------------------- |
-| `AWS_ACCESS_KEY_ID`     | The access key ID of your Relayer's AWS IAM user.     |
-| `AWS_SECRET_ACCESS_KEY` | The secret access key of your Relayer's AWS IAM user. |
+| `AWS_ACCESS_KEY_ID`     | 您 Relayer 的 AWS IAM 用户的访问密钥 ID。     |
+| `AWS_SECRET_ACCESS_KEY` | 您 Relayer 的 AWS IAM 用户的秘密访问密钥。 |
 
-For a refresher, check out the [Agent Keys](../set-up-agent-keys.mdx) guide.
+有关更多信息，请查看 [代理密钥](../set-up-agent-keys.mdx) 指南。
 
 <Tabs groupId="docker">
   <TabItem value="docker" label="Using Docker">
 
-Then start the container with the relevant arguments. For example, your configuration for AWS:
+然后使用相关参数启动容器。例如，您对 AWS 的配置：
 
 ```sh
 docker run \
@@ -213,9 +213,9 @@ docker run \
 
 :::info
 
-If you're running Validators with a local setup on the same machine and running a local Relayer to access these Validator signatures, be sure to [mount](https://docs.docker.com/storage/bind-mounts/) your local Validator's signature directory into your Relayer at the same path that you used when [announcing your Validator](../validators/run-validators.mdx#Announcing-your-validator)
+如果您在同一台机器上运行验证者并运行本地 Relayer 以访问这些验证者签名，请确保将您的本地验证者的签名目录 [挂载](https://docs.docker.com/storage/bind-mounts/) 到 Relayer 中，路径与您在 [宣布验证者](../validators/run-validators.mdx#Announcing-your-validator) 时使用的路径相同。
 
-For example, if your local Validator is writing signatures to `/tmp/hyperlane-validator-signatures-ethereum`, you should mount a directory for the Docker container:
+例如，如果您的本地验证者将签名写入 `/tmp/hyperlane-validator-signatures-ethereum`，则应为 Docker 容器挂载一个目录：
 
 ```sh
 docker run \
@@ -237,16 +237,16 @@ docker run \
   </TabItem>
 
   <TabItem value="from-source" label="Building from source">
-See these instructions for building from source without Docker.
+请参阅这些说明，以便在没有 Docker 的情况下从源代码构建。
 
-We can run the built binary from within the `hyperlane-monorepo/rust` directory:
+我们可以在 `hyperlane-monorepo/rust` 目录中运行构建的二进制文件：
 
 ```sh
-# set AWS environment variables
+# 设置 AWS 环境变量
 export AWS_ACCESS_KEY_ID=ABCDEFGHIJKLMNOP
 export AWS_SECRET_ACCESS_KEY=xX-haha-nice-try-Xx
 
-# run the Relayer
+# 运行 Relayer
 ./target/release/relayer \
   --db /hyperlane_db \
   --relayChains <chain_1_name>,<chain_2_name> \
@@ -258,6 +258,6 @@ export AWS_SECRET_ACCESS_KEY=xX-haha-nice-try-Xx
   </TabItem>
 </Tabs>
 
-## Indexing
+## 索引
 
-The Relayer needs to index all historic messages for the origin chain(s). This information is stored in a local database on disk (set with `db` in the config). This means running a Relayer for the first time may take some extra time to catch up with the current state.
+Relayer 需要索引所有源链的历史消息。这些信息存储在磁盘上的本地数据库中（在配置中通过 `db` 设置）。这意味着第一次运行 Relayer 可能需要一些额外的时间来赶上当前状态。

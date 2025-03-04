@@ -3,23 +3,23 @@ import TabItem from "@theme/TabItem";
 
 import SimpleMessagingDiagram from "@site/src/diagrams/messaging-simple.md";
 
-# Mailbox
+# 邮箱
 
-The Hyperlane `Mailbox` smart contracts expose an on-chain API for sending and receiving interchain messages. There is a `Mailbox` contract deployed on every chain Hyperlane supports.
+Hyperlane 的 `Mailbox` 智能合约提供了一个链上 API，用于发送和接收跨链消息。每个 Hyperlane 支持的链上都有一个部署的 `Mailbox` 合约。
 
-The network of `Mailboxes` facilitates the connective tissue between blockchains that developers leverage to create interchain applications, and add interchain functionality to their existing applications.
+`Mailboxes` 的网络为区块链之间提供了连接的基础，开发者可以利用这些连接来创建跨链应用，并为现有应用添加跨链功能。
 
 <SimpleMessagingDiagram />
 
-- To [**send**](../reference/messaging/send.mdx) interchain messages, call the `dispatch` function.
-- To [**receive**](../reference/messaging/receive.mdx) interchain messages, implement the `handle` function.
+- 要 [**发送**](../reference/messaging/send.mdx) 跨链消息，请调用 `dispatch` 函数。
+- 要 [**接收**](../reference/messaging/receive.mdx) 跨链消息，请实现 `handle` 函数。
 
-## Interface
+## 接口
 
-The [`IMailbox`](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/main/solidity/contracts/interfaces/IMailbox.sol) interface exposes two state-mutating functions; `dispatch()` and `process()`, which are used to send and receive messages, respectively.
+[`IMailbox`](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/main/solidity/contracts/interfaces/IMailbox.sol) 接口公开了两个状态变更函数：`dispatch()` 和 `process()`，分别用于发送和接收消息。
 
 <details>
-<summary>`IMailbox` Interface</summary>
+<summary>`IMailbox` 接口</summary>
 
 <Tabs groupId="lang">
 <TabItem value="sol" label="Solidity">
@@ -32,24 +32,24 @@ The [`IMailbox`](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/main/s
 </Tabs>
 </details>
 
-### Message Headers
+### 消息 Headers
 
-The Mailbox prepends message bodies with a header containing the following fields:
+Mailbox 在消息体前添加一个包含以下字段的头部：
 
-| **Field**     | **Description**                                                |
-| ------------- | -------------------------------------------------------------- |
-| `version`     | The version of the Mailbox contract                            |
-| `nonce`       | A unique identifier for each message sent from a given Mailbox |
-| `origin`      | The domain of the origin chain                                 |
-| `sender`      | The address of the sender on the origin chain                  |
-| `destination` | The domain of the destination chain                            |
-| `recipient`   | The address of the recipient on the destination chain          |
+| **字段**      | **描述**                                                  |
+| ------------- | -------------------------------------------------------- |
+| `version`     | Mailbox 合约的版本                                      |
+| `nonce`       | 从给定 Mailbox 发送的每条消息的唯一标识符            |
+| `origin`      | 原链的域名                                            |
+| `sender`      | 原链上发送者的地址                                      |
+| `destination` | 目标链的域名                                          |
+| `recipient`   | 目标链上接收者的地址                                    |
 
-See the [`Message` library](../reference/libraries/message.mdx) for more information on the message encoding.
+有关消息编码的更多信息，请参见 [`Message` 库](../reference/libraries/message.mdx)。
 
-### Uniqueness
+### 唯一性
 
-The `nonce` is a monotonically increasing integer for each message sent from a given Mailbox. It is incremented each time a message is dispatched to serve as a separator for otherwise identical messages.
+`nonce` 是从给定 Mailbox 发送的每条消息的单调递增整数。每次发送消息时都会递增，以作为其他相同消息的分隔符。
 
 <Tabs groupId="lang">
 <TabItem value="sol" label="Solidity">
@@ -61,11 +61,11 @@ The `nonce` is a monotonically increasing integer for each message sent from a g
 </TabItem>
 </Tabs>
 
-The `messageId` is a globally unique message identifier, returned from the `dispatch` call, computed as the `keccak256` hash of the message (with headers).
+`messageId` 是一个全球唯一的消息标识符，从 `dispatch` 调用中返回，计算方法是对消息（包括头部）进行 `keccak256` 哈希。
 
-### Replay Protection
+### 重放保护
 
-The Mailbox maintains a mapping of already delivered `messageId` values to prevent replay attacks. If a message is received with a `messageId` that has already been delivered, the message is rejected.
+Mailbox 维护一个已交付 `messageId` 值的映射，以防止重放攻击。如果收到的消息的 `messageId` 已经交付，则该消息将被拒绝。
 
 <Tabs groupId="lang">
 <TabItem value="sol" label="Solidity">
@@ -75,27 +75,26 @@ The Mailbox maintains a mapping of already delivered `messageId` values to preve
 ```
 
 </TabItem>
-
 </Tabs>
 
-## Dispatch
+## 发送
 
-To send interchain messages, developers call `Mailbox.dispatch()`.
+要发送跨链消息，开发者调用 `Mailbox.dispatch()`。
 
-This function takes as parameters the message contents, the destination chain ID, and the recipient address. Each message get inserted as a leaf into an [incremental merkle tree](https://medium.com/@josephdelong/ethereum-2-0-deposit-merkle-tree-13ec8404ca4f) stored by the `Mailbox`.
+此函数的参数包括消息内容、目标链 ID 和接收者地址。每条消息作为叶子插入到由 `Mailbox` 存储的 [增量默克尔树](https://medium.com/@josephdelong/ethereum-2-0-deposit-merkle-tree-13ec8404ca4f) 中。
 
-Hyperlane's proof of stake protocol uses this merkle tree to verify fraud proofs.
+Hyperlane 的权益证明协议使用此默克尔树来验证欺诈证明。
 
-## Process
+## 处理
 
-To deliver interchain messages, the [relayer](./agents/relayer.mdx) calls `Mailbox.process()`.
+要交付跨链消息，[中继器](./agents/relayer.mdx) 调用 `Mailbox.process()`。
 
-This function takes as parameters the message to deliver as well as arbitrary metadata that can be specified by the relayer.
+此函数的参数包括要交付的消息以及中继器可以指定的任意元数据。
 
-The `Mailbox` will pass the message and metadata to the recipient's interchain security module for verification. If the ISM successfully verifies the message, the `Mailbox` delivers the message to the recipient by calling `recipient.handle()`.
+`Mailbox` 将消息和元数据传递给接收者的跨链安全模块进行验证。如果 ISM 成功验证消息，`Mailbox` 将通过调用 `recipient.handle()` 将消息交付给接收者。
 
 :::info
 
-See [`Message.sol`](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/main/solidity/contracts/libs/Message.sol)for more details on Hyperlane message encoding
+有关 Hyperlane 消息编码的更多详细信息，请参见 [`Message.sol`](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/main/solidity/contracts/libs/Message.sol)
 
 :::

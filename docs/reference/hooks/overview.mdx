@@ -3,9 +3,9 @@ import TabItem from "@theme/TabItem";
 
 import { MultiLanguageExample } from "@site/src/components/InteractiveExample";
 
-# Post-Dispatch Hooks
+# 邮件分发 Hooks
 
-Post-dispatch hooks allow developers to configure additional origin chain behavior with message content dispatched via the Mailbox.
+邮件分发 Hooks 允许开发者通过邮件箱配置附加的原始链行为，使用通过邮件箱分发的消息内容。
 
 ```mermaid
 flowchart TB
@@ -19,10 +19,10 @@ flowchart TB
     end
 ```
 
-This allows developers to integrate third party/native bridges, make additional chain commitments, or require custom fees all while maintaining a consistent single-call Mailbox interface.
+这使得开发者能够集成第三方/本地桥接，进行额外的链承诺，或要求自定义费用，同时保持一致的单次调用邮件箱接口。
 
 <details>
-<summary>`IPostDispatchHook` Interface</summary>
+<summary>`IPostDispatchHook` 接口</summary>
 
 <Tabs groupId="lang">
 <TabItem value="sol" label="Solidity">
@@ -35,9 +35,9 @@ This allows developers to integrate third party/native bridges, make additional 
 </Tabs>
 </details>
 
-## Post Dispatch
+## 邮件分发
 
-In addition to the `message` dispatched via the Mailbox, the `postDispatch` function receives a `metadata` parameter. The `metadata` parameter is passed from the `dispatch` call through the Mailbox unmodified. This allows developers to pass any context they wish through to the hook.
+除了通过邮件箱分发的 `message`，`postDispatch` 函数还接收一个 `metadata` 参数。`metadata` 参数从 `dispatch` 调用中传递，通过邮件箱未被修改。这允许开发者传递任何他们希望通过钩子传递的上下文。
 
 <Tabs groupId="lang">
 <TabItem value="sol" label="Solidity">
@@ -49,15 +49,15 @@ In addition to the `message` dispatched via the Mailbox, the `postDispatch` func
 </TabItem>
 </Tabs>
 
-If the `postDispatch` function receives insufficient payment, it may revert.
+如果 `postDispatch` 函数接收到的支付不足，可能会回滚。
 
 :::info
-Post-Dispatch Hooks may be replayable. Developers creating custom hooks should implement safe checks to prevent this behavior. [Here](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/b69bc23239ecfc8f8a6277bb0f9bc248cffea234/solidity/contracts/hooks/warp-route/RateLimitedHook.sol#L16) is an example implementation.
+后处理钩子可能是可重放的。创建自定义钩子的开发者应实现安全检查以防止这种行为。[这里](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/b69bc23239ecfc8f8a6277bb0f9bc248cffea234/solidity/contracts/hooks/warp-route/RateLimitedHook.sol#L16) 是一个示例实现。
 :::
 
-### Quote Dispatch (Fees)
+### 报价处理（费用）
 
-Fees are often charged in `postDispatch` to cover costs such as destination chain transaction submission and security provisioning. To receive a quote for a corresponding `postDispatch` call, you can query the `quoteDispatch` function.
+费用通常在 `postDispatch` 中收取，以覆盖诸如目标链交易提交和安全提供等成本。要获取相应 `postDispatch` 调用的报价，可以查询 `quoteDispatch` 函数。
 
 <Tabs groupId="lang">
 <TabItem value="sol" label="Solidity">
@@ -69,7 +69,7 @@ Fees are often charged in `postDispatch` to cover costs such as destination chai
 </TabItem>
 </Tabs>
 
-The Mailbox has a `quoteDispatch` function that returns the aggregate fee required for a `dispatch` call to be successful.
+邮件箱有一个 `quoteDispatch` 函数，返回成功执行 `dispatch` 调用所需的总费用。
 
 ```mermaid
 flowchart TB
@@ -86,14 +86,14 @@ flowchart TB
     end
 ```
 
-Move to implementing a hook guide [here](../../guides/create-custom-hook-and-ism.mdx)
+转到实现钩子指南 [这里](../../guides/create-custom-hook-and-ism.mdx)
 
-### Overriding default Hook Metadata
+### 重写默认 hook 元数据
 
-To override the default metadata, there is a `dispatch` overload that takes an optional `metadata` parameter.
+要重写默认元数据，有一个 `dispatch` 重载，接受一个可选的 `metadata` 参数。
 
 :::info
-Hooks currently expect metadata to be formatted with the [`StandardHookMetadata` library](../libraries/hookmetadata.mdx).
+Hooks 当前期望元数据使用 [`StandardHookMetadata` 库](../libraries/hookmetadata.mdx) 格式化。
 :::
 
 <Tabs groupId="lang">
@@ -106,7 +106,7 @@ Hooks currently expect metadata to be formatted with the [`StandardHookMetadata`
 </TabItem>
 </Tabs>
 
-The custom `metadata` will be passed to the required hook's `quoteDispatch` and `postDispatch` functions, before being passed to the default hook's `postDispatch` function.
+自定义的 `metadata` 将在传递给所需钩子的 `quoteDispatch` 和 `postDispatch` 函数之前，传递给默认钩子的 `postDispatch` 函数。
 
 ```mermaid
 flowchart LR
@@ -123,10 +123,10 @@ flowchart LR
     end
 ```
 
-#### Examples
+#### 示例
 
 <details>
-<summary>`StandardHookMetadata` Library</summary>
+<summary>`StandardHookMetadata` 库</summary>
 
 <Tabs groupId="lang">
 <TabItem value="sol" label="Solidity">
@@ -148,7 +148,7 @@ flowchart LR
     paddedRecipient,
     body,
   }) => `\
-// send message from ${originChain} to ${destinationChain} TestRecipient
+// 从 ${originChain} 发送消息到 ${destinationChain} 测试接收者
 IMailbox mailbox = IMailbox("${mailbox}");
 mailbox.dispatch{value: msg.value}(
   ${destinationDomain},
@@ -159,9 +159,9 @@ mailbox.dispatch{value: msg.value}(
 `}
 />
 
-### Custom hook and metadata
+### 自定义钩子和元数据
 
-After implementing the above interfaces, you can override default hook along the hook metadata by using the overloaded `dispatch` call in our mailbox:
+在实现上述接口后，您可以通过在邮件箱中使用重载的 `dispatch` 调用来重写默认钩子及其元数据：
 
 <Tabs groupId="lang">
 <TabItem value="sol" label="Solidity">
@@ -170,7 +170,7 @@ After implementing the above interfaces, you can override default hook along the
 
 ```
 
-### Examples
+### 示例
 
 <MultiLanguageExample
   solidity={({
@@ -182,14 +182,14 @@ After implementing the above interfaces, you can override default hook along the
     paddedRecipient,
     body,
   }) => `\
-// send message from ${originChain} to ${destinationChain} TestRecipient
+// 从 ${originChain} 发送消息到 ${destinationChain} 测试接收者
 IMailbox mailbox = IMailbox("${mailbox}");
 IPostDispatchHook merkleTree = IPostDispatchHook("${merkleTreeHook}");
 mailbox.dispatch(
   ${destinationDomain},
   "${paddedRecipient}",
   bytes("${body}"),
-  "0x", // empty metadata
+  "0x", // 空元数据
   merkleTree
 );
 `}

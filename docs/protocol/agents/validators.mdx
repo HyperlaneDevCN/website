@@ -1,68 +1,68 @@
-# Validators
+# 验证者
 
-## Overview
+## 概述
 
-Validators run as part of the [Multisig ISM](../ISM/multisig-ISM.mdx) or the [Economic Security Module](../economic-security/economic-security.mdx), fulfilling the security layer of the Hyperlane protocol. If using a different ISM, validators are not required. They are responsible for attesting to messages by signing a merkle root (also referred to as a checkpoint) when new dispatches happen in the [Mailbox](../mailbox.mdx). Signatures must be made available for anyone (typically the Relayer) to fetch and submit alongside the message to the destination chain.
+验证者作为 [多重签名ISM](../ISM/multisig-ISM.mdx) 或 [经济安全模块](../economic-security/economic-security.mdx) 的一部分运行，履行 Hyperlane 协议的安全层。如果使用不同的 ISM，则不需要验证者。它们负责通过在 [邮箱](../mailbox.mdx) 中发生新调度时签署梅克尔根（也称为检查点）来证明消息。签名必须对任何人（通常是中继器）可用，以便提取并与消息一起提交到目标链。
 
-Unlike many other protocols, Hyperlane does **not** have an enshrined validator set. Anyone is free to run their own validator, as long as the receiver contract specifies a [Multisig ISM](../ISM/multisig-ISM.mdx) that includes their validator.
+与许多其他协议不同，Hyperlane **没有** 固定的验证者集。任何人都可以自由运行自己的验证者，只要接收合约指定了包含其验证者的 [多重签名ISM](../ISM/multisig-ISM.mdx)。
 
-Validator checkpoints are public. This ensures the transport layer is permissionless, since anyone can fetch the signatures and call `Mailbox.process()` to deliver the message. The Relayer merely provides a convenience service for message senders.
+验证者检查点是公开的。这确保了传输层是无权限的，因为任何人都可以提取签名并调用 `Mailbox.process()` 来传递消息。中继器仅为消息发送者提供便利服务。
 
-It's important that the Validator only signs finalized checkpoints to avoid compromising the safety of the protocol. Signing messages that get reorged out leads to slashing in the economic security module. The Validator agent connects to a single chain to check for new messages. If validating multiple chains, multiple instances of this agent must be run.
+验证者仅在最终确定的检查点上签名，以避免危及协议的安全性。签署被重组的消息会导致经济安全模块中的惩罚。验证者代理连接到单个链以检查新消息。如果要验证多个链，则必须运行多个此代理的实例。
 
-Hyperlane is developing the validator as a binary implemented in Rust that can be easily run by anyone. Operationally, validators need to run this binary and have access to an RPC provider or node for the chain that they are validating for. We hope that the majority of Hyperlane validators will come from each chain's existing node operator community.
+Hyperlane 正在开发一个用 Rust 实现的验证者二进制文件，任何人都可以轻松运行。从操作上讲，验证者需要运行此二进制文件，并访问其验证的链的 RPC 提供者或节点。我们希望大多数 Hyperlane 验证者将来自每个链现有的节点运营商社区。
 
 :::info
-Want to run a validator? Follow the [validators guide](../../operate/validators/run-validators.mdx).
+想要运行验证者吗？请遵循 [验证者指南](../../operate/validators/run-validators.mdx)。
 :::
 
-## In more detail
+## 更详细的信息
 
-The Validator agent uses two key types: one for signing transactions on the blockchain it is validating, and another for signing checkpoints on the Ethereum-compatible ECDSA curve. Since checkpoints are public, when a Validator first starts operating it must announce its checkpoint location via an onchain `announce` transaction. This is the only transaction ever submitted by the Validator agent; the blockchain-specific key is otherwise not used at all. There is also the option of manually announcing a new Validator to avoid configuring the blockchain-specific key. Validators can be announced by anyone.
+验证者代理使用两种关键类型：一种用于在其验证的区块链上签署交易，另一种用于在以太坊兼容的 ECDSA 曲线上签署检查点。由于检查点是公开的，当验证者首次开始操作时，必须通过链上 `announce` 交易宣布其检查点位置。这是验证者代理提交的唯一交易；区块链特定密钥在其他情况下根本不使用。也可以手动宣布新的验证者，以避免配置区块链特定密钥。任何人都可以宣布验证者。
 
-For messages using a [Multisig ISM](../../reference/ISM/multisig-ISM-interface.mdx), validators read the current merkle root by calling `MerkleTreeHook.latestCheckpoint()`.
+对于使用 [多重签名ISM](../../reference/ISM/multisig-ISM-interface.mdx) 的消息，验证者通过调用 `MerkleTreeHook.latestCheckpoint()` 来读取当前的梅克尔根。
 
-Validators use the `MerkleTreeHook.latestCheckpoint()` function to determine when new transactions need to be indexed. This polling mechanism ensures validators can start signing new messages without the need to backfill the entire tree.
+验证者使用 `MerkleTreeHook.latestCheckpoint()` 函数来确定何时需要索引新交易。此轮询机制确保验证者可以开始签署新消息，而无需回填整个树。
 
-### Multisig ISM Prerequisites
+### 多重签名ISM 前提条件
 
-To validate messages from an origin chain, the Validator's checkpoint signing key must be registered in the [Multisig ISM](../../reference/ISM/multisig-ISM-interface.mdx) specified by the destination chain recipient. This can only be done when the ISM contract is deployed, but this is easily done by sending a `deploy(validatorAddresses, threshold)` transaction on any implementation of [StaticThresholdAddressSetFactory](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/be4617b18ba638e0ef5a5326614bc4f8c58d25f9/solidity/contracts/libs/StaticAddressSetFactory.sol#L10).
+要验证来自源链的消息，验证者的检查点签名密钥必须在目标链接收者指定的 [多重签名ISM](../../reference/ISM/multisig-ISM-interface.mdx) 中注册。这只能在 ISM 合约部署时完成，但通过在任何 [StaticThresholdAddressSetFactory](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/be4617b18ba638e0ef5a5326614bc4f8c58d25f9/solidity/contracts/libs/StaticAddressSetFactory.sol#L10) 的实现上发送 `deploy(validatorAddresses, threshold)` 交易可以轻松完成。
 
-### AVS Operator Prerequisites
+### AVS 操作员前提条件
 
-To run a Validator for the EigenLayer AVS and provide [economic security](../economic-security/economic-security.mdx), the Validator must register as an AVS operator. See more details in the [AVS Operator Guide](../../guides/avs-operator-guide.mdx).
+要为 EigenLayer AVS 运行验证者并提供 [经济安全](../economic-security/economic-security.mdx)，验证者必须注册为 AVS 操作员。有关更多详细信息，请参阅 [AVS 操作员指南](../../guides/avs-operator-guide.mdx)。
 
-## Architecture
+## 架构
 
-The validator is comprised of two main tasks: an Indexer for the origin chain, and a Checkpoint Submitter to publish signed merkle roots.
+验证者由两个主要任务组成：一个用于源链的索引器，以及一个用于发布签名梅克尔根的检查点提交者。
 
-### The Indexer
+### 索引器
 
-The only event type indexed by the Validator is `InsertedIntoTree` from the Merkle Tree Hook [contract](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/be4617b18ba638e0ef5a5326614bc4f8c58d25f9/solidity/contracts/hooks/MerkleTreeHook.sol#L32) that the [Mailbox](../mailbox.mdx) calls whenever a new message is dispatched. This happens over RPC, and the agent builds an in-memory merkle tree based on the merkle insertion events, which are also cached to a local RocksDB database for fast startup. Whenever a new message is dispatched, the Checkpoint Submitter generates a checkpoint from the in-memory tree and adds it to a queue for processing.
+验证者唯一索引的事件类型是来自梅克尔树钩 [合约](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/be4617b18ba638e0ef5a5326614bc4f8c58d25f9/solidity/contracts/hooks/MerkleTreeHook.sol#L32) 的 `InsertedIntoTree`，该合约在每次新消息调度时由 [邮箱](../mailbox.mdx) 调用。这是通过 RPC 进行的，代理根据梅克尔插入事件构建内存中的梅克尔树，这些事件也被缓存到本地 RocksDB 数据库中以加快启动速度。每当调度新消息时，检查点提交者会从内存树生成一个检查点并将其添加到处理队列中。
 
-### The Checkpoint Submitter
+### 检查点提交者
 
-The checkpoint submitter uses the ECDSA key to sign checkpoints and publish them to highly-available storage. The schema of a checkpoint is
+检查点提交者使用 ECDSA 密钥签署检查点并将其发布到高可用存储中。检查点的模式为
 
 ```rust
 pub struct Checkpoint {
-    /// The merkle tree hook address
+    /// merkle_tree hook 地址
     pub merkle_tree_hook_address: H256,
-    /// The mailbox / merkle tree hook domain
+    /// 邮箱 / 梅克尔树钩域
     pub mailbox_domain: u32,
-    /// The checkpointed root
+    /// 检查点根
     pub root: H256,
-    /// The index of the checkpoint
+    /// 检查点索引
     pub index: u32,
 }
 ```
 
-The only checkpoint storage that is currently supported by the agent implementation is AWS S3. Google Cloud Storage is integrated with but has an [open issue](https://github.com/hyperlane-xyz/hyperlane-monorepo/issues/4069). The Azure Blob Storage contribution is still [in progress](https://github.com/eigerco/hyperlane-monorepo/pull/2).
+当前代理实现支持的唯一检查点存储是 AWS S3。Google Cloud Storage 已集成，但存在一个 [开放问题](https://github.com/hyperlane-xyz/hyperlane-monorepo/issues/4069)。Azure Blob Storage 的贡献仍在 [进行中](https://github.com/eigerco/hyperlane-monorepo/pull/2)。
 
-### Liveness implications
+### 活跃性影响
 
-Depending on the threshold configured in the Multisig ISM, Validator downtime can halt liveness of the protocol. The submitter prioritizes new checkpoints over old ones, so that the Relayer can fetch metadata for newer messages first, which are more likely to not have been delivered yet.
+根据多重签名ISM 中配置的阈值，验证者的停机可能会阻止协议的活跃性。提交者优先处理新检查点而非旧检查点，以便中继器可以首先获取较新消息的元数据，这些消息更有可能尚未交付。
 
-### Default ISM Validators
+### 默认 ISM 验证者
 
-The number of validators depend on the Interchain Security Module (ISM) configuration. The Default ISM uses a specific validator set, you can view the Validator details such as threshold, operator and addresses [here](../../reference/default-ism-validators).
+验证者的数量取决于跨链安全模块（ISM）配置。默认 ISM 使用特定的验证者集，您可以在 [这里](../../reference/default-ism-validators) 查看验证者的详细信息，例如阈值、操作员和地址。

@@ -5,28 +5,28 @@ import MessagingIsmDiagram from "@site/src/diagrams/messaging-isms.md";
 
 import SimpleMessagingDiagram from "@site/src/diagrams/messaging-simple.md";
 
-# Receive a message
+# 接收消息
 
-To deliver interchain messages, the [relayer](/docs/operate/relayer/run-relayer.mdx) calls `Mailbox.process()`.
+为了投递跨链消息,[中继器](/docs/operate/relayer/run-relayer.mdx)会调用 `Mailbox.process()`。
 
-This function takes as parameters the message to deliver, as well as arbitrary metadata that can be specified by the relayer.
+该函数接收要投递的消息以及中继器可以指定的任意元数据作为参数。
 
-The `Mailbox` will pass the message and metadata to the recipient's Interchain Security Module (ISM) for verification. If the ISM successfully verifies the message, the `Mailbox` delivers the message to the recipient by calling `recipient.handle()`.
+`Mailbox` 会将消息和元数据传递给接收者的跨链安全模块(ISM)进行验证。如果 ISM 成功验证了消息,`Mailbox` 会通过调用 `recipient.handle()` 将消息投递给接收者。
 
 <SimpleMessagingDiagram />
 
 :::info
 
-See [`Message.sol`](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/main/solidity/contracts/libs/Message.sol)for more details on Hyperlane message encoding
+查看 [`Message.sol`](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/main/solidity/contracts/libs/Message.sol) 了解更多关于 Hyperlane 消息编码的细节
 
 :::
 
 ## Handle
 
-This function is called by the `Mailbox` contract when a message is received.
+当收到消息时,该函数会被 `Mailbox` 合约调用。
 
 :::danger
-To ensure only valid interchain messages are accepted, it is important to restrict [access control](#access-control) to the Mailbox address.
+为了确保只接受有效的跨链消息,限制只允许 Mailbox 地址的[访问控制](#access-control)非常重要。
 :::
 
 <Tabs groupId="lang">
@@ -36,14 +36,14 @@ To ensure only valid interchain messages are accepted, it is important to restri
 
 ```
 
-**Parameters**
+**参数**
 
-- `origin`: Domain of origin chain
-- `sender`: Address of sender on origin chain as bytes32
-- `messageBody`: Raw bytes content of message body
+- `origin`: 源链的域 ID
+- `sender`: 源链上发送者的地址(bytes32格式)
+- `messageBody`: 消息体的原始字节内容
 
 :::info
-Sender addresses are left-padded to `bytes32` for compatibility with virtual machines that are addressed differently. The following utility is provided in the [`TypeCasts` library](../libraries/typecasts.mdx) for convenience.
+为了兼容不同寻址方式的虚拟机,发送者地址会左填充至 `bytes32`。[`TypeCasts` 库](../libraries/typecasts.mdx)提供了以下实用工具:
 
 ```solidity file=<rootDir>/node_modules/@hyperlane-xyz/core/contracts/libs/TypeCasts.sol#L10-L13
 
@@ -55,11 +55,11 @@ Sender addresses are left-padded to `bytes32` for compatibility with virtual mac
 
 </Tabs>
 
-### Access Control
+### 访问控制
 
-The `handle` function should be restricted to the Mailbox address if the contract should only accept calls from interchain messages.
+如果合约只接受跨链消息的调用,`handle` 函数应该限制只允许 Mailbox 地址调用。
 
-The following utility is provided in the [`MailboxClient` library](../libraries/mailboxclient.mdx) for convenience.
+[`MailboxClient` 库](../libraries/mailboxclient.mdx)提供了以下实用工具:
 
 <Tabs groupId="lang">
 <TabItem value="sol" label="Solidity">
@@ -72,7 +72,7 @@ The following utility is provided in the [`MailboxClient` library](../libraries/
 
 </Tabs>
 
-### Examples
+### 示例
 
 <Tabs groupId="lang">
 <TabItem value="sol" label="Solidity">
@@ -85,13 +85,13 @@ The following utility is provided in the [`MailboxClient` library](../libraries/
 
 </Tabs>
 
-## Verify
+## 验证
 
-When a message is received, the Mailbox will verify security with an [Interchain Security Module](../ISM/specify-your-ISM.mdx) before calling the message recipient's `handle`.
+当收到消息时,Mailbox 会在调用消息接收者的 `handle` 之前通过[跨链安全模块](../ISM/specify-your-ISM.mdx)验证安全性。
 
-### Default Security
+### 默认安全性
 
-To query the default ISM address, you can call the `defaultIsm` function.
+你可以调用 `defaultIsm` 函数查询默认的 ISM 地址。
 
 <Tabs groupId="lang">
 <TabItem value="sol" label="Solidity">
@@ -103,8 +103,8 @@ To query the default ISM address, you can call the `defaultIsm` function.
 </TabItem>
 </Tabs>
 
-### Modular Security
+### 模块化安全性
 
-To leverage Hyperlane's modular security, message recipients can specify a custom Interchain Security Module to **verify anything** about incoming messages. The Mailbox will defer to this ISM when specified.
+为了利用 Hyperlane 的模块化安全性,消息接收者可以指定自定义的跨链安全模块来**验证**传入消息的**任何内容**。当指定了自定义 ISM 时,Mailbox 会使用该模块进行验证。
 
 <MessagingIsmDiagram />

@@ -1,97 +1,88 @@
 # Relayer
 
-## Overview
+## 概述
 
-### Core Function
+### 核心功能
 
-The relayer runs the transport layer of the Hyperlane protocol by delivering messages from origin to destination chains. Depending on the [Interchain Security Module (ISM)](../../reference/ISM/specify-your-ISM) specified by the recipient, metadata may be required to prove the security of the message, such as Validator signatures for the [Multisig ISM](../ISM/multisig-ISM.mdx), merkle proofs, zero-knowledge proofs, and more. So before attempting to deliver, the relayer gathers any ISM-specific metadata.
+Relayer 通过将消息从源链传递到目标链，运行 Hyperlane 协议的传输层。根据接收方指定的 [跨链安全模块 (ISM)](../../reference/ISM/specify-your-ISM)，可能需要元数据来证明消息的安全性，例如 [多重签名 ISM](../ISM/multisig-ISM.mdx) 的验证者签名、默克尔证明、零知识证明等。因此，在尝试交付之前，Relayer 会收集任何特定于 ISM 的元数据。
 
 :::tip
-The relayer will periodically retry metadata gathering and message submission. This is important to improve resilience against disruptions, such as: no gas payment made to pay for delivery, insufficient relayer balance, temporary spikes in transaction fees on the destination, Validator downtime.
+Relayer 会定期重试元数据收集和消息提交。这对于提高对中断的恢复能力非常重要，例如：未支付交付的燃料费用、Relayer 余额不足、目标链上的交易费用临时激增、验证者停机等。
 :::
 
-### Relayer Incentives
+### Relayer 激励
 
-Message senders are charged for delivery on the origin chain, and it is the relayer operator's responsibility to rebalance revenue to destination chain accounts so delivery transaction fees can always be paid for. The relayer does not receive direct token incentives from the protocol, but operators can configure their fee structure for providing their critical service. For more information, check out [Interchain Gas Payments (IGPs)](../interchain-gas-payment.mdx).
+消息发送者在源链上支付交付费用，Relayer 操作员有责任将收入重新平衡到目标链账户，以便始终能够支付交付交易费用。Relayer 不会从协议中获得直接的代币激励，但操作员可以配置他们的费用结构以提供其关键服务。有关更多信息，请查看 [跨链燃料支付 (IGPs)](../interchain-gas-payment.mdx)。
 
-### Operating a Relayer
+### 操作 Relayer
 
-Relayers can easily configure the messages that they wish to process. Currently, the relayer will support:
+Relayer 可以轻松配置他们希望处理的消息。目前，Relayer 将支持：
 
-1. A sender / recipient whitelist.
-2. A sender / recipient blacklist.
-3. The ability to accept [payments on the origin chain](../../reference/messaging/send.mdx#quote-dispatch) for processing a message on the destination chain.
+1. 发送者/接收者白名单。
+2. 发送者/接收者黑名单。
+3. 在源链上接受 [支付](../../reference/messaging/send.mdx#quote-dispatch) 以处理目标链上的消息。
 
-While permissionless to run, it's up to the message sender to pick which relayer to pay for delivery. [Mailbox](../mailbox.mdx) integrations usually default to always paying the same relayer, but message senders can opt out of this. For convenience, Hyperlane will run an open source and configurable relayer agent, implemented as a Rust binary. If you'd like to run your own relayer, we've open sourced the [binary here](https://github.com/hyperlane-xyz/hyperlane-monorepo/tree/main/rust/main/agents/relayer).
+虽然运行是无权限的，但消息发送者需要选择支付给哪个 Relayer 以进行交付。[邮箱](../mailbox.mdx) 集成通常默认始终支付给同一个 Relayer，但消息发送者可以选择退出。为了方便起见，Hyperlane 将运行一个开源且可配置的 Relayer 代理，作为 Rust 二进制文件实现。如果您想运行自己的 Relayer，我们已经开源了 [二进制文件](https://github.com/hyperlane-xyz/hyperlane-monorepo/tree/main/rust/main/agents/relayer)。
 
-Running your own relayer involves deploying an [IGP contract](../interchain-gas-payment.mdx) and maintaining token exchange rates and gas prices inside of it to accurately charge message delivery fees.
+运行您自己的 Relayer 涉及部署一个 [IGP 合约](../interchain-gas-payment.mdx)，并在其中维护代币汇率和燃料价格，以准确收取消息交付费用。
 
 :::info
-Want to run a relayer? Follow the [Relayer](../../operate/relayer/run-relayer.mdx) guide.
+想要运行 Relayer？请遵循 [Relayer](../../operate/relayer/run-relayer.mdx) 指南。
 :::
 
-## In more detail
+## 更详细的信息
 
-The relayer is comprised of two main tasks: an Indexer for each origin, and a Submitter for each destination.
+Relayer 由两个主要任务组成：每个源链的索引器和每个目标链的提交者。
 
-![High-level Relayer Architecture](/img/relayer-architecture-high-level.png)
+![高层次的 Relayer 架构](/img/relayer-architecture-high-level.png)
 
-### The Indexer
+### 索引器
 
-Both new and historic messages are indexed by querying [Mailbox](../mailbox.mdx) contract events using RPCs. [Gas payments](../interchain-gas-payment.mdx) are also indexed to confirm senders paid for delivery, and certain ISMs use additional origin chain data. This is the case with the Multisig ISM, which relies on the Merkle Tree Hook contract to inform the Relayer about which Validator signature corresponds to which message. There is a standalone indexing task spawned for every event type (Messages, IGP, Merkle Tree insertion).
+通过使用 RPC 查询 [邮箱](../mailbox.mdx) 合约事件，索引新消息和历史消息。[燃料支付](../interchain-gas-payment.mdx) 也被索引，以确认发送者已支付交付费用，某些 ISM 使用额外的源链数据。这种情况适用于多重签名 ISM，它依赖于默克尔树钩合约来告知 Relayer 哪个验证者签名对应于哪个消息。每种事件类型（消息、IGP、默克尔树插入）都会生成一个独立的索引任务。
 
-The indexer writes to a local database (RocksDB) as a means of caching, as well as communicating with the Submitter task - the latter periodically polls the database to check if new messages were dispatched.
+索引器将数据写入本地数据库（RocksDB）作为缓存手段，并与提交者任务进行通信——后者定期轮询数据库以检查是否有新消息被调度。
 
-The relayer prioritizes new messages over old ones, under the assumption that old ones are more likely to have been delivered. This means that when (re)started, two pointers are created: a forward one and a backward one, both initialized to the blockchain tip and using the monotonically increasing `nonce` field of messages to iterate. A similar approach is used to index the other events, but some lack a sequence number and can be missed if incorrect RPC responses are received - which happens very often. As such, the message indexing task sends transaction IDs where it found events to the other indexing tasks, guaranteeing no Hyperlane event is missed as long as it occurred within the same transaction as the `Mailbox.dispatch()` call.
+Relayer 优先处理新消息而非旧消息，假设旧消息更可能已经被交付。这意味着在（重新）启动时，会创建两个指针：一个向前，一个向后，两个指针都初始化为区块链的最新状态，并使用消息的单调递增的 `nonce` 字段进行迭代。对其他事件的索引也使用类似的方法，但某些事件缺乏序列号，如果收到错误的 RPC 响应，可能会被遗漏——这种情况非常常见。因此，消息索引任务会将找到事件的交易 ID 发送给其他索引任务，确保只要在与 `Mailbox.dispatch()` 调用的同一交易中发生，就不会遗漏任何 Hyperlane 事件。
 
-### The Submitter
+### 提交者
 
-Messages go through four stages as part of the Submitter, which are spawned as independent tasks described below.
+消息在提交者中经历四个阶段，这些阶段作为独立任务生成，具体描述如下。
 
 <table>
   <thead>
     <tr>
-      <th>Submitter Task</th>
-      <th>Description</th>
+      <th>提交者任务</th>
+      <th>描述</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td>Message Processor</td>
+      <td>消息处理器</td>
       <td>
-        Polls the local database to check if there are any undelivered messages
-        and pushes them to the Prepare step's queue.
+        轮询本地数据库以检查是否有未交付的消息，并将其推送到准备步骤的队列中。
       </td>
     </tr>
     <tr>
-      <td>Prepare Task</td>
+      <td>准备任务</td>
       <td>
-        Pops messages from its queue, ensures gas was paid, fetches any metadata
-        and simulates the message delivery transaction. If the simulation
-        succeeds, the message is pushed to the Submit step's queue. Otherwise,
-        the message is pushed back to the Prepare queue.
+        从队列中弹出消息，确保已支付燃料，获取任何元数据并模拟消息交付交易。如果模拟成功，消息将被推送到提交步骤的队列中。否则，消息将被推回准备队列。
       </td>
     </tr>
     <tr>
-      <td>Submit Task</td>
+      <td>提交任务</td>
       <td>
-        Pops messages from its queue, and sends the delivery transaction
-        onchain. Deliveries are batched whenever possible. If there is no error
-        broadcasting the transaction, the message is pushed to the Confirm
-        step's queue. Otherwise, the message is pushed back to the Prepare
-        queue.
+        从队列中弹出消息，并在链上发送交付交易。尽可能批量处理交付。如果在广播交易时没有错误，消息将被推送到确认步骤的队列中。否则，消息将被推回准备队列。
       </td>
     </tr>
     <tr>
-      <td>Confirm Task</td>
+      <td>确认任务</td>
       <td>
-        Awaits finality; if a chain reorg occurs, or the delivery transaction
-        reverts, the message is pushed back to the Prepare queue.
+        等待最终确认；如果发生链重组或交付交易回滚，消息将被推回准备队列。
       </td>
     </tr>
   </tbody>
 </table>
 
-Messages are delivered to their recipient by calling `Mailbox.process()` on the destination chain with the aforementioned metadata.
+通过在目标链上调用 `Mailbox.process()`，将消息交付给接收者，并附上上述元数据。
 
-The retry count of a message determines its next delivery attempt according to an exponential backoff strategy. Currently, there is no fixed maximum number of retries after which the relayer will cease to attempt processing a message. However, this is not a guarantee of indefinite retries, and operators should not rely on this as a service level agreement (SLA).
+消息的重试计数决定了其下一次交付尝试，采用指数退避策略。目前，没有固定的最大重试次数，超过该次数后，Relayer 将停止尝试处理消息。然而，这并不保证会进行无限次重试，操作员不应将其视为服务水平协议 (SLA)。

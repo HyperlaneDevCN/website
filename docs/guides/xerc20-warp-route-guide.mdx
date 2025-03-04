@@ -1,80 +1,80 @@
-# Create your xERC20 Token Bridge
+# 创建您的 xERC20 代币桥
 
-This guide walks you through deploying an xERC20 Warp Route between two networks of your choice. We'll use Ethereum as an example for the origin chain; however, you can select any supported network as the origin and destination.
+本指南将引导您在您选择的两个网络之间部署 xERC20 Warp Route。我们将以以太坊作为起始链的示例；不过，您可以选择任何支持的网络作为起始和目标网络。
 
-## Prerequisites
+## 前提条件
 
-To complete this walkthrough, you should have:
+要完成本指南，您需要具备：
 
-1. **An origin and destination network of choice**, between which you’d like to deploy the xERC20 warp route.
-2. **The address of an xERC20 or xERC20Lockbox** on the origin and destination chain. 
-3. **Hyperlane CLI installed** and a **wallet private key set as the `HYP_KEY` environment variable**, funded on both origin and destination networks.
+1. **一个您选择的起始和目标网络**，在这两个网络之间部署 xERC20 warp route。
+2. **在起始和目标链上的 xERC20 或 xERC20Lockbox 的地址**。
+3. **安装 Hyperlane CLI** 并将 **钱包私钥设置为 `HYP_KEY` 环境变量**，在起始和目标网络上都有资金。
 
-### Step 1: Initialize a New Warp Route
+### 第一步：初始化新的 Warp Route
 
-Run the following command to generate a warp route configuration:
+运行以下命令以生成 warp route 配置：
 
 ```bash
 hyperlane warp init
 ```
 
-1. Select **Ethereum** (origin) and **YourChain** (destination) using space, then hit enter.
-2. For Ethereum (origin), choose **xERC20** or **xERC20Lockbox**, and enter the contract address. 
-3. For YourChain (destination), choose **xERC20** or **xERC20Lockbox**, and enter the contract address. 
+1. 使用空格选择 **以太坊**（起始）和 **您的链**（目标），然后按回车。
+2. 对于以太坊（起始），选择 **xERC20** 或 **xERC20Lockbox**，并输入合约地址。
+3. 对于您的链（目标），选择 **xERC20** 或 **xERC20Lockbox**，并输入合约地址。
 
 :::info
-Choosing Between xERC20 and xERC20Lockbox:
+选择 xERC20 和 xERC20Lockbox 之间的区别：
 
-- **xERC20Lockbox**: Use this if your token is already deployed on the origin chain and requires a wrapped version for cross-chain transfers.
-- **xERC20**: Use this if your token natively implements xERC20 and does not require a lockbox.
+- **xERC20Lockbox**：如果您的代币已经在起始链上部署，并且需要一个用于跨链转移的包装版本，请使用此选项。
+- **xERC20**：如果您的代币本身实现了 xERC20，并且不需要锁箱，请使用此选项。
 
-If you're unsure, review your token’s contract structure or deployment history to determine the correct choice.
+如果您不确定，请查看您的代币合约结构或部署历史，以确定正确的选择。
 :::
 
-### Step 2: Deploy the xERC20 Warp Route
+### 第二步：部署 xERC20 Warp Route
 
-Run the following command to deploy the warp route:
+运行以下命令以部署 warp route：
 
 ```bash
 hyperlane warp deploy
 ```
 
-This deploys the *Hyperlane adapter contracts**, either:
+这将部署 *Hyperlane 适配器合约**，具体为：
 
-- **HypXERC20Lockbox** (if using xERC20Lockbox)
-- **HypXERC20** (if using xERC20)
+- **HypXERC20Lockbox**（如果使用 xERC20Lockbox）
+- **HypXERC20**（如果使用 xERC20）
 
-*The CLI does not deploy non-Hyperlane contracts (e.g., existing xERC20 contracts). Those should already be deployed.*
+*CLI 不会部署非 Hyperlane 合约（例如，现有的 xERC20 合约）。这些合约应该已经部署。*
 
-### Step 3: Configure Minting Permissions
+### 第三步：配置铸造权限
 
-Once the xERC20 warp route contracts are deployed, you must configure minting permissions for the destination token.
+一旦 xERC20 warp route 合约部署完成，您必须为目标代币配置铸造权限。
 
-Set the mint limit for the newly deployed warp route using the [`setLimits` function](https://github.com/defi-wonderland/xERC20/blob/main/solidity/contracts/XERC20.sol#L85) in your xERC20 contract.
-By default, these limits are found in the Registry, located at `~/.hyperlane` locally.
+使用您 xERC20 合约中的 [`setLimits` 函数](https://github.com/defi-wonderland/xERC20/blob/main/solidity/contracts/XERC20.sol#L85) 设置新部署的 warp route 的铸造限制。
+默认情况下，这些限制在 Registry 中找到，位于本地的 `~/.hyperlane`。
 
-### Step 4: Test Cross-Chain Transfers
+### 第四步：测试跨链转移
 
-Test transferring tokens across chains using:
+使用以下命令测试跨链转移代币：
 
 ```bash
 hyperlane warp send --symbol <token_symbol> --amount <amount>
 ```
 
-- Replace `<token_symbol>` with your token.
-- Replace `<amount>` with the number of tokens to transfer.
+- 将 `<token_symbol>` 替换为您的代币。
+- 将 `<amount>` 替换为要转移的代币数量。
 
 ### 
 
-🎉 Congrats! You have successfully created an **xERC20 Warp Route**. Your xERC20 tokens can now move across chains!
+🎉 恭喜！您已成功创建 **xERC20 Warp Route**。您的 xERC20 代币现在可以跨链移动！
 
 :::warning
-Please note that cross-chain operations rely on **Interchain Security Modules (ISMs)**, and there are inherent risks, such as ISM trust assumptions.
+请注意，跨链操作依赖于 **跨链安全模块（ISM）**，并且存在固有风险，例如 ISM 信任假设。
 :::
 
-## Resources
+## 资源
 
-For more resources on deploying xERC20 warp routes, check out:
+有关部署 xERC20 warp routes 的更多资源，请查看：
 
-- [xERC20 Token Standard](https://github.com/defi-wonderland/xERC20/blob/main/solidity/contracts/XERC20.sol)
-- [xERC20 Token transfer limits](./manage-warp-route-limits.mdx)
+- [xERC20 代币标准](https://github.com/defi-wonderland/xERC20/blob/main/solidity/contracts/XERC20.sol)
+- [xERC20 代币转移限制](./manage-warp-route-limits.mdx)

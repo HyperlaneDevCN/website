@@ -5,23 +5,23 @@ import { MultiLanguageExample } from "@site/src/components/InteractiveExample";
 
 import SimpleMessagingDiagram from "@site/src/diagrams/messaging-simple.md";
 
-# Send a message
+# 发送消息
 
-To send interchain messages, developers call `Mailbox.dispatch()`.
+开发者通过调用 `Mailbox.dispatch()` 来发送跨链消息。
 
-This function takes as parameters the message contents, the destination chain ID, and the recipient address. Each message gets inserted as a leaf into an [incremental merkle tree](https://medium.com/@josephdelong/ethereum-2-0-deposit-merkle-tree-13ec8404ca4f) stored by the `Mailbox`. Hyperlane's proof of stake protocol uses this merkle tree to verify fraud proofs.
+该函数接收消息内容、目标链 ID 和接收者地址作为参数。每条消息都会作为叶子节点插入到 `Mailbox` 存储的[增量默克尔树](https://medium.com/@josephdelong/ethereum-2-0-deposit-merkle-tree-13ec8404ca4f)中。Hyperlane 的权益证明协议使用这个默克尔树来验证欺诈证明。
 
 <SimpleMessagingDiagram />
 
 ## Dispatch
 
-Calling this function dispatches a message to the destination domain and recipient.
+调用此函数可将消息发送到目标域和接收者。
 
 :::warning
-Hyperlane can only deliver messages to smart contracts that implement the `handle` function. See the [receive a message](./receive.mdx) documentation for more information.
+Hyperlane 只能向实现了 `handle` 函数的智能合约投递消息。查看[接收消息](./receive.mdx)文档获取更多信息。
 :::
 
-Depending on the [post-`dispatch` hook configuration](##post-dispatch-hook-config), some payment may be required. See the [`quoteDispatch`](#quote-dispatch) section for more information.
+根据[post-`dispatch` 钩子配置](##post-dispatch-hook-config),可能需要支付一些费用。查看 [`quoteDispatch`](#quote-dispatch) 部分获取更多信息。
 
 <Tabs groupId="lang">
 <TabItem value="sol" label="Solidity">
@@ -31,7 +31,7 @@ Depending on the [post-`dispatch` hook configuration](##post-dispatch-hook-confi
 ```
 
 :::info
-Recipient addresses are left-padded to `bytes32` for compatibility with virtual machines that are addressed differently. The following utility is provided in the [`TypeCasts` library](../libraries/typecasts.mdx) for convenience.
+为了兼容不同寻址方式的虚拟机,接收者地址会左填充至 `bytes32`。[`TypeCasts` 库](../libraries/typecasts.mdx)提供了以下实用工具:
 
 ```solidity file=<rootDir>/node_modules/@hyperlane-xyz/core/contracts/libs/TypeCasts.sol#L5-L8
 
@@ -43,7 +43,7 @@ Recipient addresses are left-padded to `bytes32` for compatibility with virtual 
 
 </Tabs>
 
-### Examples
+### 示例
 
 <MultiLanguageExample
   solidity={({
@@ -54,7 +54,7 @@ Recipient addresses are left-padded to `bytes32` for compatibility with virtual 
     paddedRecipient,
     body,
   }) => `\
-// send message from ${originChain} to ${destinationChain} TestRecipient
+// 从 ${originChain} 发送消息到 ${destinationChain} 的 TestRecipient
 IMailbox mailbox = IMailbox("${mailbox}");
 bytes32 messageId = mailbox.dispatch{value: msg.value}(
   ${destinationDomain},
@@ -63,9 +63,9 @@ bytes32 messageId = mailbox.dispatch{value: msg.value}(
 );`}
 />
 
-## Quote Dispatch
+## 查询发送费用
 
-Fees are often configured to cover IGP payments as well as protocol costs. These include transaction submission on the destination chain, security provisioning, and maintenance. To receive a quote for a corresponding `dispatch` call, you can query the `quoteDispatch` function.
+通常会配置费用来支付 IGP 支付以及协议成本。这包括目标链上的交易提交、安全保障和维护费用。你可以通过调用 `quoteDispatch` 函数来获取相应 `dispatch` 调用的费用报价。
 
 ```mermaid
 flowchart TB
@@ -84,13 +84,13 @@ flowchart TB
 
 ```
 
-The quoted `fee` must be passed as value to the `dispatch` call to ensure it does not revert.
+必须将报价的 `fee` 作为 value 传递给 `dispatch` 调用以确保它不会回滚。
 
 </TabItem>
 
 </Tabs>
 
-### Examples
+### 示例
 
 <MultiLanguageExample
   solidity={({
@@ -101,7 +101,7 @@ The quoted `fee` must be passed as value to the `dispatch` call to ensure it doe
     paddedRecipient,
     body,
   }) => `\
-// quote sending message from ${originChain} to ${destinationChain} TestRecipient
+// 查询从 ${originChain} 发送消息到 ${destinationChain} TestRecipient 的费用
 IMailbox mailbox = IMailbox("${mailbox}");
 uint32 destination = ${destinationDomain};
 bytes32 recipient = "${paddedRecipient}";
@@ -112,15 +112,15 @@ mailbox.dispatch{value: fee}(destination, recipient, body);
 />
 
 :::danger
-Underpayment to `dispatch` will revert. If you are composing hooks together, overpayment **may not be refunded** to the message sender.
+向 `dispatch` 支付的费用不足会导致回滚。如果你组合使用多个钩子,超额支付的费用**可能不会**退还给消息发送者。
 :::
 
-## Post-Dispatch Hook Config
+## Post-Dispatch 钩子配置
 
-There are two hooks configured on a Mailbox
+Mailbox 上配置了两个钩子:
 
-- `required`: invoked for all `dispatch` calls with value that covers the required fee
-- `default`: invoked (unless overridden) with remaining value after `required` hook
+- `required`: 对所有支付了所需费用的 `dispatch` 调用都会触发
+- `default`: 在 `required` 钩子之后使用剩余 value 触发(除非被覆盖)
 
 ```mermaid
 flowchart LR
@@ -137,9 +137,9 @@ flowchart LR
     end
 ```
 
-### Required Hook
+### Required 钩子
 
-To query the required hook configuration, you can call the `requiredHook` function.
+你可以调用 `requiredHook` 函数查询 required 钩子配置。
 
 <Tabs groupId="lang">
 <TabItem value="sol" label="Solidity">
@@ -151,9 +151,9 @@ To query the required hook configuration, you can call the `requiredHook` functi
 </TabItem>
 </Tabs>
 
-### Default Hook
+### Default 钩子
 
-To query the default hook configuration, you can call the `defaultHook` function.
+你可以调用 `defaultHook` 函数查询 default 钩子配置。
 
 <Tabs groupId="lang">
 <TabItem value="sol" label="Solidity">
@@ -165,4 +165,4 @@ To query the default hook configuration, you can call the `defaultHook` function
 </TabItem>
 </Tabs>
 
-To override the default hook with a custom hook in the `dispatch` call, see the [Hooks Reference](../hooks/overview.mdx).
+要在 `dispatch` 调用中用自定义钩子覆盖默认钩子,请参阅[钩子参考](../hooks/overview.mdx)。

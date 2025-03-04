@@ -1,12 +1,12 @@
-# `StandardHookMetadata` Library
+# `StandardHookMetadata` 库
 
-The `StandardHookMetadata` library provides utilities for handling and formatting metadata used in Hyperlane hooks. This library enables you to pack and extract information such as gas limits, refund addresses, and custom metadata for messages.
+`StandardHookMetadata` 库提供了用于处理和格式化 Hyperlane hooks 元数据的工具。该库使您能够打包和提取消息的相关信息,如 gas 限制、退款地址和自定义元数据。
 
-- **Parse Metadata**: Functions like `variant`, `msgValue`, `gasLimit`, and `refundAddress` help you extract specific metadata fields from ABI-encoded data.
-- **Custom Metadata**: `getCustomMetadata` retrieves any additional metadata beyond the standard fields.
-- **Format Metadata**: `formatMetadata` lets you construct ABI-encoded metadata with fields like gas limit, refund address, and custom data.
+- **解析元数据**: 函数如 `variant`、`msgValue`、`gasLimit` 和 `refundAddress` 可帮助您从 ABI 编码的数据中提取特定的元数据字段。
+- **自定义元数据**: `getCustomMetadata` 用于获取标准字段之外的任何附加元数据。
+- **格式化元数据**: `formatMetadata` 允许您构造包含 gas 限制、退款地址和自定义数据等字段的 ABI 编码元数据。
 
-## StandardHookMetadata Library
+## StandardHookMetadata 库
 
 ```solidity file=<rootDir>/node_modules/@hyperlane-xyz/core/contracts/hooks/libs/StandardHookMetadata.sol
 

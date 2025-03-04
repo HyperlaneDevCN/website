@@ -1,17 +1,17 @@
-# Polygon PoS Hook
+# Polygon PoS 钩子
 
-Polygon PoS has their own interface for message passing between Ethereum and Polygon called the [`fx portal`](https://github.com/0xPolygon/fx-portal). Messages passed via this interface benefit from the security of the Polygon [state sync mechanism](https://docs.polygon.technology/pos/architecture/bor/state-sync/).
+Polygon PoS 具有自己的以太坊和 Polygon 之间消息传递的接口，称为 [`fx portal`](https://github.com/0xPolygon/fx-portal)。通过此接口传递的消息受益于 Polygon [状态同步机制](https://docs.polygon.technology/pos/architecture/bor/state-sync/) 的安全性。
 
-To provide this security as an option in Hyperlane, we created a Hook and ISM combo that can be transparently configured to reuse the fx-portal interface.
+为了在 Hyperlane 中提供这种安全性，我们创建了一个钩子和 ISM 组合，可以透明地配置以重用 fx-portal 接口。
 
-See the [addresses](../contract-addresses.mdx) page for Hook and ISM addresses. 
+请参见 [地址](../contract-addresses.mdx) 页面以获取钩子和 ISM 地址。
 
-## How It Works
+## 工作原理
 
-Polygon FX-Portal provide FxChild (FxChild.sol) and FxRoot (FxRoot.sol) as the main contracts on which the bridge works. It calls and passes data to user-defined methods on another chain without needing a mapping.
+Polygon FX-Portal 提供 FxChild (FxChild.sol) 和 FxRoot (FxRoot.sol) 作为桥接工作的主要合约。它调用并将数据传递给另一条链上的用户定义方法，而无需映射。
 
-The FxChild/FxRoot contract are provided and maintained by the polygon team. You can find the address of this contract in Polygon’s [Fx-Portal repo](https://github.com/0xPolygon/fx-portal). 
-The PolygonPosHook sends payloads with FxRoot. Validators will pick up the message and pass it to the other chain. You can find detailed state sync mechanism in [documentation](https://docs.polygon.technology/pos/how-to/bridging/l1-l2-communication/state-transfer/) `StateReceiver` at `0x0000000000000000000000000000000000001001` is allowed to call `onStateReceive` in FxChild contract. FxChild calls `processMessageFromRoot` in abstract `CrossChainEnabledPolygonChild` on which PolygonPosISM implements. `CrossChainEnabledPolygonChild` is maintained by [OpenZeppelin](https://docs.openzeppelin.com/contracts/4.x/api/crosschain#) 
+FxChild/FxRoot 合约由 Polygon 团队提供和维护。您可以在 Polygon 的 [Fx-Portal 仓库](https://github.com/0xPolygon/fx-portal) 中找到此合约的地址。
+PolygonPosHook 通过 FxRoot 发送有效负载。验证者将提取消息并将其传递到另一条链。您可以在 [文档](https://docs.polygon.technology/pos/how-to/bridging/l1-l2-communication/state-transfer/) 中找到详细的状态同步机制，`StateReceiver` 在 `0x0000000000000000000000000000000000001001` 允许调用 FxChild 合约中的 `onStateReceive`。FxChild 调用抽象的 `CrossChainEnabledPolygonChild` 中的 `processMessageFromRoot`，PolygonPosISM 在其上实现。`CrossChainEnabledPolygonChild` 由 [OpenZeppelin](https://docs.openzeppelin.com/contracts/4.x/api/crosschain#) 维护。
 
 ```mermaid
 flowchart TB

@@ -1,68 +1,68 @@
-# Hyperlane Local Setup Guide: Sending Messages between Anvil Nodes
+# Hyperlane 本地设置指南：在 Anvil 节点之间发送消息
 
-This guide walks you through sending interchain messages between two local Anvil nodes using the Hyperlane CLI.
+本指南将引导您通过 Hyperlane CLI 在两个本地 Anvil 节点之间发送跨链消息。
 
-## Prerequisites
+## 前提条件
 
-- **[Hyperlane CLI](https://docs.hyperlane.xyz/docs/reference/cli):** Make sure you have the latest version of the Hyperlane CLI installed.
+- **[Hyperlane CLI](https://docs.hyperlane.xyz/docs/reference/cli)：** 确保您已安装最新版本的 Hyperlane CLI。
 
   ```bash
   npm install -g @hyperlane-xyz/cli
   ```
 
-- **[Anvil (foundry)](https://book.getfoundry.sh/getting-started/installation):** Installed to run local chains. Install it via
+- **[Anvil (foundry)](https://book.getfoundry.sh/getting-started/installation)：** 安装以运行本地链。通过以下命令安装：
   ```bash
   curl -L https://foundry.paradigm.xyz | bash
   ```
-- **Node.js** (v18 or later)
-- **Deployer Wallet Private Key**: You need a funded wallet for deploying contracts. This will be used as the HYP_KEY.
+- **Node.js**（v18 或更高版本）
+- **部署者钱包私钥**：您需要一个有资金的钱包来部署合约。这将用作 HYP_KEY。
   ```bash
   export HYP_KEY=<YOUR_PRIVATE_KEY>
   ```
 
-## Step-by-Step Guide
+## 步骤指南
 
-### 1. Environment Setup: Create a working directory for the Hyperlane configuration:
+### 1. 环境设置：为 Hyperlane 配置创建一个工作目录：
 
 ```bash
 mkdir hyperlane-local-test && cd hyperlane-local-test
 ```
 
-### 2. Start Two Distinct Anvil Nodes
+### 2. 启动两个不同的 Anvil 节点
 
-We will run two Anvil nodes with unique chain IDs.
+我们将运行两个具有唯一链 ID 的 Anvil 节点。
 
-- On a first terminal, start the first Anvil node:
+- 在第一个终端上，启动第一个 Anvil 节点：
 
   ```bash
   anvil --port 8545 --chain-id 31337 --block-time 1
   ```
 
-  - Runs on `http://localhost:8545`.
-  - Chain ID: `31337`.
+  - 运行在 `http://localhost:8545`。
+  - 链 ID：`31337`。
 
-- In a new terminal, start the second Anvil node:
+- 在新终端中，启动第二个 Anvil 节点：
 
   ```bash
   anvil --port 8546 --chain-id 31338 --block-time 1
   ```
 
-  - Runs on `http://localhost:8546`.
-  - Chain ID: `31338`.
+  - 运行在 `http://localhost:8546`。
+  - 链 ID：`31338`。
 
-### 3. Initialize the Hyperlane Registry
+### 3. 初始化 Hyperlane 注册表
 
-On a new terminal, use the Hyperlane CLI to create configurations for both Anvil nodes:
+在新终端中，使用 Hyperlane CLI 为两个 Anvil 节点创建配置：
 
 ```bash
 hyperlane registry init
 ```
 
-Follow the prompts to set up `anvilnode1`. The CLI will ask you for the details of your chains including chainId and RPC URLs. Repeat the process for `anvilnode2`.
+按照提示设置 `anvilnode1`。CLI 将询问您有关链的详细信息，包括 chainId 和 RPC URL。对 `anvilnode2` 重复此过程。
 
-This process will create `metadata.yaml` files under `$HOME/.hyperlane/chains/anvilnode1` and `$HOME/.hyperlane/chains/anvilnode2`.
+此过程将在 `$HOME/.hyperlane/chains/anvilnode1` 和 `$HOME/.hyperlane/chains/anvilnode2` 下创建 `metadata.yaml` 文件。
 
-Example metadata:
+示例元数据：
 
 - **anvilnode1**
 
@@ -98,78 +98,78 @@ rpcUrls:
   - http: http://localhost:8546
 ```
 
-### 4. Deploy Core Contracts
+### 4. 部署核心合约
 
-We'll configure and deploy Hyperlane core contracts.
+我们将配置并部署 Hyperlane 核心合约。
 
 :::tip
-You'll need the deployer wallet private key to deploy the core contracts. You can use `export HYP_KEY='<YOUR_PRIVATE_KEY>'` to set the private key as an environment variable.
+您需要部署核心合约的部署者钱包私钥。您可以使用 `export HYP_KEY='<YOUR_PRIVATE_KEY>'` 将私钥设置为环境变量。
 :::
 
 ```bash
 hyperlane core init
 ```
 
-The deployment configuration will be saved to `./configs/core-config.yaml`.
+部署配置将保存到 `./configs/core-config.yaml`。
 
-Next, deploy the core contracts:
+接下来，部署核心合约：
 
 ```bash
 hyperlane core deploy
 ```
 
-Follow the prompts to select `anvilnode1`. The CLI will deploy Mailbox, Interchain Security Modules (ISMs), and other required contracts. Repeat the process for `anvilnode2`.
+按照提示选择 `anvilnode1`。CLI 将部署邮箱、跨链安全模块（ISM）和其他所需合约。对 `anvilnode2` 重复此过程。
 
-Once complete, you’ll find `addresses.yaml` in `$HOME/.hyperlane/chains/anvilnode1` and `$HOME/.hyperlane/chains/anvilnode2`, with the deployed contract addresses.
+完成后，您将在 `$HOME/.hyperlane/chains/anvilnode1` 和 `$HOME/.hyperlane/chains/anvilnode2` 中找到 `addresses.yaml`，其中包含已部署的合约地址。
 
 :::tip
-You should be able to see the messages of the contract deployments on your terminals running the local nodes.
+您应该能够在运行本地节点的终端上看到合约部署的消息。
 :::
 
-### 5. Send a Test Message
+### 5. 发送测试消息
 
-Use the Hyperlane CLI to send a message from `anvilnode1` to `anvilnode2`.
+使用 Hyperlane CLI 从 `anvilnode1` 向 `anvilnode2` 发送消息。
 
 ```bash
 hyperlane send message --relay
 ```
 
-The CLI will prompt you to provide the origin chain (`anvilnode1`) and the destination chain (`anvilnode2`).
+CLI 将提示您提供源链（`anvilnode1`）和目标链（`anvilnode2`）。
 
 :::tip
 
-For local testing, the `--relay` flag automatically relays the message to the destination chain.
+对于本地测试，`--relay` 标志会自动将消息中继到目标链。
 
 :::
 
-After sending the message, check the following:
+发送消息后，请检查以下内容：
 
-- Validator Logs: Look for entries indicating that signatures were generated and stored.
-- Relayer Logs: Look for successful metadata retrieval and message processing.
-- Anvil Logs: Ensure blocks were mined to process the transactions.
+- 验证者日志：查找指示生成和存储签名的条目。
+- 中继器日志：查找成功检索元数据和消息处理的记录。
+- Anvil 日志：确保已挖掘区块以处理交易。
 
 :::success
-🎉 You've sent a message between two local Anvil nodes using Hyperlane!
+🎉 您已使用 Hyperlane 在两个本地 Anvil 节点之间发送了消息！
 :::
 
-## Troubleshooting
+## 故障排除
 
-1. “Could not fetch metadata” warning:
+1. “无法获取元数据”警告：
 
-   - **Reason:** This occurs when the relayer cannot retrieve validator signatures required to process a message. Common causes:
-     - The validator key lacks testnet funds.
-     - The validator has not announced its storage locations.
-   - **Solution:**
-     - Ensure the validators have announced their storage locations. Check validator logs for a message such as: `Validator has announced signature storage location, locations: ["file:///tmp/hyperlane-validator-signatures-local"].`
-     - Verify that each validator has a unique signature storage path (`--checkpointSyncer.path`) to prevent overwriting.
-     - Confirm that the relayer has read access to the storage paths.
+   - **原因：** 当中继器无法检索处理消息所需的验证者签名时，会发生此情况。常见原因：
+     - 验证者密钥缺乏测试网资金。
+     - 验证者尚未宣布其存储位置。
+   - **解决方案：**
+     - 确保验证者已宣布其存储位置。检查验证者日志以查找类似以下消息：`Validator has announced signature storage location, locations: ["file:///tmp/hyperlane-validator-signatures-local"].`
+     - 验证每个验证者是否具有唯一的签名存储路径（`--checkpointSyncer.path`），以防止覆盖。
+     - 确认中继器对存储路径具有读取权限。
 
-2. Messages time out:
+2. 消息超时：
 
-   - **Reason:** Anvil doesn't auto-mine blocks by default, causing validators or relayers to wait indefinitely for new blocks.
-   - **Solution:** Make sure to use the `--block-time 1 flag` when starting Anvil to auto-mine blocks every second.
+   - **原因：** Anvil 默认不自动挖掘区块，导致验证者或中继器无限期等待新块。
+   - **解决方案：** 确保在启动 Anvil 时使用 `--block-time 1` 标志，以每秒自动挖掘区块。
 
-3. Validator mismatch or misconfiguration:
+3. 验证者不匹配或配置错误：
 
-   - **Reason:** The ISM configuration on the destination chain does not match the validator key(s) used by the origin chain.
-   - **Solution:** Check that the ISM configuration includes the correct validator addresses. Validator logs can help identify the announced addresses.
+   - **原因：** 目标链上的 ISM 配置与源链使用的验证者密钥不匹配。
+   - **解决方案：** 检查 ISM 配置是否包含正确的验证者地址。验证者日志可以帮助识别已宣布的地址。

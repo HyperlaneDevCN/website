@@ -1,11 +1,11 @@
-# Sequence diagram
+# 序列图
 
-The following shows a simplified sequence diagram of an interchain message being verified and delivered on the destination chain.
+以下展示了一个简化的序列图，描述了跨链消息在目标链上被验证和传递的过程。
 
 :::info
 
-- If the recipient does not implement `ISpecifiesInterchainSecurityModule` or `recipient.interchainSecurityModule()` returns `address(0)`, the default ISM configured on the [Mailbox](../mailbox.mdx) will be used to verify the message.
-- This is omitted from the sequence diagram for clarity.
+- 如果接收方未实现 `ISpecifiesInterchainSecurityModule` 或 `recipient.interchainSecurityModule()` 返回 `address(0)`，则将使用在 [Mailbox](../mailbox.mdx) 上配置的默认 ISM 来验证消息。
+- 为了清晰起见，这一点在序列图中被省略。
 
 :::
 

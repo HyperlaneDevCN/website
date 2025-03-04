@@ -1,48 +1,48 @@
-# Quickstart with Docker Compose and AWS
+# 使用 Docker Compose 和 AWS 的快速入门
 
-Using Docker Compose provides a structured way to manage validator deployments while maintaining the flexibility of raw Docker. You can find the full specification of the format in the [Docker docs](https://docs.Docker.com/compose/compose-file/).
+使用 Docker Compose 提供了一种结构化的方式来管理验证者的部署，同时保持原始 Docker 的灵活性。您可以在 [Docker 文档](https://docs.Docker.com/compose/compose-file/) 中找到格式的完整规范。
 
-## 1. Setup validator key
+## 1. 设置验证者密钥
 
-Follow the guide [here](set-up-agent-keys.mdx#2-aws-kms) for creating agent keys with AWS KMS.
+请按照 [此处](set-up-agent-keys.mdx#2-aws-kms) 的指南使用 AWS KMS 创建代理密钥。
 
-## 2. Create S3 bucket for signatures
+## 2. 为签名创建 S3 存储桶
 
-Follow the guide [here](./validators/validator-signatures-aws.mdx) for creating and configuring an S3 bucket for your validator to write signatures to.
+请按照 [此处](./validators/validator-signatures-aws.mdx) 的指南创建和配置 S3 存储桶，以便您的验证者将签名写入。
 
-## 3. (AVS Operators Only) Register with Hyperlane AVS
+## 3. （仅限 AVS 操作员）注册 Hyperlane AVS
 
-If you are an AVS operator, follow the guide [here](../guides/avs-operator-guide.mdx#4-register-your-operator) to register with the Hyperlane AVS.
+如果您是 AVS 操作员，请按照 [此处](../guides/avs-operator-guide.mdx#4-register-your-operator) 的指南注册 Hyperlane AVS。
 
-## 4. Setup validator environment
+## 4. 设置验证者环境
 
-### Create config files
+### 创建配置文件
 
-In this example, we will run three chains.
+在此示例中，我们将运行三个链。
 
 ```bash
 mkdir -p ethereum/hyperlane_db optimism/hyperlane_db base/hyperlane_db && \
 touch ethereum/config.json optimism/config.json base/config.json docker-compose.yml .env.ethereum .env.optimism .env.base
 ```
 
-### Edit each config.json
+### 编辑每个 config.json
 
-You can read more about Agent Configs [here](./agent-config.mdx).
+您可以在 [此处](./agent-config.mdx) 了解有关代理配置的更多信息。
 
-| Parameter                 | Description                                                                                                                                                                |
-| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `customRpcUrls`           | A comma-separated list of performant RPC endpoints for the chain you wish to support. We recommend using paid providers to avoid rate limiting.                            |
-| `chains.ethereum`         | Should be changed to `chains.base` in the base/config.json, and `chains.optimism` in optimism/config.json.                                                                 |
-| `signer.region`           | Should be adjusted to your AWS region.                                                                                                                                     |
-| `validator.region`        | Should be adjusted to your AWS region.                                                                                                                                     |
-| `signer.id`               | Should be adjusted to your AWS KMS id you configured in step 3, prefixed with `alias/`.                                                                                    |
-| `validator.id`            | Should be adjusted to your AWS KMS id you configured in step 3, prefixed with `alias/`.                                                                                    |
-| `originChainName`         | Should be the chain you are validating.                                                                                                                                    |
-| `checkpointSyncer.bucket` | Should reflect the name of the S3 bucket.                                                                                                                                  |
-| `checkpointSyncer.folder` | The name of the folder the validator will use within the bucket. You may use the same bucket for multiple validators, but ensure each folder name is unique per validator. |
-| `reorgPeriod`             | May be different for each chain. [Find the reorgPeriods](https://github.com/hyperlane-xyz/hyperlane-registry/tree/main/chains).                                            |
+| 参数                     | 描述                                                                                                                                                                |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `customRpcUrls`         | 支持的链的高性能 RPC 端点的逗号分隔列表。我们建议使用付费提供商以避免速率限制。                                                                                          |
+| `chains.ethereum`       | 在 base/config.json 中应更改为 `chains.base`，在 optimism/config.json 中应更改为 `chains.optimism`。                                                                 |
+| `signer.region`         | 应根据您的 AWS 区域进行调整。                                                                                                                                     |
+| `validator.region`      | 应根据您的 AWS 区域进行调整。                                                                                                                                     |
+| `signer.id`             | 应根据您在第 3 步中配置的 AWS KMS id 进行调整，前缀为 `alias/`。                                                                                                   |
+| `validator.id`          | 应根据您在第 3 步中配置的 AWS KMS id 进行调整，前缀为 `alias/`。                                                                                                   |
+| `originChainName`       | 应为您正在验证的链。                                                                                                                                              |
+| `checkpointSyncer.bucket` | 应反映 S3 存储桶的名称。                                                                                                                                          |
+| `checkpointSyncer.folder` | 验证者将在存储桶中使用的文件夹名称。您可以为多个验证者使用同一个存储桶，但请确保每个验证者的文件夹名称是唯一的。                                                       |
+| `reorgPeriod`           | 每个链可能不同。 [查找 reorgPeriods](https://github.com/hyperlane-xyz/hyperlane-registry/tree/main/chains)。                                                            |
 
-Here is an example agent config.
+以下是一个示例代理配置。
 
 ```json
 {
@@ -74,17 +74,17 @@ Here is an example agent config.
 }
 ```
 
-### Edit each .env file
+### 编辑每个 .env 文件
 
-You should change the service name, AWS credentials for each chain.
+您应该为每个链更改服务名称和 AWS 凭证。
 
 ```
-AWS_ACCESS_KEY_ID=<Your AWS access key ID>
-AWS_SECRET_ACCESS_KEY=<Your AWS secret access key>
+AWS_ACCESS_KEY_ID=<您的 AWS 访问密钥 ID>
+AWS_SECRET_ACCESS_KEY=<您的 AWS 秘密访问密钥>
 SERVICE_NAME=ethereum
 ```
 
-## 5. Configure Docker Compose (docker-compose.yml)
+## 5. 配置 Docker Compose (docker-compose.yml)
 
 ```yaml
 x-common-attributes: &common-validator
@@ -117,7 +117,7 @@ services:
       - "9093:9090/tcp"
 ```
 
-Your directory structure should look similar to this:
+您的目录结构应类似于以下内容：
 
 ```bash
 .
@@ -136,11 +136,11 @@ Your directory structure should look similar to this:
     └── hyperlane_db
 ```
 
-## 6. Run the Hyperlane validators
+## 6. 运行 Hyperlane 验证者
 
-Bring the containers up:
+启动容器：
 
-Remember to fund your validator address so the validator can announce.
+请记得为您的验证者地址提供资金，以便验证者可以进行公告。
 
 ```bash
 docker compose --env-file .env.ethereum up ethereum-validator -d
@@ -148,7 +148,7 @@ docker compose --env-file .env.optimism up optimism-validator -d
 docker compose --env-file .env.base up base-validator -d
 ```
 
-Ensure there are no errors:
+确保没有错误：
 
 ```bash
 docker logs -f ethereum-validator
@@ -157,5 +157,5 @@ docker logs -f base-validator
 ```
 
 :::tip
-**Running Multiple Validators**: Running multiple validators improves reliability and ensures message validation continues even if one fails. Learn more about the setup and requirements [here](./validators/run-validators.mdx#running-multiple-validators).
+**运行多个验证者**：运行多个验证者可以提高可靠性，并确保即使一个失败，消息验证仍然继续。了解更多设置和要求 [这里](./validators/run-validators.mdx#running-multiple-validators)。
 :::

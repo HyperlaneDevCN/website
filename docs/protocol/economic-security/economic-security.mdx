@@ -1,27 +1,27 @@
-# Economic Security
+# 经济安全
 
 :::info
 
-Hyperlane is committed to making fraud costly. Staking and slashing are coming soon and are not yet implemented. This page is shown for informational purposes only. Details may change as the design matures.
+Hyperlane 致力于使欺诈成本高昂。质押和惩罚即将到来，但尚未实施。本页面仅供参考，具体细节可能会随着设计的成熟而变化。
 
 :::
 
-Staking and slashing allow economic security to be added to ISMs that rely on validator signatures, including [Multisig ISM](/docs/protocol/ISM/multisig-ISM.mdx) and Optimistic ISM.
+质押和惩罚允许将经济安全添加到依赖验证者签名的 ISM 中，包括 [多重签名 ISM](/docs/protocol/ISM/multisig-ISM.mdx) 和乐观 ISM。
 
-Hyperlane validators can optionally participate in Hyperlane's staking protocol. Later, if these validators attempt to falsify or censor interchain messages, their stake, and any stake delegated to them, can be slashed.
+Hyperlane 验证者可以选择参与 Hyperlane 的质押协议。稍后，如果这些验证者试图伪造或审查跨链消息，他们的质押以及任何委托给他们的质押都可能会被惩罚。
 
-[Interchain Security Modules](/docs/protocol/ISM/modular-security.mdx) that depend on signatures from these validators benefit from the additional economic security provided by staking and slashing.
+依赖于这些验证者签名的 [跨链安全模块](/docs/protocol/ISM/modular-security.mdx) 将从质押和惩罚提供的额外经济安全中受益。
 
-### Verifiable fraud proofs
+### 可验证的欺诈证明
 
-Unlike many other interchain communication protocols, Hyperlane's slashing protocol uses **verifiable fraud proofs**.
+与许多其他跨链通信协议不同，Hyperlane 的惩罚协议使用 **可验证的欺诈证明**。
 
-This means that the Hyperlane protocol is able to verify whether or not a validator signed a fraudulent checkpoint without any participation from trusted parties.
+这意味着 Hyperlane 协议能够在没有可信方参与的情况下验证验证者是否签署了欺诈性检查点。
 
-This is possible because the stake put up by validators lives on the **same chain** as the state (i.e. the Mailbox merkle root) that they're attesting to. The slashing smart contract can compare the validator signature with the latest root, and do some complicated merkle tree manipulation to confirm whether or not the checkpoint signed by the validator was fraudulent.
+这是可能的，因为验证者所提供的质押与他们所证明的状态（即邮箱默克尔根）在 **同一链** 上。惩罚智能合约可以将验证者的签名与最新的根进行比较，并进行一些复杂的默克尔树操作，以确认验证者签署的检查点是否存在欺诈行为。
 
-In many other interchain communication protocols, it is common for a validator's stake to live on a **different chain** than the chain from which an interchain message originated.
+在许多其他跨链通信协议中，验证者的质押通常位于与跨链消息来源不同的 **链** 上。
 
-What this means is that in order for a fraudulent validator to have their stake slashed, the same message passing protocol must relay a message to the chain where the stake lives. You can see the problem with this right? The same validator set where fraud occurred is the mechanism by which evidence of that fraud is delivered, what could go wrong?
+这意味着，为了惩罚欺诈的验证者，他们的质押必须通过相同的消息传递协议传递到质押所在的链。你能看到这个问题吗？发生欺诈的同一验证者集是传递欺诈证据的机制，这样会有什么问题呢？
 
-Hyperlane doesn't want to allow for that possibility, thus in Hyperlane validators must keep their bonded stake on the origin chain for which they are validating. This means fraud proofs are trustlessly verifiable. The record of fraud that is examined for slashing exists in the same environment as the stake to be slashed, leaving no room for error with the process of fraud proofs.
+Hyperlane 不希望允许这种可能性，因此在 Hyperlane 中，验证者必须将其绑定的质押保留在他们所验证的原始链上。这意味着欺诈证明是可以无信任验证的。用于惩罚的欺诈记录存在于与要惩罚的质押相同的环境中，消除了欺诈证明过程中的错误空间。

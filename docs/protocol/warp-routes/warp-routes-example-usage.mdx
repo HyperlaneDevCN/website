@@ -1,22 +1,22 @@
-# Warp Routes: Example Usage
+# Warp Routes: 示例用法
 
-Warp Routes define how assets move between chains, whether as native tokens, synthetic representations, or collateral-backed assets. The choice of route depends on the asset type and the desired behavior on the destination chain.
+Warp Routes 定义了资产在链之间的移动方式，无论是作为原生代币、合成表示，还是抵押支持的资产。选择路线取决于资产类型和在目标链上的期望行为。
 
-## Warp Route Combinations
+## Warp Route 组合
 
-### 1. Native to Native
+### 1. 原生到原生
 
-This route allows for the transfer of native tokens between chains that both use their own native tokens.
+此路线允许在两个都使用自己原生代币的链之间转移原生代币。
 
 :::info
-This type of route should only be used when both networks have native tokens of equivalent value, e.g. inEVM & Ethereum.
+此类型的路线仅应在两个网络具有等值的原生代币时使用，例如 inEVM 和以太坊。
 :::
 
-#### Setup
+#### 设置
 
-- **HypNative** contract deployed on both chains.
+- **HypNative** 合约已在两个链上部署。
 
-#### Example Flow
+#### 示例流程
 
 ```
 Transaction Type: Native to Native Transfer
@@ -25,7 +25,7 @@ To: inEVM (ETH)
 Amount: 1 ETH
 ```
 
-#### Diagram
+#### 图示
 
 ```mermaid
 graph LR
@@ -34,20 +34,20 @@ graph LR
     C -->|ETH equivalent| D[Alice on inEVM]
 ```
 
-#### Use Case
+#### 用例
 
-- Alice wants to quickly move value from Ethereum to inEVM.
+- Alice 想要快速将价值从以太坊转移到 inEVM。
 
-### 2. Native to Synthetic
+### 2. 原生到合成
 
-This route creates a synthetic representation of a native token on another chain.
+此路线在另一条链上创建原生代币的合成表示。
 
-#### Setup
+#### 设置
 
-- **HypNative** contract deployed on the origin chain where the native asset exists.
-- **HypERC20** contract deployed on the destination chain where the synthetic token is minted.
+- **HypNative** 合约已在原链上部署，原链上存在原生资产。
+- **HypERC20** 合约已在目标链上部署，合成代币在此铸造。
 
-#### Example Flow
+#### 示例流程
 
 ```
 Transaction Type: Minting Synthetic Token from Native Token
@@ -56,7 +56,7 @@ To: Optimism (wCELO)
 Amount: 100 CELO
 ```
 
-#### Diagram
+#### 图示
 
 ```mermaid
 graph LR
@@ -65,20 +65,20 @@ graph LR
     C -->|Mint 100 wCELO| D[Alice on Optimism]
 ```
 
-#### Use Case
+#### 用例
 
-- A Celo-based project wants to make their native CELO token available for use on Optimism.
+- 一个基于 Celo 的项目希望在 Optimism 上使用他们的原生 CELO 代币。
 
-### 3. Collateral to Synthetic
+### 3. 抵押到合成
 
-This route allows for the creation of synthetic tokens based on collateralized ERC20 tokens.
+此路线允许基于抵押的 ERC20 代币创建合成代币。
 
-#### Setup
+#### 设置
 
-- **Collateral contract (HypERC20Collateral)** is deployed on the source chain where the original asset exists.
-- **Synthetic contract (HypERC20)** is deployed on the destination chain, where the asset is minted.
+- **抵押合约 (HypERC20Collateral)** 已在源链上部署，原始资产存在于此。
+- **合成合约 (HypERC20)** 已在目标链上部署，资产在此铸造。
 
-#### Example Flow
+#### 示例流程
 
 ```
 Transaction Type: Minting Synthetic Token from Collateral Token
@@ -87,7 +87,7 @@ To: Arbitrum (wUSDC - Minted Synthetic Asset) - Synthetic Destination
 Amount: 1000 USDC
 ```
 
-#### Diagram
+#### 图示
 
 ```mermaid
 graph LR
@@ -96,6 +96,6 @@ graph LR
     C -->|Mint 1000 wUSDC| D[Alice on Arbitrum]
 ```
 
-#### Use Case
+#### 用例
 
-- Alice wants to use her USDC on Arbitrum without moving actual USDC to Arbitrum or relying on Arbitrum's bridged USDC.
+- Alice 希望在 Arbitrum 上使用她的 USDC，而无需将实际的 USDC 移动到 Arbitrum 或依赖 Arbitrum 的桥接 USDC。

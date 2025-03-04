@@ -1,12 +1,12 @@
-# `Message` Library
+# `Message` 库
 
-The `Message` library helps you format and parse interchain messages for use with the Hyperlane `Mailbox` contract.
+`Message` 库帮助您格式化和解析用于 Hyperlane `Mailbox` 合约的跨链消息。
 
-- **Construct Messages**: `formatMessage` lets you pack all the key fields into a single, ready-to-send message.
-- **Extract Fields**: Functions like `version`, `nonce`, `origin`, `senderAddress`, `recipientAddress`, and `body` help you pull out specific parts of a message for processing.
-- **Get Message ID**: `id` generates a unique identifier for each message using `keccak256`.
+- **构造消息**: `formatMessage` 让您可以将所有关键字段打包成一个可发送的消息。
+- **提取字段**: 函数如 `version`、`nonce`、`origin`、`senderAddress`、`recipientAddress` 和 `body` 帮助您提取消息中的特定部分进行处理。
+- **获取消息 ID**: `id` 使用 `keccak256` 为每条消息生成唯一标识符。
 
-## Message Library
+## Message 库
 
 ```solidity file=<rootDir>/node_modules/@hyperlane-xyz/core/contracts/libs/Message.sol
 

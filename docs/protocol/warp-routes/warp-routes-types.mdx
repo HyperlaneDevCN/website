@@ -1,121 +1,121 @@
-# Warp Routes: Types
+# 传送路线：类型
 
-Warp routes are Hyperlane's implementation of token bridging, allowing for permissionless transfer of native, ERC20, and synthetic (newly deployed ERC20) assets across any chain via Hyperlane. This document provides details on all warp route types.
+传送路线是 Hyperlane 实现的代币桥接，允许通过 Hyperlane 在任何链上无权限地转移原生、ERC20 和合成（新部署的 ERC20）资产。本文档提供了所有传送路线类型的详细信息。
 
-| **Warp Route Type**      | **Description**                                                                                  |
-| ------------------------ | ------------------------------------------------------------------------------------------------ |
-| Native Token Warp Routes | Enables direct transfers of native gas tokens (e.g., ETH) across chains without wrapping.        |
-| Collateral-Backed ERC20  | Locks ERC20 tokens as collateral on the source chain for cross-chain transfers.                  |
-| Synthetic ERC20          | Mints new ERC20 tokens on the destination chain to represent the original tokens.                |
-| Specialized Warp Routes  | Adds advanced features or integrates with specific use cases (e.g., vaults, fiat-backed tokens.) |
+| **传送路线类型**        | **描述**                                                                                      |
+| ---------------------- | -------------------------------------------------------------------------------------------- |
+| 原生代币传送路线       | 允许在不同链之间直接转移原生燃气代币（例如，ETH）而无需包装。                                   |
+| 抵押支持的 ERC20      | 在源链上锁定 ERC20 代币作为抵押，以进行跨链转移。                                            |
+| 合成 ERC20            | 在目标链上铸造新的 ERC20 代币，以代表原始代币。                                              |
+| 专用传送路线          | 增加高级功能或与特定用例集成（例如，金库、法币支持的代币）。                                   |
 
-_Please note that this document does not include ERC721 warp routes._
+_请注意，本文档不包括 ERC721 传送路线。_
 
-## Core Warp Route Types
+## 核心传送路线类型
 
-### Native Token Warp Routes
+### 原生代币传送路线
 
-Implemented in `HypNative.sol`, native warp routes handle the transfer of native gas tokens (e.g. ETH on Ethereum or Arbitrum, MNT on Mantle) across different chains.
+在 `HypNative.sol` 中实现，原生传送路线处理原生燃气代币（例如以太坊或 Arbitrum 上的 ETH，Mantle 上的 MNT）在不同链之间的转移。
 
-#### Features
+#### 特性
 
-- Directly transfers native tokens without wrapping.
-- Uses `msg.value` for transfer amount.
-- Handles excess `msg.value` as hook payment.
-- Supports donations through a `receive()` function.
+- 直接转移原生代币，无需包装。
+- 使用 `msg.value` 作为转移金额。
+- 将多余的 `msg.value` 作为 hook 支付。
+- 通过 `receive()` 函数支持捐赠。
 
-See [the implementation](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/main/solidity/contracts/token/HypNative.sol) for more details.
+有关更多详细信息，请参见 [实现](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/main/solidity/contracts/token/HypNative.sol)。
 
-### Collateral-Backed ERC20 Warp Routes
+### 抵押支持的 ERC20 传送路线
 
-Implemented in `HypERC20Collateral.sol`, collateral warp routes enable ERC20 tokens to be locked as collateral on the source chain and then used to mint a synthetic representation on the destination chain.
+在 `HypERC20Collateral.sol` 中实现，抵押传送路线允许在源链上锁定 ERC20 代币作为抵押，然后在目标链上铸造合成表示。
 
-#### Features
+#### 特性
 
-- Wraps existing ERC20 tokens as collateral for transfers.
-- Locks tokens in the contract on the source chain.
-- Releases equivalent tokens on the destination chain.
-- Uses SafeERC20 for secure token transfers.
+- 将现有的 ERC20 代币包装为抵押以进行转移。
+- 在源链上锁定代币。
+- 在目标链上释放等值代币。
+- 使用 SafeERC20 进行安全的代币转移。
 
-See [the implementation](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/main/solidity/contracts/token/HypERC20Collateral.sol) for more details.
+有关更多详细信息，请参见 [实现](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/main/solidity/contracts/token/HypERC20Collateral.sol)。
 
-### Synthetic ERC20 Warp Routes
+### 合成 ERC20 传送路线
 
-Implemented in `HypERC20.sol`, synthetic warp routes mint new tokens on the destination chain that represent the original tokens from the source chain. The original tokens are not transferred but remain locked.
+在 `HypERC20.sol` 中实现，合成传送路线在目标链上铸造新的代币，以代表源链上的原始代币。原始代币不会被转移，而是保持锁定状态。
 
-#### Features
+#### 特性
 
-- Maintains consistent total supply across all chains.
-- Supports custom token attributes (name, symbol, decimals).
-- Mints new tokens on the destination chain.
-- Burns tokens on the source chain when transferred back.
+- 在所有链上保持一致的总供应量。
+- 支持自定义代币属性（名称、符号、小数位数）。
+- 在目标链上铸造新代币。
+- 在源链上转移回时销毁代币。
 
-See [the implementation](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/main/solidity/contracts/token/HypERC20.sol) for more details.
+有关更多详细信息，请参见 [实现](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/main/solidity/contracts/token/HypERC20.sol)。
 
-## Advanced Features
+## 高级功能
 
-### TokenRouter Functionality
+### TokenRouter 功能
 
-All warp routes extend the `TokenRouter` contract, which provides the core functionality for warp route token transfers.
+所有传送路线都扩展了 `TokenRouter` 合约，该合约提供了传送路线代币转移的核心功能。
 
-#### Features
+#### 特性
 
-1. **Message Structure**: Uses [TokenMessage](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/main/solidity/contracts/token/libs/TokenMessage.sol) library for encoding and decoding token transfer messages.
-2. **Transfer Initiation**: `transferRemote` function initiates cross-chain transfers.
-3. **Message Handling**: `_handle` function processes incoming transfer messages.
-4. **Abstract Methods**:
-   - `_transferFromSender`: Implemented by all warp routes to handle token collection.
-   - `_transferTo`: Implemented by all warp routes to handle token distribution.
+1. **消息结构**：使用 [TokenMessage](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/main/solidity/contracts/token/libs/TokenMessage.sol) 库进行代币转移消息的编码和解码。
+2. **转移启动**：`transferRemote` 函数启动跨链转移。
+3. **消息处理**：`_handle` 函数处理传入的转移消息。
+4. **抽象方法**：
+   - `_transferFromSender`：由所有传送路线实现以处理代币收集。
+   - `_transferTo`：由所有传送路线实现以处理代币分发。
 
-#### TokenMessage Format
+#### TokenMessage 格式
 
 ```solidity
-[32 bytes for recipient][32 bytes for amount][remaining bytes for metadata]
+[32 字节的接收者][32 字节的金额][剩余字节的元数据]
 ```
 
-This standardized format ensures consistent handling across different warp route implementations while allowing for extensibility through metadata.
+这种标准化格式确保在不同传送路线实现之间的一致处理，同时允许通过元数据进行扩展。
 
-See [the implementation](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/main/solidity/contracts/token/libs/TokenRouter.sol) for more details.
+有关更多详细信息，请参见 [实现](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/main/solidity/contracts/token/libs/TokenRouter.sol)。
 
-### FastTokenRouter Transfers
+### FastTokenRouter 转移
 
-Implemented in `FastTokenRouter.sol`, this router extends TokenRouter and provides faster token transfers through a liquidity provider mechanism.
+在 `FastTokenRouter.sol` 中实现，该路由器扩展了 TokenRouter，并通过流动性提供者机制提供更快的代币转移。
 
-#### Features
+#### 特性
 
-- Allows liquidity providers to fulfill transfer requests before message processing.
-- Includes a `fastFee` to incentivize liquidity providers.
-- Introduces `fastTransferId` for unique transfer identification.
+- 允许流动性提供者在消息处理之前满足转移请求。
+- 包含 `fastFee` 以激励流动性提供者。
+- 引入 `fastTransferId` 以进行唯一转移标识。
 
-See [the implementation](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/main/solidity/contracts/token/libs/FastTokenRouter.sol) for more details.
+有关更多详细信息，请参见 [实现](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/main/solidity/contracts/token/libs/FastTokenRouter.sol)。
 
-## Specialized Warp Route Extensions
+## 专用传送路线扩展
 
-### 1. Fast Collateral Transfers (FastHypERC20Collateral)
+### 1. 快速抵押转移 (FastHypERC20Collateral)
 
-- Combines fast transfer capabilities with collateral-backed ERC20 functionality.
-- See [the implementation](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/main/solidity/contracts/token/extensions/FastHypERC20Collateral.sol) for more details.
+- 将快速转移能力与抵押支持的 ERC20 功能相结合。
+- 有关更多详细信息，请参见 [实现](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/main/solidity/contracts/token/extensions/FastHypERC20Collateral.sol)。
 
-### 2. Vault Integration (HypERC4626OwnerCollateral, HypERC4626Collateral)
+### 2. 金库集成 (HypERC4626OwnerCollateral, HypERC4626Collateral)
 
-- Allows for yield generation on collateral by integrating with ERC-4626 vaults.
-- See [the implementation](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/main/solidity/contracts/token/extensions/HypERC4626OwnerCollateral.sol) & [rebasing variant](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/main/solidity/contracts/token/extensions/HypERC4626Collateral.sol) and for more details.
+- 通过与 ERC-4626 金库集成，允许对抵押进行收益生成。
+- 有关更多详细信息，请参见 [实现](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/main/solidity/contracts/token/extensions/HypERC4626OwnerCollateral.sol) 和 [再基准变体](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/main/solidity/contracts/token/extensions/HypERC4626Collateral.sol)。
 
-### 3. Fiat-Backed Tokens (HypFiatToken)
+### 3. 法币支持的代币 (HypFiatToken)
 
-- Designed for stablecoins and other fiat-backed tokens, implementing specific mint and burn operations.
-- See [the implementation](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/main/solidity/contracts/token/extensions/HypFiatToken.sol) for more details.
+- 专为稳定币和其他法币支持的代币设计，实施特定的铸造和销毁操作。
+- 有关更多详细信息，请参见 [实现](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/main/solidity/contracts/token/extensions/HypFiatToken.sol)。
 
-### 4. Scaled Native Tokens (HypNativeScaled)
+### 4. 扩展原生代币 (HypNativeScaled)
 
-- Scales native token values for consistency across chains with different decimals.
-- See [the implementation](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/main/solidity/contracts/token/extensions/HypNativeScaled.sol) for more details.
+- 为在不同小数位的链之间保持一致性而扩展原生代币值。
+- 有关更多详细信息，请参见 [实现](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/main/solidity/contracts/token/extensions/HypNativeScaled.sol)。
 
-### 5. xERC20 Integration (HypXERC20 & HypXERC20Lockbox)
+### 5. xERC20 集成 (HypXERC20 & HypXERC20Lockbox)
 
-- Enables cross-chain transfers of xERC20 tokens, integrating with lockbox mechanisms for conversions.
-- See the [HypXERC20 implementation](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/main/solidity/contracts/token/extensions/HypXERC20.sol) and the [HypXERC20Lockbox implementation](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/main/solidity/contracts/token/extensions/HypXERC20Lockbox.sol) for more details.
+- 启用 xERC20 代币的跨链转移，集成锁箱机制以进行转换。
+- 有关更多详细信息，请参见 [HypXERC20 实现](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/main/solidity/contracts/token/extensions/HypXERC20.sol) 和 [HypXERC20Lockbox 实现](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/main/solidity/contracts/token/extensions/HypXERC20Lockbox.sol)。
 
-## References
+## 参考
 
-For setup examples & use cases, check out [Warp Routes: Example Usage](./warp-routes-example-usage.mdx).
+有关设置示例和用例，请查看 [Warp Routes：示例用法](./warp-routes-example-usage.mdx)。

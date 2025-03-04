@@ -1,12 +1,12 @@
-# Protocol Overview
+# 协议概述
 
-Hyperlane is the first [permissionless interoperability](../deploy-hyperlane.mdx) layer that allows smart contract developers to send arbitrary data between blockchains.
+Hyperlane 是第一个 [无权限的互操作性](../deploy-hyperlane.mdx) 层，允许智能合约开发者在区块链之间发送任意数据。
 
-Developers can use Hyperlane to move tokens, execute function calls, and many other things that allow for the creation of interchain applications, apps that can be accessed by users on any blockchain.
+开发者可以使用 Hyperlane 移动代币、执行函数调用，以及其他许多功能，从而创建跨链应用程序，这些应用程序可以被任何区块链上的用户访问。
 
-Users interface with the Hyperlane protocol via [mailbox](./mailbox.mdx) smart contracts, which provide an on-chain messaging interface to send and receive interchain messages.
+用户通过 [邮箱](./mailbox.mdx) 智能合约与 Hyperlane 协议进行交互，这些合约提供了一个链上消息接口，用于发送和接收跨链消息。
 
-Hyperlane takes a modular approach to security, allowing applications to configure and choose from a selection of [Interchain Security Modules](../protocol/ISM/modular-security.mdx) (ISMs). Applications may specify an ISM to customize the security model that secures their integration with the Hyperlane messaging interface.
+Hyperlane 采取模块化的安全性方法，允许应用程序配置并选择一系列 [跨链安全模块](../protocol/ISM/modular-security.mdx) (ISM)。应用程序可以指定一个 ISM，以自定义保护其与 Hyperlane 消息接口集成的安全模型。
 
 ```mermaid
 flowchart TB

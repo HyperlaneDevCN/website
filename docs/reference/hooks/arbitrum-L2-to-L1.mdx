@@ -1,21 +1,21 @@
-# Arbitrum L2 to L1 Hook
+# Arbitrum L2 到 L1 的 Hook
 
-Arbitrum's Outbox system allows for arbitrary L2 to L1 contract calls after the optimistic challenge period, i.e., messages initiated on the L2 chain which eventually resolve in execution on L1. See more details about [here](https://docs.arbitrum.io/how-arbitrum-works/arbos/l2-l1-messaging). Hyperlane can wrap around the Outbox system to leverage the optimistic security of Arbitrum L2 (with a 7-day withdrawal period and operational fraud proofs) to secure L2 to L1 messages from any Arbitrum Nitro rollups. We've implemented the [ArbL2ToL1Hook](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/main/solidity/contracts/hooks/ArbL2ToL1Hook.sol) and [ArbL2ToL1Ism](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/main/solidity/contracts/isms/hook/ArbL2ToL1Ism.sol).
+Arbitrum 的 Outbox 系统允许在乐观挑战期后进行任意的 L2 到 L1 合约调用，即在 L2 链上发起的消息最终在 L1 上执行。有关更多详细信息，请参见 [这里](https://docs.arbitrum.io/how-arbitrum-works/arbos/l2-l1-messaging)。Hyperlane 可以围绕 Outbox 系统进行封装，以利用 Arbitrum L2 的乐观安全性（具有 7 天的提款期和操作欺诈证明）来保护来自任何 Arbitrum Nitro rollups 的 L2 到 L1 消息。我们实现了 [ArbL2ToL1Hook](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/main/solidity/contracts/hooks/ArbL2ToL1Hook.sol) 和 [ArbL2ToL1Ism](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/main/solidity/contracts/isms/hook/ArbL2ToL1Ism.sol)。
 
-## How it works
+## 工作原理
 
 :::note
 
-Outgoing messages from L2 cannot provide in-protocol automatic L1 execution because Ethereum doesn't offer scheduled execution affordances through the L1 node.
+来自 L2 的出站消息无法提供协议内的自动 L1 执行，因为以太坊不通过 L1 节点提供计划执行的便利。
 
 :::
 
-The `ArbL2ToL1Hook` sends the encoded function call with the `messageId` to the `ArbSys` precompile on the L2. After waiting for the withdrawal period, you can use the `getOutboxProof()` on the L2 to get a merkle proof of the message. From here, you have two options:
+`ArbL2ToL1Hook` 将编码的函数调用与 `messageId` 发送到 L2 上的 `ArbSys` 预编译。在等待提款期后，您可以在 L2 上使用 `getOutboxProof()` 获取消息的默克尔证明。从这里，您有两个选项：
 
-- **Option A.** You can call the `ArbL2ToL1Ism`'s verify function via the `mailbox.process()` call with the proof and the other encoded data which in turn calls the `outbox.executeTransaction()` checking for the message sender and message data validity.
-- **Option B.** You can directly call the `outbox.executeTransaction()` with the proof and the other encoded data. However, you'll need to make a second call to the `ArbL2ToL1Ism`'s verify function to deliver the message. This option also you delivery of message values to the recipient contract.
+- **选项 A.** 您可以通过 `mailbox.process()` 调用 `ArbL2ToL1Ism` 的验证函数，使用证明和其他编码数据，这将调用 `outbox.executeTransaction()`，检查消息发送者和消息数据的有效性。
+- **选项 B.** 您可以直接使用证明和其他编码数据调用 `outbox.executeTransaction()`。但是，您需要再次调用 `ArbL2ToL1Ism` 的验证函数以传递消息。此选项还需要将消息值传递给接收合约。
 
-### Option A
+### 选项 A
 
 ```mermaid
 flowchart TB
@@ -52,9 +52,9 @@ flowchart TB
     style L_2 fill: #162c4f
 ```
 
-### Option B
+### 选项 B
 
-Note: here, the relayer is responsible for encoding the message proof from `arbSys.getOutboxProof()` and calling the `outbox.executeTransaction()` function.
+注意：在这里，转发者负责从 `arbSys.getOutboxProof()` 编码消息证明并调用 `outbox.executeTransaction()` 函数。
 
 ```mermaid
 flowchart TB

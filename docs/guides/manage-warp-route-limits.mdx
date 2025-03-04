@@ -1,33 +1,33 @@
-# Manage Warp Route Limits on xERC20 and FiatToken
+# 管理 xERC20 和 FiatToken 的 Warp 路由限制
 
-## xERC20 Deployments
+## xERC20 部署
 
-Warp Routes support [`xERC20` tokens](https://github.com/defi-wonderland/xERC20). Follow these steps to configure `xERC20` for Warp Route usage:
+Warp 路由支持 [`xERC20` 代币](https://github.com/defi-wonderland/xERC20)。请按照以下步骤配置 `xERC20` 以用于 Warp 路由：
 
-1. **Ownership Transfer**: 
-- Ensure that the ownership of the [`xERC20` contract](https://github.com/defi-wonderland/xERC20/blob/main/solidity/contracts/XERC20.sol) is transferred to a secure multisig for security purposes. This step is crucial to prevent unauthorized changes. 
-- The `xERC20` contract uses OpenZeppelin's `Ownable` interface. Use the `transferOwnership` function to complete this step.
-2. **Mint Limit Configuration**:
-- The minting and burning limits for the Warp Route contract are managed through the [`setLimits`](https://github.com/defi-wonderland/xERC20/blob/main/solidity/contracts/XERC20.sol#L85) function in the `xERC20` contract. This function must be called by the contract owner.
-  - The `xERC20` contract uses a 24-hour window to manage limits. This is defined by the [`_DURATION`](https://github.com/defi-wonderland/xERC20/blob/main/solidity/contracts/XERC20.sol#L13) variable, which is set to 1 days (24 hours). The current available limits are calculated dynamically using the [`_getCurrentLimit`](https://github.com/defi-wonderland/xERC20/blob/main/solidity/contracts/XERC20.sol#L234) function.
-  - If 24 hours (`_DURATION`) have passed since the last use, the limit will automatically restore to the full `maxLimit`.
-- Ensure limits are appropriate for the expected volume to prevent disruptions. Review and adjust the limits based on transaction volumes and expected usage patterns.
+1. **所有权转移**: 
+- 确保将 [`xERC20` 合约](https://github.com/defi-wonderland/xERC20/blob/main/solidity/contracts/XERC20.sol) 的所有权转移到一个安全的多签钱包，以确保安全性。此步骤对于防止未经授权的更改至关重要。 
+- `xERC20` 合约使用 OpenZeppelin 的 `Ownable` 接口。使用 `transferOwnership` 函数完成此步骤。
+2. **铸造限制配置**:
+- Warp 路由合约的铸造和销毁限制通过 `xERC20` 合约中的 [`setLimits`](https://github.com/defi-wonderland/xERC20/blob/main/solidity/contracts/XERC20.sol#L85) 函数进行管理。此函数必须由合约所有者调用。
+  - `xERC20` 合约使用 24 小时窗口来管理限制。这由 [`_DURATION`](https://github.com/defi-wonderland/xERC20/blob/main/solidity/contracts/XERC20.sol#L13) 变量定义，该变量设置为 1 天（24 小时）。当前可用限制通过 [`_getCurrentLimit`](https://github.com/defi-wonderland/xERC20/blob/main/solidity/contracts/XERC20.sol#L234) 函数动态计算。
+  - 如果自上次使用以来已过去 24 小时（`_DURATION`），限制将自动恢复到完整的 `maxLimit`。
+- 确保限制适合预期的交易量，以防止中断。根据交易量和预期使用模式审查和调整限制。
 
-## FiatToken Deployments
+## FiatToken 部署
 
-Warp Routes support [Circle's Bridged USDC in the form of a minter for `FiatToken`](https://github.com/circlefin/stablecoin-evm) (See more on the repo for documentation). There are three roles that are relevant on the `FiatToken` and `MasterMinter` contracts:
+Warp 路由支持 [Circle 的桥接 USDC 作为 `FiatToken` 的铸造者](https://github.com/circlefin/stablecoin-evm)（有关文档，请参见该仓库）。在 `FiatToken` 和 `MasterMinter` 合约中，有三个相关角色：
 
-1. **`MasterMinter` owner** is the account that can set controllers and minters.
-2. **`MasterMinter` controller** is the account that can set the mint limits for its assigned minters.
-3. **`MasterMinter` minter** is the account that can actually call `mint` on `FiatToken`. 
+1. **`MasterMinter` 所有者**是可以设置控制者和铸造者的账户。
+2. **`MasterMinter` 控制者**是可以为其分配的铸造者设置铸造限制的账户。
+3. **`MasterMinter` 铸造者**是可以实际调用 `FiatToken` 上的 `mint` 的账户。
 
-The owner and controller should typically be set to a Safe multisig for enhanced security, the minter is the Warp Route contract address on the local chain. Mint limits for `FiatToken` are absolute, meaning they do not reset automatically and must be updated if required.
+所有者和控制者通常应设置为安全多签钱包，以增强安全性，铸造者是本地链上的 Warp 路由合约地址。`FiatToken` 的铸造限制是绝对的，意味着它们不会自动重置，必要时必须更新。
 
-There are three actions that should be set on the `MasterMinter` contract to be ready for usage:
+在 `MasterMinter` 合约上应设置三个操作以准备使用：
 
-1. **Remove the previous test controller:**: 
-- As the owner, remove the previous test controller via the [`removeController(address _controller)` function](https://github.com/circlefin/stablecoin-evm/blob/master/contracts/minting/Controller.sol#L87C14-L87C51)
-2. **Set the controller and minter:**
-- As the owner, you should set the controller and minter via the [`configureController(address controller, address worker)` function](https://github.com/circlefin/stablecoin-evm/blob/master/contracts/minting/Controller.sol#L70). The controller can be the same as the owner, the minter should be the warp route address.
-3. **Set the mint limit for the minter:**
-- As the controller, you should set the mint limit for the minter via the [`configureMinter(uint256 _newAllowance)` function](https://github.com/circlefin/stablecoin-evm/blob/master/contracts/minting/MintController.sol#L116). This limit is not being continuously reset, so either set it to a sufficiently large value (like `cast max-uint`) or monitor the usage and adjust accordingly.
+1. **移除之前的测试控制者**: 
+- 作为所有者，通过 [`removeController(address _controller)` 函数](https://github.com/circlefin/stablecoin-evm/blob/master/contracts/minting/Controller.sol#L87C14-L87C51) 移除之前的测试控制者。
+2. **设置控制者和铸造者**:
+- 作为所有者，您应通过 [`configureController(address controller, address worker)` 函数](https://github.com/circlefin/stablecoin-evm/blob/master/contracts/minting/Controller.sol#L70) 设置控制者和铸造者。控制者可以与所有者相同，铸造者应为 Warp 路由地址。
+3. **为铸造者设置铸造限制**:
+- 作为控制者，您应通过 [`configureMinter(uint256 _newAllowance)` 函数](https://github.com/circlefin/stablecoin-evm/blob/master/contracts/minting/MintController.sol#L116) 为铸造者设置铸造限制。此限制不会持续重置，因此可以将其设置为足够大的值（如 `cast max-uint`），或监控使用情况并相应调整。

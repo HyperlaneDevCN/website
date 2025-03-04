@@ -1,13 +1,13 @@
-# Wormhole ISM
+# 虫洞 ISM
 
 :::warning
-`WormholeISM` is coming soon and is not yet implemented. This page is shown for informational purposes only. Details may change as the design matures.
+`WormholeISM` 即将推出，目前尚未实现。此页面仅供参考，具体细节可能会随着设计的成熟而变化。
 :::
 
-The `WormholeISM` encodes the security model used by [Wormhole's](https://wormhole.com/) interchain communication protocol.
+`WormholeISM` 编码了 Wormhole 的跨链通信协议所使用的安全模型。
 
-This ISM requires that 13 of the 19 [Wormhole guardians](https://wormhole.com/network/#guardians) attest to the validity of a Hyperlane message.
+该 ISM 要求 19 名 Wormhole 守护者中的 13 名对 Hyperlane 消息的有效性进行认证。
 
-## Compose
+## 组合
 
-Developers can compose a Wormhole ISM with a [Multisig ISM](../multisig-ISM.mdx) using an [Aggregation ISM](../aggregation-ISM.mdx) to require that m of n Hyperlane validators **and** 13-of-19 Wormhole guardians verify a message.
+开发者可以使用 [聚合 ISM](../aggregation-ISM.mdx) 将 Wormhole ISM 与 [多重签名 ISM](../multisig-ISM.mdx) 组合，以要求 m 名 Hyperlane 验证者 **和** 19 名 Wormhole 守护者中的 13 名对消息进行验证。

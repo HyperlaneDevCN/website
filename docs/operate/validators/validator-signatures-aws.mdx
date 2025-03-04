@@ -1,52 +1,52 @@
-# AWS Signatures Bucket Setup
+# AWS 签名桶设置
 
-Configure your signing key and S3 bucket
+配置您的签名密钥和 S3 桶
 
 :::info
 
-These instructions are for a production environment where Validator keys exist in AWS's Key Management Service and Validator signatures are posted publicly in an S3 bucket.
+这些说明适用于生产环境，其中验证者密钥存在于 AWS 的密钥管理服务中，验证者签名公开发布在 S3 桶中。
 
-If you're only intending to run a Validator for testing or development purposes, consider following the [local setup guide](../../guides/deploy-hyperlane-local-agents.mdx) instead.
+如果您仅打算运行一个用于测试或开发目的的验证者，请考虑遵循 [本地设置指南](../../guides/deploy-hyperlane-local-agents.mdx)。
 
 :::
 
-### 1. Create an AWS IAM user, and a signing key
+### 1. 创建 AWS IAM 用户和签名密钥
 
-Follow the instructions in [Agent Keys](../set-up-agent-keys.mdx) to generate an AWS IAM user and either a KMS or a hexadecimal key. You will use this key's credentials in the following steps.
+请按照 [代理密钥](../set-up-agent-keys.mdx) 中的说明生成 AWS IAM 用户，并生成 KMS 密钥或十六进制密钥。您将在接下来的步骤中使用此密钥的凭据。
 
-### 2. Create an S3 bucket
+### 2. 创建 S3 桶
 
 :::info
-Note that Step 1 (creating the IAM user) is required for setting up the S3 bucket, so is required regardless of the type of key used.
+请注意，步骤 1（创建 IAM 用户）是设置 S3 桶所必需的，因此无论使用何种类型的密钥都必须执行此步骤。
 :::
 
-Your Validator will post their signatures to this bucket.
+您的验证者将把其签名发布到此桶中。
 
-1. Go to AWS's S3 in the AWS console.
-2. On the right, click the orange "Create Bucket" button
-3. Pick an informative bucket name, such as `hyperlane-validator-signatures-${validator_name}-${chain_name}`
-4. Consider choosing the same region as the KMS key you created in the previous step.
-5. Keep the recommended "ACLs disabled" setting for object ownership.
-6. Configure public access settings so that the relayer can read your signatures
-   1. Uncheck "Block all public access"
-   2. Check the first two options that block access via access control lists
-   3. Leave the last two options unchecked, we will be granting public read access via a bucket policy
-   4. Acknowledge that these settings may result in public access to your bucket
-7. The remaining default settings are fine, click the orange "Create bucket" button on the bottom
+1. 在 AWS 控制台中转到 AWS 的 S3。
+2. 在右侧，点击橙色的“创建桶”按钮。
+3. 选择一个信息丰富的桶名称，例如 `hyperlane-validator-signatures-${validator_name}-${chain_name}`。
+4. 考虑选择与您在上一步中创建的 KMS 密钥相同的区域。
+5. 保持推荐的“禁用 ACL”设置以进行对象所有权。
+6. 配置公共访问设置，以便中继器可以读取您的签名。
+   1. 取消选中“阻止所有公共访问”。
+   2. 选中前两个选项以阻止通过访问控制列表的访问。
+   3. 保持最后两个选项未选中，我们将通过桶策略授予公共读取访问权限。
+   4. 确认这些设置可能会导致您的桶公开访问。
+7. 其余默认设置是可以的，点击底部的橙色“创建桶”按钮。
 
-### 3. Configure S3 bucket permissions
+### 3. 配置 S3 桶权限
 
-Your Validator IAM user will need write permissions, and it should be publicly readable by the Relayer.
+您的验证者 IAM 用户需要写入权限，并且应该对中继器公开可读。
 
-1. Navigate back to "Identity and Access Management (IAM)" in the AWS console
-2. Under "IAM resources" you should see at least one "User", click into that
-3. Click on the name of the user that you provisioned earlier (e.g. `hyperlane-validator-${chain_name}`)
-4. Copy the "User ARN" to your clipboard, it should look something like `arn:aws:iam::791444913613:user/hyperlane-validator-${chain_name}`
-5. Navigate back to "S3" in the AWS console
-6. Click on the name of the bucket you just created
-7. Just under the name of the bucket, click "Permissions"
-8. Scroll down to "Bucket policy" and click "Edit"
-9. Enter the following contents. The Bucket ARN is shown just above where you enter the policy
+1. 返回 AWS 控制台中的“身份和访问管理（IAM）”。
+2. 在“IAM 资源”下，您应该看到至少一个“用户”，点击进入。
+3. 点击您之前配置的用户的名称（例如 `hyperlane-validator-${chain_name}`）。
+4. 将“用户 ARN”复制到剪贴板，它应该类似于 `arn:aws:iam::791444913613:user/hyperlane-validator-${chain_name}`。
+5. 返回 AWS 控制台中的“S3”。
+6. 点击您刚创建的桶的名称。
+7. 在桶名称下方，点击“权限”。
+8. 向下滚动到“桶策略”，然后点击“编辑”。
+9. 输入以下内容。桶 ARN 显示在您输入策略的地方上方。
 
 ```json
 {
@@ -72,6 +72,6 @@ Your Validator IAM user will need write permissions, and it should be publicly r
 
 :::tip
 
-Advanced users may consider using the [S3 Terraform module](../deploy-with-terraform.mdx#iam--kms) instead to create the S3 bucket with the correct permissions.
+高级用户可以考虑使用 [S3 Terraform 模块](../deploy-with-terraform.mdx#iam--kms) 来创建具有正确权限的 S3 桶。
 
 :::

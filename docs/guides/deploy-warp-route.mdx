@@ -1,139 +1,139 @@
 import CliChainsPartial from "/docs/partials/deploy-hyperlane/_cli-chains.mdx";
 
-# How to Bridge a Token with Hyperlane Warp Routes
+# 如何使用 Hyperlane Warp Routes 进行代币桥接
 
-This section provides a step-by-step walkthrough for creating an interchain token bridge by deploying Hyperlane Warp Route contracts.
+本节提供了通过部署 Hyperlane Warp Route 合同创建跨链代币桥的逐步指南。
 
-## Prerequisites
+## 前提条件
 
 - [Hyperlane CLI](/docs/reference/cli.mdx)
-- A private key for contract transaction signing
+- 用于合同交易签名的私钥
 
-## 1. Configuration
+## 1. 配置
 
-### Warp Route deployment config
+### Warp Route 部署配置
 
-To deploy the route, you will need a Warp Route deployment config file. A valid config will specify:
+要部署路由，您需要一个 Warp Route 部署配置文件。有效的配置将指定：
 
-- Which token, on which chain, is this Warp Route being created for?
-- _Optional:_ Hyperlane connection details, such as contract addresses for the [Mailbox](/docs/reference/messaging/messaging-interface.mdx), [Interchain Gas](/docs/reference/hooks/interchain-gas.mdx), and [Interchain Security Modules](/docs/reference/ISM/specify-your-ISM.mdx).
-- _Optional:_ Token standard, including ERC20 (fungible tokens), ERC721 (NFTs), and ERC4626 (yield-bearing tokens). Note ERC721 support is experimental and some Hyperlane tooling won't work for NFTs yet.
+- 该 Warp Route 是为哪个链上的哪个代币创建的？
+- _可选：_ Hyperlane 连接详细信息，例如 [Mailbox](/docs/reference/messaging/messaging-interface.mdx) 的合同地址、[Interchain Gas](/docs/reference/hooks/interchain-gas.mdx) 和 [Interchain Security Modules](/docs/reference/ISM/specify-your-ISM.mdx) 的合同地址。
+- _可选：_ 代币标准，包括 ERC20（可替代代币）、ERC721（NFT）和 ERC4626（收益代币）。请注意，ERC721 支持是实验性的，一些 Hyperlane 工具尚不支持 NFT。
 
-The easiest way to create a Warp Route deployment config file is with the CLI's config command:
+创建 Warp Route 部署配置文件的最简单方法是使用 CLI 的配置命令：
 
 ```bash
 hyperlane warp init
 ```
 
-This command provides a walkthrough, prompting you for configuration choices directly in the terminal. You will be asked to select specific options for each part of the configuration, such as the network type, chains to connect, token type, and whether to use trusted ISMs.
+此命令提供了一个逐步指南，直接在终端中提示您进行配置选择。您将被要求为配置的每个部分选择特定选项，例如网络类型、要连接的链、代币类型以及是否使用受信任的 ISM。
 
 :::tip
 
-- If your config looks correct, you can now skip to [Step 2: Deployment](#2-deployment).
-  Or see below for details on how to define your config manually.
-- If you need any help setting up a token bridge, reach out on #developers on Discord or [get in touch](https://forms.gle/KyRTaWvo4XNmNvrq6).
+- 如果您的配置看起来正确，您可以直接跳到 [步骤 2：部署](#2-deployment)。
+  或者，查看下面有关如何手动定义配置的详细信息。
+- 如果您在设置代币桥时需要任何帮助，请在 Discord 的 #developers 上联系或 [与我们联系](https://forms.gle/KyRTaWvo4XNmNvrq6)。
   :::
 
-#### Deployment config schema
+#### 部署配置架构
 
-Your config consists of a map of chain names to deployment configs. Each config sets details about the token for which you are creating a Warp Route.
+您的配置由链名称到部署配置的映射组成。每个配置设置有关您要为其创建 Warp Route 的代币的详细信息。
 
-- **type**:
-  - Set this to `collateral` to create a basic Warp Route for an ERC20/ERC721 token
-  - Set this to `collateralVault` to create a yield-bearing Warp Route for an ERC20 token that deposits into an existing ERC4626 vault
-  - Set this to `native` to create a Warp Route for a native token (e.g. ether)
-- **address:**
-  - If using `collateral`, the address of the ERC20/ERC721 contract for which to create a route
-  - If using `collateralVault`, the address of the existing ERC4626 vault to deposit collateral into
-- **isNft:** If using `collateral` for an ERC721 contract, set to `true`.
+- **类型**：
+  - 将其设置为 `collateral` 以创建 ERC20/ERC721 代币的基本 Warp Route
+  - 将其设置为 `collateralVault` 以创建一个将存入现有 ERC4626 金库的 ERC20 代币的收益型 Warp Route
+  - 将其设置为 `native` 以创建一个原生代币（例如以太币）的 Warp Route
+- **地址：**
+  - 如果使用 `collateral`，则为要创建路由的 ERC20/ERC721 合同的地址
+  - 如果使用 `collateralVault`，则为要存入的现有 ERC4626 金库的地址
+- **isNft：** 如果使用 `collateral` 针对 ERC721 合同，则设置为 `true`。
 
-#### Optional fields
+#### 可选字段
 
-You may specify the following optional values in your config entries. If no values are provided, the deployer will attempt to pull these values from elsewhere. In the case of metadata (symbol, name decimals), it will query the contract. For addresses (mailbox, ISM) it will check the registry, either yours (if provided) or the [default](/docs/reference/registries#default-registry).
+您可以在配置条目中指定以下可选值。如果未提供任何值，部署者将尝试从其他地方提取这些值。在元数据（符号、名称、小数位数）的情况下，它将查询合同。对于地址（邮箱、ISM），它将检查注册表，无论是您的（如果提供）还是 [默认的](/docs/reference/registries#default-registry)。
 
-- **symbol:** The token symbol
-- **name:** The token name
-- **decimals:** The number of decimal places for the token
-- **mailbox:** The address of the [mailbox](/docs/reference/messaging/messaging-interface.mdx) contract to use to send and receive messages
-- **interchainSecurityModule:** The address of an [interchain security modules](/docs/reference/ISM/specify-your-ISM.mdx) to verify interchain messages
+- **符号：** 代币符号
+- **名称：** 代币名称
+- **小数位数：** 代币的小数位数
+- **邮箱：** 用于发送和接收消息的 [邮箱](/docs/reference/messaging/messaging-interface.mdx) 合同的地址
+- **interchainSecurityModule：** 用于验证跨链消息的 [跨链安全模块](/docs/reference/ISM/specify-your-ISM.mdx) 的地址
 
-#### Example
+#### 示例
 
-For a minimal Warp deployment config example using local anvil chains, see [`warp-route-deployment.yaml`](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/main/typescript/cli/examples/warp-route-deployment.yaml).
+有关使用本地 anvil 链的最小 Warp 部署配置示例，请参见 [`warp-route-deployment.yaml`](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/main/typescript/cli/examples/warp-route-deployment.yaml)。
 
 :::tip
 
-- Learn more about Warp Route types and the different configurations in the following sections:
-  - [Warp Route Types](/docs/protocol/warp-routes/warp-routes-types)
-  - [Warp Route Example Usage](/docs/protocol/warp-routes/warp-routes-example-usage)
+- 了解有关 Warp Route 类型和不同配置的更多信息，请参阅以下部分：
+  - [Warp Route 类型](/docs/protocol/warp-routes/warp-routes-types)
+  - [Warp Route 示例用法](/docs/protocol/warp-routes/warp-routes-example-usage)
 
 :::
 
-### Chain Configurations
+### 链配置
 
 <CliChainsPartial />
 
 :::warning
 
-Where possible, be sure to **reuse any existing chains** from the registry/CLI in your warp route config instead of setting up a new mailbox.
+在可能的情况下，请确保在您的 warp route 配置中**重用任何现有链**，而不是设置新的邮箱。
 
 :::
 
-## 2. Deploy the Warp Route
+## 2. 部署 Warp Route
 
-Once your configuration is ready, initiate the Warp Route deployment with:
+一旦您的配置准备就绪，请使用以下命令启动 Warp Route 部署：
 
 ```bash
 hyperlane warp deploy
 ```
 
-During deployment, the CLI requires access to your private key to sign transactions. You can set this up in one of two ways:
+在部署过程中，CLI 需要访问您的私钥以签署交易。您可以通过以下两种方式之一进行设置：
 
-1. **Environment Variable**: Set your private key as HYP_KEY to avoid entering it each time:
+1. **环境变量**：将您的私钥设置为 HYP_KEY，以避免每次输入：
 
    ```bash
    export HYP_KEY=<your_private_key>
    ```
 
-2. **Manual Entry**: Alternatively, you can enter the private key directly when prompted during deployment.
+2. **手动输入**：或者，您可以在部署过程中提示时直接输入私钥。
 
-The `hyperlane warp deploy` command will create two new artifact files:
+`hyperlane warp deploy` 命令将创建两个新的工件文件：
 
-1. `otherchain-yourchain-addresses.yaml`: Contains addresses for the newly deployed Warp Route contracts.
-2. `otherchain-yourchain-config.yaml`: A config file for interacting with the Warp Route via the CLI and Warp UI.
+1. `otherchain-yourchain-addresses.yaml`：包含新部署的 Warp Route 合同的地址。
+2. `otherchain-yourchain-config.yaml`：用于通过 CLI 和 Warp UI 与 Warp Route 交互的配置文件。
 
-These files will be located under `$HOME/.hyperlane/deployments/warp_routes/`.
+这些文件将位于 `$HOME/.hyperlane/deployments/warp_routes/` 下。
 
-## 3. Testing
+## 3. 测试
 
-You can initiate a test transfer of a single wei with the following command:
+您可以使用以下命令启动单个 wei 的测试转账：
 
 ```bash
 hyperlane warp send --relay --symbol TOKEN
 ```
 
-The `--relay` flag is optional and will relay the message to the destination chain.
+`--relay` 标志是可选的，将消息中继到目标链。
 
-You can also run a relayer that delivers only for your warp route in the background with:
+您还可以在后台运行一个仅为您的 warp route 提供服务的中继器：
 
 ```bash
 hyperlane relayer --symbol TOKEN
 ```
 
-You can test in either direction between where you have the warp route set. However, if you deployed `native` or `collateral` warp route, you must select the origin where the route corresponding to where that `native` or `collateral` type is deployed. By default, the amount sent is `1` of the smallest unit of the token.
+您可以在设置了 warp route 的任一方向进行测试。但是，如果您部署了 `native` 或 `collateral` warp route，您必须选择与该 `native` 或 `collateral` 类型部署相对应的起源。默认情况下，发送的金额为代币的最小单位 `1`。
 
 :::tip
 
-**Next Steps**
+**后续步骤**
 
-- If you were following the [Deploy Hyperlane to a new chain](/docs/deploy-hyperlane#3-warp-route) guide and want to connect other chains or move to production with Abacus Works, continue with the [Submit to Registry](/docs/deploy-hyperlane#4-submit-to-registry) guide.
+- 如果您正在遵循 [将 Hyperlane 部署到新链](/docs/deploy-hyperlane#3-warp-route) 指南并希望连接其他链或与 Abacus Works 一起进入生产环境，请继续查看 [提交到注册表](/docs/deploy-hyperlane#4-submit-to-registry) 指南。
 
-- For interacting with Warp Routes via a UI, continue to the [Warp UI docs](/docs/guides/deploy-warp-route-UI.mdx).
+- 有关通过 UI 与 Warp Routes 交互的更多信息，请继续查看 [Warp UI 文档](/docs/guides/deploy-warp-route-UI.mdx)。
 
 :::
 
-## Learn More
+## 了解更多
 
-- Check out the [Warp Route](/docs/reference/applications/warp-routes) reference page for more information on the interface and security implications of a Warp Route. The [interface](/docs/reference/applications/warp-routes#interface) section covers calling `transferRemote` to transfer tokens to a specified recipient on a destination chain. Note that you'll have to prompt for a token approval prior to calling `transferRemote`.
+- 查看 [Warp Route](/docs/reference/applications/warp-routes) 参考页面，以获取有关 Warp Route 接口和安全影响的更多信息。 [接口](/docs/reference/applications/warp-routes#interface) 部分涵盖调用 `transferRemote` 将代币转移到目标链上指定的接收者。请注意，在调用 `transferRemote` 之前，您必须提示进行代币批准。
 
-- A Warp Route is a type of [router](docs/reference/libraries/router.mdx) application, a pattern enabling you to link multiple contracts across chains together.
+- Warp Route 是一种 [路由器](docs/reference/libraries/router.mdx) 应用程序，允许您将多个合同跨链链接在一起的模式。

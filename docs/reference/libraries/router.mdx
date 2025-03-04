@@ -1,16 +1,16 @@
 import RouterDiagram from "@site/src/diagrams/router.md";
 
-# `Router` Library
+# `Router` 库
 
-Application developers looking to write their contracts once and deploy them on multiple chains should consider building with the [`Router`](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/v3/solidity/contracts/client/Router.sol) pattern.
+希望编写一次合约并在多个链上部署的应用程序开发者应该考虑使用 [`Router`](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/v3/solidity/contracts/client/Router.sol) 模式。
 
-In this pattern, an instance of the application's contracts is deployed on each application-supported chain. Each instance is made aware of the addresses of instances on other chains. These instances use Hyperlane to communicate information and state to and from instances on remote chains.
+在这种模式中,应用程序的合约实例部署在每个支持的链上。每个实例都知道其他链上实例的地址。这些实例使用 Hyperlane 与远程链上的实例进行信息和状态的通信。
 
 <RouterDiagram />
 
-Developers using this pattern can inherit from the `Router` mix-in contract. `Router` is a [`MailboxClient`](./mailboxclient.mdx) that tracks the addresses of other `Router` contract addresses on remote chains. This allows `Routers` to send messages directly to others without having to specify addresses. It also allows `Routers` to reject messages sent from other untrusted senders.
+开发者可以继承 `Router` 混入合约来使用这种模式。`Router` 是一个 [`MailboxClient`](./mailboxclient.mdx),它跟踪远程链上其他 `Router` 合约的地址。这使得 `Router` 可以直接向其他 `Router` 发送消息而无需指定地址。它还允许 `Router` 拒绝来自其他不受信任发送者的消息。
 
-## Router Library
+## Router 库
 
 ```solidity file=<rootDir>/node_modules/@hyperlane-xyz/core/contracts/client/Router.sol
 

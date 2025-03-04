@@ -1,8 +1,8 @@
-You can check everything is working correctly by sending a test message between pairs of chains.
-Initiate the message with the CLI.
+您可以通过在链对之间发送测试消息来检查一切是否正常工作。
+使用 CLI 启动消息。
 
 ```bash
 hyperlane send message --key $PRIVATE_KEY
 ```
 
-The `send message` command will inform you when the message is dispatched. After a short wait, a confirmation of delivery will be displayed. If the message delivery times out, it is likely that there's an issue with the Validator or Relayer setup in the steps above. To troubleshoot start by looking at the origin chain relayer logs. If you need further help, reach out on [Discord](https://discord.gg/hyperlane).
+`send message` 命令会在消息发送时通知您。稍等片刻后，将显示交付确认。如果消息交付超时，可能是上述步骤中验证者或中继器设置存在问题。要进行故障排除，请首先查看源链中继器的日志。如果您需要进一步的帮助，请在 [Discord](https://discord.gg/hyperlane) 上联系。

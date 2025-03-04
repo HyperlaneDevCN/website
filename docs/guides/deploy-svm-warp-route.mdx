@@ -1,120 +1,120 @@
-# Deploy an SVM Warp Route
+# 部署 SVM Warp 路由
 
-## Outcomes
+## 结果
 
-You will be deploying a Warp Route for an asset of your choice, between two SVM chains with an existing Hyperlane core deployment. At the time of writing this document, supported SVM chains are Solana and Eclipse, but you can find an up-to-date list [here](https://github.com/hyperlane-xyz/hyperlane-monorepo/tree/main/rust/sealevel/environments/mainnet3) (all chain directory names with a `core` subdirectory).
+您将为您选择的资产在两个 SVM 链之间部署一个 Warp 路由，并且有一个现有的 Hyperlane 核心部署。在撰写本文时，支持的 SVM 链是 Solana 和 Eclipse，但您可以在 [这里](https://github.com/hyperlane-xyz/hyperlane-monorepo/tree/main/rust/sealevel/environments/mainnet3) 找到最新的列表（所有链目录名称都有一个 `core` 子目录）。
 
 :::info
-**If you want your SVM rollup supported as a core Hyperlane deployment, or are looking to set up an EVM to SVM Warp Route, [get in touch](https://forms.gle/KyRTaWvo4XNmNvrq6)!**
+**如果您希望您的 SVM rollup 被支持为核心 Hyperlane 部署，或者希望设置 EVM 到 SVM 的 Warp 路由，请 [联系我们](https://forms.gle/KyRTaWvo4XNmNvrq6)!**
 :::
 
-## Warp Route Types
+## Warp 路由类型
 
-The type of token used determines the Warp Route type, so it's important to understand the different Warp Route contracts available:
+使用的代币类型决定了 Warp 路由类型，因此了解可用的不同 Warp 路由合约非常重要：
 
-- [Native](https://docs.hyperlane.xyz/docs/protocol/warp-routes/warp-routes-types#native-token-warp-routes): Handles the transfer of native gas tokens (e.g. SOL on Solana, ETH on Eclipse).
-- [Collateral](https://docs.hyperlane.xyz/docs/protocol/warp-routes/warp-routes-types#collateral-backed-erc20-warp-routes): Handles the transfer of existing [Token-2022](https://spl.solana.com/token-2022) or [Token](https://spl.solana.com/token) tokens (the ERC20 equivalent on SVM).
-- [Synthetic](https://docs.hyperlane.xyz/docs/protocol/warp-routes/warp-routes-types#synthetic-erc20-warp-routes): Handles synthetic tokens that are minted and burned as transfers occur through the Warp Route, to represent tokens from their origin chain. The tooling in this guide deploys a new Token-2022 token in this case, whose authority is set to the deployer key.
+- [原生](https://docs.hyperlane.xyz/docs/protocol/warp-routes/warp-routes-types#native-token-warp-routes): 处理原生燃气代币的转移（例如 Solana 上的 SOL，Eclipse 上的 ETH）。
+- [抵押品](https://docs.hyperlane.xyz/docs/protocol/warp-routes/warp-routes-types#collateral-backed-erc20-warp-routes): 处理现有的 [Token-2022](https://spl.solana.com/token-2022) 或 [Token](https://spl.solana.com/token) 代币的转移（SVM 上的 ERC20 等价物）。
+- [合成](https://docs.hyperlane.xyz/docs/protocol/warp-routes/warp-routes-types#synthetic-erc20-warp-routes): 处理合成代币，这些代币在通过 Warp 路由转移时被铸造和销毁，以表示来自其源链的代币。在这种情况下，本指南中的工具将部署一个新的 Token-2022 代币，其权限设置为部署者密钥。
 
-Here are the common Warp Route setups (you can find more details [here](https://docs.hyperlane.xyz/docs/protocol/warp-routes/warp-routes-example-usage)):
+以下是常见的 Warp 路由设置（您可以在 [这里](https://docs.hyperlane.xyz/docs/protocol/warp-routes/warp-routes-example-usage) 找到更多详细信息）：
 
-- **Native to Synthetic**: Lock Native tokens on the origin chain to mint Synthetic ones on the destination. When transferring back, the Synthetic is burned. An example of this is a SOL Warp Route between Solana and Eclipse.
-- **Collateral to Synthetic**: Lock Collateral tokens on the origin chain to mint Synthetic ones on the destination. When transferring back, the Synthetic is burned. An example of this is a USDC Warp Route between Solana and Eclipse.
-- Other: **Native to Native** (such as ETH between Optimism and Arbitrum), as well as **Collateral to Collateral**, are also possible if the token already exists on both origin and destination chains. Rebalancing liquidity is an important consideration in this case.
+- **原生到合成**: 在源链上锁定原生代币，以在目标链上铸造合成代币。转移回时，合成代币被销毁。这是 Solana 和 Eclipse 之间的 SOL Warp 路由的一个示例。
+- **抵押品到合成**: 在源链上锁定抵押代币，以在目标链上铸造合成代币。转移回时，合成代币被销毁。这是 Solana 和 Eclipse 之间的 USDC Warp 路由的一个示例。
+- 其他: **原生到原生**（例如 Optimism 和 Arbitrum 之间的 ETH），以及 **抵押品到抵押品**，如果代币在源链和目标链上都已存在，也可以实现。在这种情况下，重新平衡流动性是一个重要的考虑因素。
 
-## Before You Start
+## 开始之前
 
-Deploying a Warp Route requires there to be a core Hyperlane deployment that is connected (i.e. actively relayed and secured) to the rest of the Hyperlane ecosystem. The core Hyperlane deployments used in this guide are Solana ([core artifacts](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/main/rust/sealevel/environments/mainnet3/solanamainnet/core/program-ids.json)) and Eclipse ([core artifacts](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/main/rust/sealevel/environments/mainnet3/eclipsemainnet/core/program-ids.json)). You may need to refer to these core artifacts throughout the guide.
+部署 Warp 路由需要有一个核心 Hyperlane 部署，该部署与 Hyperlane 生态系统的其余部分连接（即，积极中继和保护）。本指南中使用的核心 Hyperlane 部署是 Solana ([核心工件](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/main/rust/sealevel/environments/mainnet3/solanamainnet/core/program-ids.json)) 和 Eclipse ([核心工件](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/main/rust/sealevel/environments/mainnet3/eclipsemainnet/core/program-ids.json))。您可能需要在整个指南中参考这些核心工件。
 
-## Walkthrough: Deploy a Sealevel Warp Route
+## 演练：部署 Sealevel Warp 路由
 
-### Step 1: Build the Warp Route Programs
+### 第 1 步：构建 Warp 路由程序
 
-1. Install `solana-cli 1.14.20` to build the Warp Route programs. Note that you **must** use this version, otherwise deployment may fail.
+1. 安装 `solana-cli 1.14.20` 以构建 Warp 路由程序。请注意，您 **必须** 使用此版本，否则部署可能会失败。
 
    ```bash
    sh -c "$(curl -sSfL https://release.solana.com/v1.14.20/install)"
    ```
 
-2. Clone the [hyperlane-monorepo](https://github.com/hyperlane-xyz/hyperlane-monorepo)
+2. 克隆 [hyperlane-monorepo](https://github.com/hyperlane-xyz/hyperlane-monorepo)
 
    ```bash
    git clone https://github.com/hyperlane-xyz/hyperlane-monorepo
    cd hyperlane-monorepo/rust/sealevel/programs
    ```
 
-3. Build the Warp Route programs on your machine
+3. 在您的机器上构建 Warp 路由程序
 
-   1. Build the **Token** program:
+   1. 构建 **Token** 程序：
 
       ```bash
       cd hyperlane-sealevel-token
       cargo build-sbf
       ```
 
-   2. Build the **Token Collateral** program:
+   2. 构建 **Token Collateral** 程序：
 
       ```bash
       cd hyperlane-sealevel-token-collateral
       cargo build-sbf
       ```
 
-   3. Build the **Token Native** program:
+   3. 构建 **Token Native** 程序：
 
       ```bash
       cd hyperlane-sealevel-token-native
       cargo build-sbf
       ```
 
-   These steps **compile the Solana programs**, which is needed for deployment.
-   To verify the build output, check the target/deploy directory for `.so` files in `hyperlane-monorepo/rust/sealevel/target/deploy`
+   这些步骤 **编译 Solana 程序**，这是部署所需的。
+   要验证构建输出，请检查 `hyperlane-monorepo/rust/sealevel/target/deploy` 目录中的 `.so` 文件。
 
-### Step 2: Prepare for Deployment
+### 第 2 步：准备部署
 
-1. To deploy the contracts, install `solana-cli 1.18.18`. Note that you **must** use this version, otherwise deployment may fail.
+1. 要部署合约，请安装 `solana-cli 1.18.18`。请注意，您 **必须** 使用此版本，否则部署可能会失败。
 
    ```bash
    sh -c "$(curl -sSfL https://release.solana.com/v1.18.18/install)"
    ```
 
-   After installing you can verify the version with:
+   安装后，您可以通过以下命令验证版本：
 
    ```bash
    solana --version
    ```
 
-2. Create a **Solana keypair**. This key pays for the deployment and will be the owner of the deployed programs. An existing funded key can be used if you'd like.
+2. 创建一个 **Solana 密钥对**。此密钥用于支付部署费用，并将是已部署程序的所有者。如果您愿意，可以使用现有的已资助密钥。
 
    ```bash
    solana-keygen new --outfile ./warp-route-deployer-key.json
    ```
 
-   - To read the public key you just created:
+   - 要读取您刚创建的公钥：
 
      ```bash
      solana-keygen pubkey ./warp-route-deployer-key.json
      ```
 
-   - Check the balance:
+   - 检查余额：
      ```bash
      solana balance --keypair ./warp-route-deployer-key.json
      ```
 
-### Step 3: Configure the Warp Route
+### 第 3 步：配置 Warp 路由
 
-1. Create a directory for your Warp Route in `rust/sealevel/environments/mainnet3/warp-routes` with the name you want your Warp Route deployment to have.
+1. 在 `rust/sealevel/environments/mainnet3/warp-routes` 中为您的 Warp 路由创建一个目录，名称为您希望您的 Warp 路由部署的名称。
 
    ```bash
    mkdir -p rust/sealevel/environments/mainnet3/warp-routes/<YOUR-WARP-ROUTE-NAME>
    ```
 
-   For example, the existing SOL Warp Route between Solana and Eclipse lives in `rust/sealevel/environments/mainnet3/warp-routes/eclipsesol`.
+   例如，现有的 Solana 和 Eclipse 之间的 SOL Warp 路由位于 `rust/sealevel/environments/mainnet3/warp-routes/eclipsesol`。
 
-2. Inside the directory you just created, create a configuration file named `token-config.json`.
+2. 在您刚创建的目录中，创建一个名为 `token-config.json` 的配置文件。
 
-   Configure the parameters of your Warp Route based on the `serde_json` serialization of the [TokenConfig](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/a5afd20f3ae69ccb3289d845d44b99dbdcde2c62/rust/sealevel/client/src/warp_route.rs#L114) Rust struct. The value to set for the `interchainGasPaymaster`, can be found in the [core deployment artifacts](#before-you-start).
+   根据 [TokenConfig](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/a5afd20f3ae69ccb3289d845d44b99dbdcde2c62/rust/sealevel/client/src/warp_route.rs#L114) Rust 结构的 `serde_json` 序列化配置您的 Warp 路由参数。要为 `interchainGasPaymaster` 设置的值，可以在 [核心部署工件](#before-you-start) 中找到。
 
-   The example below shows a testnet **Native to Synthetic Warp Route** that transfers SOL from Solana and mints synthetic SOL on Eclipse. You can also check [this configuration](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/a5afd20f3ae69ccb3289d845d44b99dbdcde2c62/rust/sealevel/environments/mainnet3/warp-routes/eclipsesol/token-config.json) of a production SOL Warp Route.
+   下面的示例显示了一个测试网 **原生到合成 Warp 路由**，它将 SOL 从 Solana 转移并在 Eclipse 上铸造合成 SOL。您还可以查看 [此配置](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/a5afd20f3ae69ccb3289d845d44b99dbdcde2c62/rust/sealevel/environments/mainnet3/warp-routes/eclipsesol/token-config.json) 的生产 SOL Warp 路由。
 
    ```json
    {
@@ -134,19 +134,19 @@ Deploying a Warp Route requires there to be a core Hyperlane deployment that is 
    }
    ```
 
-3. (Optional) If your warp route creates a Synthetic token, you can open a PR to the `hyperlane-registry` with metadata to associate with this token (example PR [here](https://github.com/hyperlane-xyz/hyperlane-registry/pull/142)). The `hyperlane-registry` also gives your Warp Route visibility within the Hyperlane ecosystem.
+3. （可选）如果您的 Warp 路由创建了合成代币，您可以向 `hyperlane-registry` 提交 PR，以与此代币关联元数据（示例 PR [在这里](https://github.com/hyperlane-xyz/hyperlane-registry/pull/142)）。`hyperlane-registry` 还为您的 Warp 路由在 Hyperlane 生态系统中提供可见性。
 
-### Step 4: Deploy the Warp Route
+### 第 4 步：部署 Warp 路由
 
-1. Fund the new keypair on both networks the Warp Route is being deployed to.
+1. 在部署到的两个网络上为新的密钥对提供资金。
 
-   - The public key should be the same across SVM networks, but double check with the wallets recommended by each chain, by loading the private key into them.
+   - 公钥在 SVM 网络之间应该是相同的，但请通过加载私钥到每个链推荐的钱包中进行双重检查。
 
-   - The funding should be enough to cover rent for all accounts related to the Warp Route, pay for transaction fees, and fund the [ATA](https://www.alchemy.com/overviews/associated-token-account) payer accounts (more on this below). For reference, the observed rent from one Hyperlane Warp Route account is `2.35 SOL` on Solana and `0.025 ETH` on Eclipse, so it's a good idea to fund the key with at least `5 SOL` / `0.05 ETH`.
+   - 资金应足以覆盖与 Warp 路由相关的所有账户的租金，支付交易费用，并为 [ATA](https://www.alchemy.com/overviews/associated-token-account) 付款账户提供资金（有关更多信息，请参见下文）。作为参考，从一个 Hyperlane Warp 路由账户观察到的租金为 `2.35 SOL`（在 Solana 上）和 `0.025 ETH`（在 Eclipse 上），因此最好为密钥提供至少 `5 SOL` / `0.05 ETH` 的资金。
 
-2. Deploy the warp route using the `warp-route deploy` subcommand from the `rust/sealevel/client` directory:
+2. 使用 `warp-route deploy` 子命令从 `rust/sealevel/client` 目录部署 Warp 路由：
 
-   Example usage:
+   示例用法：
 
    ```bash
    cargo run -- -k ./warp-route-deployer-key.json \
@@ -160,42 +160,42 @@ Deploying a Warp Route requires there to be a core Hyperlane deployment that is 
    --ata-payer-funding-amount 10000000
    ```
 
-   - Overview of CLI flags:
-     - `--warp-route-name`: should match the directory name picked for the Warp Route earlier
-     - `--environment`: keep as `mainnet3`
-     - `--environments-dir ../environments`: keep as `../environments`
-     - `--built-so-dir`: keep as `../../target/deploy`, as it points to the compilation output directory of Warp Route programs
-     - `--token-config-file`: point this to the `token-config.json` file created earlier
-     - `--chain-config-file`: keep as `../environments/mainnet3/chain-config.json`, as this file has been pre-populated with chain settings for all Hyperlane-supported chains
-     - `--ata-payer-funding-amount`: this flag specifies by how much to fund the Warp Route [ATA](https://www.alchemy.com/overviews/associated-token-account) payer accounts on both chains the deployment happens on. It's expressed in the lowest currency denomination, which means that it's interpreted as Lamports on Solana and Gwei on Eclipse (since it uses ETH as its native currency). In the command below, the value `10000000` works out to `0.001` ETH and `0.001` SOL, which is enough for an initial deployment. ATA payers can always be topped up later, so it’s fine to pick a small value. For reference, every Warp Route transfer costs the ATA payer `0.000000001 SOL` (on Solana) and `0.000021 ETH` (on Eclipse) on the destination chain.
+   - CLI 标志概述：
+     - `--warp-route-name`: 应与之前为 Warp 路由选择的目录名称匹配
+     - `--environment`: 保持为 `mainnet3`
+     - `--environments-dir ../environments`: 保持为 `../environments`
+     - `--built-so-dir`: 保持为 `../../target/deploy`，因为它指向 Warp 路由程序的编译输出目录
+     - `--token-config-file`: 指向之前创建的 `token-config.json` 文件
+     - `--chain-config-file`: 保持为 `../environments/mainnet3/chain-config.json`，因为该文件已预填充所有 Hyperlane 支持的链的链设置
+     - `--ata-payer-funding-amount`: 此标志指定在部署发生的两个链上为 Warp 路由 [ATA](https://www.alchemy.com/overviews/associated-token-account) 付款账户提供多少资金。它以最低货币面额表示，这意味着它在 Solana 上被解释为 Lamports，在 Eclipse 上被解释为 Gwei（因为它使用 ETH 作为其原生货币）。在下面的命令中，值 `10000000` 相当于 `0.001` ETH 和 `0.001` SOL，这对于初始部署是足够的。ATA 付款人可以随时补充，因此选择一个小值是可以的。作为参考，每个 Warp 路由转移的 ATA 付款人费用为 `0.000000001 SOL`（在 Solana 上）和 `0.000021 ETH`（在 Eclipse 上）在目标链上。
 
    <br />
 
    :::info
-   Note that since our goal was to make this tooling accessible to developers as soon as possible, it's not as reliable as we would hope. Please get in touch through a [GitHub issue](https://github.com/hyperlane-xyz/hyperlane-monorepo/issues) or via the `developers` channel on [Discord](https://discord.gg/2BYk6kV7) if you run into issues.
+   请注意，由于我们的目标是尽快使这些工具对开发人员可用，因此它的可靠性可能不如我们希望的那样。如果您遇到问题，请通过 [GitHub 问题](https://github.com/hyperlane-xyz/hyperlane-monorepo/issues) 或通过 [Discord](https://discord.gg/2BYk6kV7) 的 `developers` 频道与我们联系。
    :::
 
-   #### Troubleshooting tips
+   #### 故障排除提示
 
-   - The script is unlikely to work from the first try due to network congestion and program size, but the script should be idempotent and skip contracts that were already deployed/initialized.
+   - 由于网络拥堵和程序大小，脚本不太可能第一次就成功运行，但脚本应该是幂等的，并跳过已经部署/初始化的合约。
 
-     - Errors like `Error: 11 write transactions failed` or `Error: Custom: Invalid blockhash` can always be retried by re-running the command. If retriable errors persist, consider increasing the compute unit price [here](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/44e0ff0733baf0da4d2b0304915f5f6cce92ffc7/rust/sealevel/client/src/cmd_utils.rs#L76).
+     - 错误如 `Error: 11 write transactions failed` 或 `Error: Custom: Invalid blockhash` 可以通过重新运行命令进行重试。如果可重试的错误持续存在，请考虑在 [这里](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/44e0ff0733baf0da4d2b0304915f5f6cce92ffc7/rust/sealevel/client/src/cmd_utils.rs#L76) 增加计算单位价格。
 
-     - For other error types, you may need to close the buffers and programs of your deployer key and redeploy everything from scratch. To display buffers and programs and close them one by one, follow the commands below. Closing programs also helps recover their rent deposit.
+     - 对于其他类型的错误，您可能需要关闭缓冲区和程序的部署密钥，并从头开始重新部署所有内容。要逐个显示缓冲区和程序并关闭它们，请按照以下命令操作。关闭程序也有助于恢复其租金存款。
 
        ```bash
        solana program show --programs --keypair ./warp-route-deployer-key.json --url <CHAIN_RPC_URL>
 
        solana program show --buffers --keypair ./warp-route-deployer-key.json --url <CHAIN_RPC_URL>
 
-       # You'll need to add the `--bypass-warning` flag when closing program accounts (as opposed to closing buffers)
+       # 关闭程序账户时需要添加 `--bypass-warning` 标志（与关闭缓冲区相对）
        solana program close <YOUR_PROGRAM_ADDRESS> --url <CHAIN_RPC_URL>
        ```
 
-   - To increase the odds of the deployment succeeding faster, you can set a private RPC url in the `--chain-config-file` passed to the script. (e.g. in `solanamainnet.rpcUrls.http`)
-   - If deploying a synthetic token, the command below will create a new token mint and use the metadata token extension to set the token name, symbol, and metadata json using the fields in the `--token-config-file` file, run `warp-route deploy`:
+   - 为了增加部署成功的几率，您可以在传递给脚本的 `--chain-config-file` 中设置私有 RPC URL。（例如，在 `solanamainnet.rpcUrls.http` 中）
+   - 如果部署合成代币，下面的命令将创建一个新的代币铸造，并使用元数据代币扩展设置代币名称、符号和元数据 json，使用 `--token-config-file` 文件中的字段，运行 `warp-route deploy`：
      ```bash
-     # run from `rust/sealevel/client`
+     # 从 `rust/sealevel/client` 运行
      cargo run -- -k ./warp-route-deployer-key.json warp-route deploy \
       --warp-route-name eclipsesol \
       --environment mainnet3 \
@@ -206,69 +206,69 @@ Deploying a Warp Route requires there to be a core Hyperlane deployment that is 
       --ata-payer-funding-amount 10000000
      ```
 
-## Interacting with the Warp Route
+## 与 Warp 路由交互
 
-1.  **Query the Warp Route Program**
+1.  **查询 Warp 路由程序**
 
-    You can check the program details like Mint Account, Mint Authority, and ATA payer account using the following command:
+   您可以使用以下命令检查程序详细信息，如铸币账户、铸币权限和 ATA 付款账户：
 
-    ```bash
-    # run from `rust/sealevel/client`
-    cargo run -- -k ./warp-route-deployer-key.json \
-    -u <CHAIN_RPC_URL> token query \
-    --program-id <PROGRAM_ID> <TOKEN_TYPE>
-    ```
+   ```bash
+   # 从 `rust/sealevel/client` 运行
+   cargo run -- -k ./warp-route-deployer-key.json \
+   -u <CHAIN_RPC_URL> token query \
+   --program-id <PROGRAM_ID> <TOKEN_TYPE>
+   ```
 
-    Replace:
+   替换：
 
-        - `<CHAIN_RPC_URL>`: e.g., https://api.devnet.solana.com
-        - `<PROGRAM_ID>`: base58 address from program-ids.json (located in your warp-route directory).
-        - `<TOKEN_TYPE>`: native|synthetic|collateral
+       - `<CHAIN_RPC_URL>`: 例如，https://api.devnet.solana.com
+       - `<PROGRAM_ID>`: program-ids.json 中的 base58 地址（位于您的 warp-route 目录中）。
+       - `<TOKEN_TYPE>`: native|synthetic|collateral
 
-    If deploying a synthetic token, query the Mint Authority account to check out the metadata:
+   如果部署了合成代币，请查询铸币权限账户以检查元数据：
 
-    ```bash
-    solana account <MINT_AUTHORITY> --url <CHAIN_RPC_URL>
-    ```
+   ```bash
+   solana account <MINT_AUTHORITY> --url <CHAIN_RPC_URL>
+   ```
 
-2.  **Transfer Tokens Through the Warp Route**
+2.  **通过 Warp 路由转移代币**
 
-    To test token transfers across chains, run the following command:
+   要测试跨链代币转移，请运行以下命令：
 
-    ```bash
-    # run from `rust/sealevel/client`
-    cargo run -- -u <ORIGIN_CHAIN_RPC_URL> \
-    -k ./warp-route-deployer-key.json \
-    token transfer-remote ./warp-route-deployer-key.json \
-    <AMOUNT_IN_LOWEST_DENOM> <DESTINATION_CHAIN_DOMAIN_ID> <RECIPIENT_ADDRESS> \
-    <WARP_TOKEN_TYPE_ON_ORIGIN_CHAIN> --program-id <PROGRAM_ID>
-    ```
+   ```bash
+   # 从 `rust/sealevel/client` 运行
+   cargo run -- -u <ORIGIN_CHAIN_RPC_URL> \
+   -k ./warp-route-deployer-key.json \
+   token transfer-remote ./warp-route-deployer-key.json \
+   <AMOUNT_IN_LOWEST_DENOM> <DESTINATION_CHAIN_DOMAIN_ID> <RECIPIENT_ADDRESS> \
+   <WARP_TOKEN_TYPE_ON_ORIGIN_CHAIN> --program-id <PROGRAM_ID>
+   ```
 
-    - `<DESTINATION_CHAIN_DOMAIN_ID>`: You'll need the domain ID of the chain you're sending to, which you can find in the chain's `metadata.yaml` entry from the [hyperlane-registry](https://github.com/hyperlane-xyz/hyperlane-registry/tree/main/chains).
-    - `<PROGRAM_ID>`: base58 address from program-ids.json (located in your warp-route directory).
-    - `<WARP_TOKEN_TYPE_ON_ORIGIN_CHAIN>`: Type of token on the origin chain, options are: native|synthetic|collateral
+   - `<DESTINATION_CHAIN_DOMAIN_ID>`: 您需要发送到的链的域 ID，您可以在 [hyperlane-registry](https://github.com/hyperlane-xyz/hyperlane-registry/tree/main/chains) 的链的 `metadata.yaml` 条目中找到。
+   - `<PROGRAM_ID>`: program-ids.json 中的 base58 地址（位于您的 warp-route 目录中）。
+   - `<WARP_TOKEN_TYPE_ON_ORIGIN_CHAIN>`: 源链上的代币类型，选项为：native|synthetic|collateral
 
-3.  **Verify the Balance on the Destination Chain**
+3.  **验证目标链上的余额**
 
-    Look for the balance of the recipient on the destination chain, by querying the Mint Account address:
+   通过查询铸币账户，查看目标链上接收者的余额：
 
-    ```bash
-    spl-token balance --owner ./warp-route-deployer-key.json \
-    -u <DESTINATION_CHAIN_RPC_URL> <MINT_ACCOUNT_ADDRESS>
-    ```
+   ```bash
+   spl-token balance --owner ./warp-route-deployer-key.json \
+   -u <DESTINATION_CHAIN_RPC_URL> <MINT_ACCOUNT_ADDRESS>
+   ```
 
-    - The final parameter here is the SPL token ID. So if this is a synthetic warp route you want to check the balance of, you need to use the Mint address from a prior query you made a few steps ago.
-    - You can also check out the last tx made to the recipient account in the explorer
+   - 此处的最后一个参数是 SPL 代币 ID。因此，如果这是您想要检查余额的合成 Warp 路由，您需要使用之前查询中获得的铸币地址。
+   - 您还可以在浏览器中查看接收者账户的最后交易。
 
-4.  **Explore Additional CLI Commands**
+4.  **探索其他 CLI 命令**
 
-    This guide has made heavy use of the `hyperlane-sealevel-client` CLI from `hyperlane-monorepo`. You may find its various commands useful for configuring the Warp Route, making state queries, sending transfers, and more. Check out the other utilities it provides, in particular those under the `token` subcommand.
+   本指南大量使用了来自 `hyperlane-monorepo` 的 `hyperlane-sealevel-client` CLI。您可能会发现其各种命令对于配置 Warp 路由、进行状态查询、发送转移等非常有用。查看它提供的其他实用工具，特别是 `token` 子命令下的那些。
 
-    ```bash
-    # run from `rust/sealevel/client`
-    cargo run -- --help
-    ```
+   ```bash
+   # 从 `rust/sealevel/client` 运行
+   cargo run -- --help
+   ```
 
 :::warning
-For production deployments, we strongly recommend avoiding the use of hotkeys like those used in this guide. Instead, transfer ownership to a **multisig setup**, such as [Squads](https://squads.so/), for enhanced security.
+对于生产部署，我们强烈建议避免使用本指南中使用的热密钥。相反，将所有权转移到 **多重签名设置**，例如 [Squads](https://squads.so/)，以增强安全性。
 :::

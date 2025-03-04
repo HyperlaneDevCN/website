@@ -1,96 +1,96 @@
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
 
-# Run Validators
+# 运行验证器
 
 :::tip
 
-- For an introduction on Validators in Hyperlane, you can check out the [Overview section](/docs/operate/overview-agents.mdx).
+- 有关 Hyperlane 中验证器的介绍，请查看 [概述部分](/docs/operate/overview-agents.mdx)。
   :::
 
-As you follow this guide, you can run a Hyperlane validator on any of the existing [chains](https://github.com/hyperlane-xyz/hyperlane-registry/tree/main/chains) the protocol is live on. Hyperlane Validators are run on a per-origin-chain basis, and these instructions are written for a single chain.
+按照本指南，您可以在任何现有的 [链](https://github.com/hyperlane-xyz/hyperlane-registry/tree/main/chains) 上运行 Hyperlane 验证器。Hyperlane 验证器是按源链运行的，这些说明是针对单个链编写的。
 
-## Requirements
+## 要求
 
-- **Secure Signing Key**
+- **安全签名密钥**
 
-  - Validators use this key to sign the `Mailbox`'s latest merkle root. Securing this key is important. If it is compromised, attackers can attempt to falsify messages, causing the Validator to be slashed.
-  - The Hyperlane Validator agent currently supports signing with AWS KMS keys that are accessed via API keys/secrets as well as hexadecimal plaintext keys. See more under [agent keys](../set-up-agent-keys.mdx).
+  - 验证器使用此密钥签署 `Mailbox` 的最新默克尔根。保护此密钥非常重要。如果它被泄露，攻击者可能会试图伪造消息，导致验证器被削减。
+  - Hyperlane 验证器代理当前支持使用通过 API 密钥/秘密访问的 AWS KMS 密钥以及十六进制明文密钥进行签名。有关更多信息，请参见 [代理密钥](../set-up-agent-keys.mdx)。
 
-- **Publicly Readable Storage**
+- **公开可读存储**
 
-  - Validators write their signatures off-chain to publicly accessible, highly available, storage, so that they can be aggregated by the [Relayer](../../protocol/agents/relayer.mdx).
-  - The Hyperlane Validator agent currently supports storing signatures on AWS S3 using the same AWS API key above, as well as storing signatures in the local filesystem for testing.
-  - The design is [open source](https://github.com/hyperlane-xyz/hyperlane-monorepo/tree/56be527d691a11a1ff2de4a390fd0dae8bb77347/typescript/infra/src/agents) and generalizable to other storage and key solutions. There is a community-submitted work-in-progress [PR for GCS](https://github.com/hyperlane-xyz/hyperlane-monorepo/pull/3156).
+  - 验证器将其签名写入链下的公开可访问、高可用性存储，以便可以被 [中继器](../../protocol/agents/relayer.mdx) 聚合。
+  - Hyperlane 验证器代理当前支持使用上述相同的 AWS API 密钥将签名存储在 AWS S3 上，以及在本地文件系统中存储签名以进行测试。
+  - 该设计是 [开源](https://github.com/hyperlane-xyz/hyperlane-monorepo/tree/56be527d691a11a1ff2de4a390fd0dae8bb77347/typescript/infra/src/agents) 的，并且可以推广到其他存储和密钥解决方案。社区提交的进行中的 [PR for GCS](https://github.com/hyperlane-xyz/hyperlane-monorepo/pull/3156)。
 
-- **Machine Requirements**
+- **机器要求**
 
-  - Validators can compile the Rust binary themselves or run a Docker image provided by Abacus Works. The binary can be run using your favorite cloud service. You can even run multiple instances of them in different regions for high availability, as Hyperlane has no notion of "double signing."
-  - Hardware requirements & costs are minimal - validators often start with a 2-Core / 2GB RAM / 4GB Storage setup with typical costs around $75/mo
+  - 验证器可以自己编译 Rust 二进制文件或运行 Abacus Works 提供的 Docker 镜像。可以使用您喜欢的云服务运行该二进制文件。您甚至可以在不同区域运行多个实例以实现高可用性，因为 Hyperlane 没有"双重签名"的概念。
+  - 硬件要求和成本很低 - 验证器通常从 2 核心 / 2GB RAM / 4GB 存储的设置开始，典型成本约为 $75/月。
 
-- **RPC Node**
-  - Validators make simple view calls to read merkle roots from the [Mailbox](../../protocol/mailbox.mdx) contract on the chain they are validating for. You must use your own RPC urls not any public ones.
-  - Validators should configure multiple RPC URLs for redundancy and reliability. Different chains have different configurations—check the Configuration section for details.
+- **RPC 节点**
+  - 验证器进行简单的视图调用以从其正在验证的链上的 [Mailbox](../../protocol/mailbox.mdx) 合约中读取默克尔根。您必须使用自己的 RPC URL，而不是任何公共的。
+  - 验证器应配置多个 RPC URL 以实现冗余和可靠性。不同链具有不同的配置 - 请查看配置部分以获取详细信息。
 
 :::caution
 
-Operating a Validator for Polygon mainnet requires access to an archive node. This is because Validators should only sign roots once they've been finalized, and Polygon requires 256 block confirmations to achieve finality.
+在 Polygon 主网操作验证器需要访问归档节点。这是因为验证器应仅在根已最终确定后才签名，而 Polygon 需要 256 个区块确认才能实现最终性。
 
 :::
 
-## Guide
+## 指南
 
-### Pre-Requisites
+### 前提条件
 
-As a recap - before running a production Validator you need to have:
+回顾一下 - 在运行生产验证器之前，您需要：
 
-1. Created a key for your Validator to sign with, see the [Agent Keys](../set-up-agent-keys.mdx) documentation.
-1. Set up the destination for your Validator signatures to be posted, see the [AWS Signatures Bucket Setup](validator-signatures-aws.mdx) guide.
+1. 为您的验证器创建一个密钥以进行签名，请参见 [代理密钥](../set-up-agent-keys.mdx) 文档。
+1. 设置您的验证器签名要发布的目标，请参见 [AWS 签名存储桶设置](validator-signatures-aws.mdx) 指南。
 
-### Configuration
+### 配置
 
 :::tip
 
-Experienced operators may prefer to [deploy agents with Terraform](../deploy-with-terraform.mdx) or a community-submitted [Ansible playbook](https://github.com/polkachu/hyperlane) instead. This process will automatically create agent keys, Validator buckets, permissions and any other auxiliary setup required to run a Validator cluster on AWS.
+经验丰富的操作员可能更喜欢使用 Terraform [部署代理](../deploy-with-terraform.mdx) 或社区提交的 [Ansible 剧本](https://github.com/polkachu/hyperlane) 。此过程将自动创建代理密钥、验证器存储桶、权限以及运行 AWS 上验证器集群所需的任何其他辅助设置。
 
 :::
 
-#### RPC Configuration
+#### RPC 配置
 
-Hyperlane Validators and Relayers can use **multiple RPC URLs** to improve reliability and redundancy. The setup varies based on the chain type.
+Hyperlane 验证器和中继器可以使用 **多个 RPC URL** 来提高可靠性和冗余性。设置因链类型而异。
 
 <Tabs groupId="rpc-config">
   
 <TabItem value="evm" label="EVM Chains">
 
-EVM-based chains support configuring multiple RPC endpoints for redundancy and can specify how they are used.
+EVM 基于链支持配置多个 RPC 端点以实现冗余，并可以指定它们的使用方式。
 
-- **Configure multiple RPCs:** Use [`customRpcUrls`](../config-reference.mdx#chainschain_namecustomrpcurls).
-- **RPC Selection Mode ([`rpcConsensusType`](../config-reference.mdx#chainschain_namerpcconsensustype))**:
-  - **Fallback**: The agent tries the first URL and switches to the next if needed.
-  - **Quorum**: Requires a majority of the URLs to agree with the exception of submitting transactions; it will automatically coordinate the "latest" block if not specified to reduce sync errors.
+- **配置多个 RPC：** 使用 [`customRpcUrls`](../config-reference.mdx#chainschain_namecustomrpcurls)。
+- **RPC 选择模式 ([`rpcConsensusType`](../config-reference.mdx#chainschain_namerpcconsensustype))**：
+  - **回退**：代理尝试第一个 URL，如果需要则切换到下一个。
+  - **法定人数**：要求大多数 URL 同意，提交交易的例外情况；如果未指定，它将自动协调"最新"区块以减少同步错误。
 
 </TabItem>
 
 <TabItem value="cosmos" label="Cosmos Chains">
 
-Cosmos-based chains require both **RPC and gRPC endpoints** for proper operation.
+Cosmos 基于链需要 **RPC 和 gRPC 端点** 以确保正常操作。
 
-- **Configure multiple RPCs:** Use [`customRpcUrls`](../config-reference.mdx#chainschain_namecustomrpcurls).
-- **Configure gRPC endpoints:** Use [`customGrpcUrls`](../config-reference.mdx#chainschain_namecustomgrpcurls).
-- **Fallback Mechanism:** Cosmos agents always use **fallback mode**.
+- **配置多个 RPC：** 使用 [`customRpcUrls`](../config-reference.mdx#chainschain_namecustomrpcurls)。
+- **配置 gRPC 端点：** 使用 [`customGrpcUrls`](../config-reference.mdx#chainschain_namecustomgrpcurls)。
+- **回退机制：** Cosmos 代理始终使用 **回退模式**。
 
 </TabItem>
 
 <TabItem value="svm" label="SVM Chains">
 
-SVM-based chains support configuring multiple RPC endpoints, but **only a single RPC is used**.
+SVM 基于链支持配置多个 RPC 端点，但 **仅使用单个 RPC**。
 
-- **Configure RPCs:** Use [`customRpcUrls`](../config-reference.mdx#chainschain_namecustomrpcurls).
+- **配置 RPC：** 使用 [`customRpcUrls`](../config-reference.mdx#chainschain_namecustomrpcurls)。
 
 :::caution
 
-For **SVM chains**, only a **single RPC URL** is used. here is no fallback or quorum-based selection mechanism.
+对于 **SVM 链**，仅使用 **单个 RPC URL**。没有回退或基于法定人数的选择机制。
 
 :::
 
@@ -98,123 +98,123 @@ For **SVM chains**, only a **single RPC URL** is used. here is no fallback or qu
 
 </Tabs>
 
-#### Configuration Settings
+#### 配置设置
 
-Like the local setup, there are a few base arguments you should provide when configuring your Validator.
+与本地设置一样，在配置验证器时，您应提供一些基本参数。
 
-| Parameter                                       | Description                                                                                             |
+| 参数                                       | 描述                                                                                             |
 | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
-| `--db`                                          | Path for writing persistent data to disk.                                                               |
-| `--originChainName`                             | Name of the chain being validated. For example: `ethereum`.                                             |
-| `--chains.[originChainName].customRpcUrls`      | Override the default RPC URLs used by the Validator for your origin chain.                              |
-| `--chains.[originChainName].blocks.reorgPeriod` | Number of block confirmations the Validator needs to wait for before signing the `Mailbox` merkle root. |
+| `--db`                                          | 写入持久数据到磁盘的路径。                                                               |
+| `--originChainName`                             | 正在验证的链的名称。例如：`ethereum`。                                             |
+| `--chains.[originChainName].customRpcUrls`      | 覆盖验证器用于您的源链的默认 RPC URL。                              |
+| `--chains.[originChainName].blocks.reorgPeriod` | 验证器在签署 `Mailbox` 默克尔根之前需要等待的区块确认数量。 |
 
 :::info
 
-Your Validator takes both command line arguments and environment variables as configuration. Take a look at the [agent configuration](../agent-config.mdx) page and the [configuration reference](../config-reference.mdx) for a full list of configuration possibilities.
+您的验证器同时接受命令行参数和环境变量作为配置。查看 [代理配置](../agent-config.mdx) 页面和 [配置参考](../config-reference.mdx) 以获取完整的配置可能性列表。
 
 :::
 
-You can also provide the path to additional configuration files as a comma separated list with the [`CONFIG_FILES` environment variable](../config-reference.mdx#config_files). If you choose to run in Docker, see the docker section of [agent configuration](../agent-config.mdx) for tips on mounting your config files into your Docker container.
+您还可以通过 [`CONFIG_FILES` 环境变量](../config-reference.mdx#config_files) 提供额外配置文件的路径，使用逗号分隔列表。如果您选择在 Docker 中运行，请查看代理配置的 docker 部分以获取将配置文件挂载到 Docker 容器中的提示。
 
-### Setup-specific configuration
+### 特定于设置的配置
 
-These configurations requirements differ depending on which environment you are setting up.
+这些配置要求因您设置的环境而异。
 
-**Checkpoint signer configuration**
+**检查点签名者配置**
 
 <Tabs groupId="production-setup">
 <TabItem value="hex-key" label="Hex Key">
 
-| Argument                                | Description                                                                                                                                  |
+| 参数                                | 描述                                                                                                                                  |
 | --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| `--validator.key`                       | Your Validator's private key, which is used to sign merkle roots.                                                                            |
-| `--chains.${localChainName}.signer.key` | Your Validator's private key, which will be used to submit a transaction onchain that publicly announces your Validator's checkpoint syncer. |
+| `--validator.key`                       | 您验证器的私钥，用于签署默克尔根。                                                                            |
+| `--chains.${localChainName}.signer.key` | 您验证器的私钥，将用于在链上提交交易，公开宣布您的验证器的检查点同步器。 |
 
 </TabItem>
 <TabItem value="aws-kms" label="AWS KMS">
 
-| Argument             | Description                                                                                                                            |
+| 参数             | 描述                                                                                                                            |
 | -------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| `--validator.region` | The region of your AWS KMS key. For example: `us-east-1`.                                                                              |
-| `--validator.type`   | Set to the `aws` literal.                                                                                                              |
-| `--validator.id`     | The alias of your Validator's AWS KMS key, prefixed with `alias/`. For example: `alias/hyperlane-validator-signer-${originChainName}`. |
+| `--validator.region` | 您的 AWS KMS 密钥的区域。例如：`us-east-1`。                                                                              |
+| `--validator.type`   | 设置为 `aws` 字面量。                                                                                                              |
+| `--validator.id`     | 您验证器的 AWS KMS 密钥的别名，前缀为 `alias/`。例如：`alias/hyperlane-validator-signer-${originChainName}`。 |
 
 </TabItem>
 </Tabs>
 
-**Transaction signer configuration**
+**交易签名者配置**
 
-The key configured in this step needs a small amount of funds to send the initial announcement transaction.
+在此步骤中配置的密钥需要少量资金以发送初始公告交易。
 
 <Tabs groupId="signer-setup">
 <TabItem value="hex-key-evm" label="Hex Key (EVM)">
-This is the same as the local configuration for the checkpoint signer.
+这与检查点签名者的本地配置相同。
 
-| Argument                                | Description                                                                                                                                  |
+| 参数                                | 描述                                                                                                                                  |
 | --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| `--chains.${localChainName}.signer.key` | Your Validator's private key, which will be used to submit a transaction onchain that publicly announces your Validator's checkpoint syncer. |
+| `--chains.${localChainName}.signer.key` | 您验证器的私钥，将用于在链上提交交易，公开宣布您的验证器的检查点同步器。 |
 
 </TabItem>
 <TabItem value="aws-kms-evm" label="AWS KMS (EVM)">
 
-| Argument                                    | Description                                                                                                                            |
+| 参数                                    | 描述                                                                                                                            |
 | ------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| `--chains.${originChainName}.signer.type`   | Set to the `aws` literal.                                                                                                              |
-| `--chains.${originChainName}.signer.region` | The region of your AWS KMS key. For example: `us-east-1`.                                                                              |
-| `--chains.${originChainName}.signer.id`     | The alias of your Validator's AWS KMS key, prefixed with `alias/`. For example: `alias/hyperlane-validator-signer-${originChainName}`. |
+| `--chains.${originChainName}.signer.type`   | 设置为 `aws` 字面量。                                                                                                              |
+| `--chains.${originChainName}.signer.region` | 您的 AWS KMS 密钥的区域。例如：`us-east-1`。                                                                              |
+| `--chains.${originChainName}.signer.id`     | 您验证器的 AWS KMS 密钥的别名，前缀为 `alias/`。例如：`alias/hyperlane-validator-signer-${originChainName}`。 |
 
 </TabItem>
 <TabItem value="hex-key-cosmos" label="Hex Key (Cosmos)">
 
-| Argument                                    | Description                                                                                                                                      |
+| 参数                                    | 描述                                                                                                                                      |
 | ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `--chains.${originChainName}.signer.type`   | Set to the `cosmosKey` literal.                                                                                                                  |
-| `--chains.${originChainName}.signer.prefix` | Set to the prefix literal associated with the chain's address format. Example: `osmo`.                                                           |
-| `--chains.${originChainName}.key`           | Your Validator's hex private key, which will be used to submit a transaction onchain that publicly announces your Validator's checkpoint syncer. |
+| `--chains.${originChainName}.signer.type`   | 设置为 `cosmosKey` 字面量。                                                                                                                  |
+| `--chains.${originChainName}.signer.prefix` | 设置为与链的地址格式相关联的前缀字面量。例如：`osmo`。                                                           |
+| `--chains.${originChainName}.key`           | 您验证器的十六进制私钥，将用于在链上提交交易，公开宣布您的验证器的检查点同步器。 |
 
 </TabItem>
 </Tabs>
 
-**Checkpoint syncer configuration**
+**检查点同步器配置**
 
 <Tabs groupId="production-setup">
 <TabItem value="local-setup" label="Local Setup">
 
-| Argument                  | Description                                                                                                                                                                                                                                                |
+| 参数                  | 描述                                                                                                                                                                                                                                                |
 | ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `--checkpointSyncer.type` | Set to `localStorage`.                                                                                                                                                                                                                                     |
-| `--checkpointSyncer.path` | The path to your local directory where Validator signatures will be written. This should be the value of `$MY_VALIDATOR_SIGNATURES_DIRECTORY` from the local setup. For example: `--checkpointSyncer.path='/tmp/hyperlane-validator-signatures-ethereum'`. |
+| `--checkpointSyncer.type` | 设置为 `localStorage`。                                                                                                                                                                                                                                     |
+| `--checkpointSyncer.path` | 您本地目录的路径，验证器签名将被写入。此值应为本地设置中的 `$MY_VALIDATOR_SIGNATURES_DIRECTORY` 的值。例如：`--checkpointSyncer.path='/tmp/hyperlane-validator-signatures-ethereum'`。 |
 
 :::warning
 
-Note that the Relayer **must** be configured with `--allowLocalCheckpointSyncers` to be able to read signatures from this Validator.
+请注意，中继器 **必须** 配置为 `--allowLocalCheckpointSyncers` 才能读取来自此验证器的签名。
 
 :::
 
 </TabItem>
 <TabItem value="production-setup" label="Production Setup (AWS)">
 
-| Argument                    | Description                                                           |
+| 参数                    | 描述                                                           |
 | --------------------------- | --------------------------------------------------------------------- |
-| `--checkpointSyncer.type`   | Set to `s3`.                                                          |
-| `--checkpointSyncer.bucket` | The AWS S3 bucket name.                                               |
-| `--checkpointSyncer.region` | The region of your AWS S3 bucket. For example: `us-east-1`.           |
-| `--checkpointSyncer.folder` | A folder name to use for this validator, can be the name of the chain |
+| `--checkpointSyncer.type`   | 设置为 `s3`。                                                          |
+| `--checkpointSyncer.bucket` | AWS S3 存储桶名称。                                               |
+| `--checkpointSyncer.region` | 您的 AWS S3 存储桶的区域。例如：`us-east-1`。           |
+| `--checkpointSyncer.folder` | 用于此验证器的文件夹名称，可以是链的名称 |
 
 </TabItem>
 </Tabs>
 
-## Start Validating
+## 开始验证
 
-### Setup
+### 设置
 
-The recommended installation method for a production environment is using a Docker image.
+生产环境的推荐安装方法是使用 Docker 镜像。
 
 <Tabs groupId="docker">
   <TabItem value="docker" label="Docker image">
 
-First download the docker image:
+首先下载 docker 镜像：
 
 ```bash
 docker pull --platform linux/amd64 gcr.io/abacus-labs-dev/hyperlane-agent:agents-v1.1.0
@@ -223,25 +223,25 @@ docker pull --platform linux/amd64 gcr.io/abacus-labs-dev/hyperlane-agent:agents
   </TabItem>
   <TabItem value="from-source" label="Building from source">
 
-**Clone and setup**
+**克隆和设置**
 
-First, clone the Hyperlane monorepo:
+首先，克隆 Hyperlane 单一代码库：
 
 ```sh
 git clone git@github.com:hyperlane-xyz/hyperlane-monorepo.git
 ```
 
-Then follow the [setup instructions](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/main/rust/README.md) in the `rust` directory. This should setup `rustup` as well as Rosetta 2 if you are on Apple Silicon.
+然后按照 `rust` 目录中的 [设置说明](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/main/rust/README.md) 进行操作。这应该设置 `rustup` 以及如果您在 Apple Silicon 上则设置 Rosetta 2。
 
 ```sh
-# install rustup
+# 安装 rustup
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
-# (apple silicon only) install rosetta 2
+# (仅限苹果硅) 安装 rosetta 2
 softwareupdate --install-rosetta --agree-to-license
 ```
 
-Build the Validator:
+构建验证器：
 
 ```sh
 cargo build --release bin validator
@@ -250,21 +250,21 @@ cargo build --release bin validator
   </TabItem>
 </Tabs>
 
-### Running the binary
+### 运行二进制文件
 
-For production Validators that write their signatures to an S3 bucket and have their keys configured with AWS KMS, you will have to provide the AWS access key and secret as environment variables.
+对于将签名写入 S3 存储桶并使用 AWS KMS 配置密钥的生产验证器，您必须将 AWS 访问密钥和秘密作为环境变量提供。
 
-| Environment variable    | Description                                             |
+| 环境变量    | 描述                                             |
 | ----------------------- | ------------------------------------------------------- |
-| `AWS_ACCESS_KEY_ID`     | The access key ID of your Validator's AWS IAM user.     |
-| `AWS_SECRET_ACCESS_KEY` | The secret access key of your Validator's AWS IAM user. |
+| `AWS_ACCESS_KEY_ID`     | 您验证器的 AWS IAM 用户的访问密钥 ID。     |
+| `AWS_SECRET_ACCESS_KEY` | 您验证器的 AWS IAM 用户的秘密访问密钥。 |
 
-For a refresher, check out the [Agent Keys](../set-up-agent-keys.mdx) guide.
+有关更多信息，请查看 [代理密钥](../set-up-agent-keys.mdx) 指南。
 
 <Tabs groupId="docker">
   <TabItem value="docker" label="Using Docker">
 
-Then start the container with the relevant arguments. For example, your configuration for AWS:
+然后使用相关参数启动容器。例如，您对 AWS 的配置：
 
 ```sh
 docker run \
@@ -291,16 +291,16 @@ docker run \
   </TabItem>
 
   <TabItem value="from-source" label="Building from source">
-See these instructions for building from source without Docker.
+请参阅这些说明以在没有 Docker 的情况下从源构建。
 
-We can run the built binary from within the `hyperlane-monorepo/rust` directory:
+我们可以在 `hyperlane-monorepo/rust` 目录中运行构建的二进制文件：
 
 ```sh
-# set AWS environment variables
+# 设置 AWS 环境变量
 export AWS_ACCESS_KEY_ID=ABCDEFGHIJKLMNOP
 export AWS_SECRET_ACCESS_KEY=xX-haha-nice-try-Xx
 
-# run the Validator
+# 运行验证器
 ./target/release/validator \
   --db /hyperlane_db \
   --originChainName <your_chain_name> \
@@ -319,48 +319,48 @@ export AWS_SECRET_ACCESS_KEY=xX-haha-nice-try-Xx
   </TabItem>
 </Tabs>
 
-### Announcing your Validator
+### 宣布您的验证器
 
-The [Relayer](../relayer/run-relayer.mdx) needs to know where to find your Validator's signatures. Your Validator will automatically attempt to announce itself by writing to the `ValidatorAnnounce` contract on the chain that you're validating.
+[中继器](../relayer/run-relayer.mdx) 需要知道在哪里找到您的验证器的签名。您的验证器将自动尝试通过写入您正在验证的链上的 `ValidatorAnnounce` 合约来宣布自己。
 
-To do this, your Validator must have a small amount of tokens to pay for the gas for this transaction.
+为此，您的验证器必须有少量代币来支付此交易的燃气费用。
 
-If your Validator has not yet announced itself, and does not have enough tokens to pay for gas, it will log a message specifying how many tokens are needed.
+如果您的验证器尚未宣布自己，并且没有足够的代币支付燃气费用，它将记录一条消息，说明需要多少代币。
 
-### Success!
+### 成功！
 
-The Validator will index the origin Mailbox contract for messages. If a message has been sent, you should see log messages that the Validator has signed them. If everything is configured correctly, you should see json files being written to your S3 bucket (if you followed the AWS setup) or to your local signatures directory if you followed the local setup. New json files get written every time a new outbound message is inserted into the mailbox.
+验证器将索引源 Mailbox 合约以获取消息。如果已发送消息，您应该看到验证器已签署它们的日志消息。如果一切配置正确，您应该会看到 JSON 文件被写入您的 S3 存储桶（如果您遵循了 AWS 设置）或写入您的本地签名目录（如果您遵循了本地设置）。每当向邮箱插入新出站消息时，都会写入新的 JSON 文件。
 
-## Running Multiple Validators
+## 运行多个验证器
 
-We encourage folks to validate on as many chains as they are interested in supporting. This section provides an overview of the considerations and instructions to set up multiple validators.
+我们鼓励大家在尽可能多的链上进行验证。此部分提供了设置多个验证器的考虑因素和说明。
 
-Running multiple validators improves security and redundancy. By deploying validators across different chains or regions, you reduce the risk of a single point of failure. If one validator encounters downtime or issues, others can continue to operate, ensuring the integrity and availability of the validation process.
+运行多个验证器可以提高安全性和冗余性。通过在不同链或区域部署验证器，您可以减少单点故障的风险。如果一个验证器遇到停机或问题，其他验证器可以继续运行，确保验证过程的完整性和可用性。
 
-### Running Mulitple Validators: Key Considerations
+### 运行多个验证器：关键考虑因素
 
-- **Reusing Keys**: The same key can be used by multiple validators.
-- **Shared AWS Account**: The same AWS account can be used by multiple validators.
-- **Using a Shared S3 Bucket**: The same checkpoint syncer S3 bucket can be used by multiple validators, however each **must** use a different folder (e.g., `--checkpointSyncer.folder validator-1`, `--checkpointSyncer.folder validator-2`).
+- **重用密钥**：同一密钥可以被多个验证器使用。
+- **共享 AWS 账户**：同一 AWS 账户可以被多个验证器使用。
+- **使用共享 S3 存储桶**：同一检查点同步器 S3 存储桶可以被多个验证器使用，但每个 **必须** 使用不同的文件夹（例如，`--checkpointSyncer.folder validator-1`，`--checkpointSyncer.folder validator-2`）。
 
-### Additional Steps for Multiple Validators
+### 多个验证器的额外步骤
 
-#### 1. Create an Agent Configuration
+#### 1. 创建代理配置
 
-- Generate an agent [configuration](#configuration) file for each validator, specifying the chains they will validate and the corresponding RPC URLs.
-- Ensure that each configuration file points to the correct signing key and S3 folder.
+- 为每个验证器生成一个代理 [配置](#configuration) 文件，指定它们将验证的链和相应的 RPC URL。
+- 确保每个配置文件指向正确的签名密钥和 S3 文件夹。
 
-#### 2. Run Each Validator
+#### 2. 运行每个验证器
 
-- Ensure each Validator is assigned a unique database path (e.g., `--db /hyperlane_db_validator1`).
-- Configure each validator to expose metrics on a unique port (e.g., `--metrics-port 9090`, `--metrics-port 9091`).
-- If running multiple validators on the same machine, allocate sufficient system resources (CPU, memory, and storage).
-- Ensure logs are directed to separate files or services for easier debugging and monitoring.
-- If using Docker, assign unique container names and network configurations to avoid conflicts.
+- 确保每个验证器分配一个唯一的数据库路径（例如，`--db /hyperlane_db_validator1`）。
+- 配置每个验证器在唯一端口上公开指标（例如，`--metrics-port 9090`，`--metrics-port 9091`）。
+- 如果在同一台机器上运行多个验证器，请分配足够的系统资源（CPU、内存和存储）。
+- 确保日志被定向到单独的文件或服务，以便于调试和监控。
+- 如果使用 Docker，请分配唯一的容器名称和网络配置以避免冲突。
 
-By following these additional steps, you can efficiently manage multiple Hyperlane Validators.
+通过遵循这些额外步骤，您可以有效管理多个 Hyperlane 验证器。
 
-## Design reference
+## 设计参考
 
 ```mermaid
 flowchart TB

@@ -3,16 +3,16 @@ import TabItem from "@theme/TabItem";
 
 import DomainsTable from '@site/src/components/DomainsTable';
 
-# Domain Identifiers
+# 域标识符
 
-## Core Domains
+## 核心域
 
-This list includes only the deployments on chains that are managed by Abacus Works (our legal entity). Anybody can deploy Hyperlane on any chain [permissionlessly](../deploy-hyperlane.mdx) - we are building a registry to reflect the community's permissionless deployments.
+此列表仅包含由 Abacus Works(我们的法律实体)管理的链上部署。任何人都可以[无需许可](../deploy-hyperlane.mdx)在任何链上部署 Hyperlane - 我们正在建立一个注册表来反映社区的无许可部署。
 
-Hyperlane uses unique IDs for each Hyperlane-supported chain. When possible Hyperlane domain IDs match EVM chain IDs, but this is **not guaranteed** as we support non-EVM chains as well.
+Hyperlane 为每个支持 Hyperlane 的链使用唯一的 ID。在可能的情况下,Hyperlane 域 ID 与 EVM 链 ID 匹配,但由于我们也支持非 EVM 链,这**并不能保证**。
 
 :::warning
-Some Hyperlane domain IDs do not match their corresponding EVM chain IDs, such as:
+某些 Hyperlane 域 ID 与其对应的 EVM 链 ID 不匹配,例如:
 - `immutablezkevmmainnet`
 - `rarichain`
 - `rootstockmainnet`
@@ -24,16 +24,16 @@ Some Hyperlane domain IDs do not match their corresponding EVM chain IDs, such a
 - `metal`
 - `polynomialfi`
 
-Please refer to the table below for the full list of Hyperlane domain IDs.
+请参考下表获取完整的 Hyperlane 域 ID 列表。
 :::
 
-When [sending a message](../your-first-message.mdx), users must provide the domain ID of the destination chain. When [receiving a message](./messaging/receive.mdx), the recipient will be passed the domain ID of the origin chain.
+在[发送消息](../your-first-message.mdx)时,用户必须提供目标链的域 ID。在[接收消息](./messaging/receive.mdx)时,接收者将获得源链的域 ID。
 
 <Tabs groupId="environment">
-<TabItem value="mainnet" label="Mainnet">
+<TabItem value="mainnet" label="主网">
 <DomainsTable environment="mainnet"/>
 </TabItem>
-<TabItem value="testnet" label="Testnet">
+<TabItem value="testnet" label="测试网">
 <DomainsTable environment="testnet"/>
 </TabItem>
 </Tabs>

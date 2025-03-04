@@ -1,21 +1,21 @@
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
 
-# Post-Dispatch Interchain Gas Payment
+# 跨链 Gas 费用后置处理
 
-During the post-dispatch hook, the `InterchainGasPaymaster` contract will revert if payment is insufficient to cover the relayer's _anticipated_ costs. The gas quote calculated at `dispatch` time must align with the relayer’s anticipated costs.
+在后置处理钩子中,如果支付的费用不足以覆盖中继器的预期成本,`InterchainGasPaymaster` 合约将会回滚。在 `dispatch` 时计算的 gas 报价必须与中继器的预期成本相符。
 
-## Gas Limit
+## Gas 限制
 
-The `gasLimit` is set based on the cost of calling `handle` on the destination chain for a given message. This can vary depending on message content and the logic of the handler.
+`gasLimit` 是根据在目标链上调用给定消息的 `handle` 的成本来设置的。这可能会根据消息内容和处理程序的逻辑而有所不同。
 
-The default `gasLimit` for metering the handle call is a static default of `50_000` gas. This is sufficient for simple operations but may not be enough for more complex `handle` functions.
+用于计量 handle 调用的默认 `gasLimit` 是静态的 `50_000` gas。这对于简单操作来说已经足够,但对于更复杂的 `handle` 函数可能不够。
 
-If your `handle` function performs complex operations or requires more gas, you must override the [default `gasLimit` in metadata](#metadata) to avoid transaction reverts. Benchmark your [`handle` implementations](../messaging/receive.mdx#handle) in unit tests to determine a reasonable `gasLimit` to use.
+如果你的 `handle` 函数执行复杂操作或需要更多 gas,你必须在[元数据中覆盖默认的 `gasLimit`](#metadata) 以避免交易回滚。在单元测试中对你的 [`handle` 实现](../messaging/receive.mdx#handle)进行基准测试,以确定合理的 `gasLimit`。
 
-### Metadata
+### 元数据
 
-This hook expects metadata in a **packed encoding** of `StandardHookMetadata`. See the Mailbox [dispatch overloads](../messaging/send.mdx#overriding-default-hook-metadata) for how to pass metadata overrides.
+此 hook 需要 **打包编码** 格式的 `StandardHookMetadata`。查看 Mailbox [dispatch 重载](../messaging/send.mdx#overriding-default-hook-metadata)了解如何传递元数据覆盖。
 
 <Tabs groupId="lang">
 <TabItem value="sol" label="Solidity">
@@ -23,7 +23,7 @@ This hook expects metadata in a **packed encoding** of `StandardHookMetadata`. S
 ```solidity
 struct StandardHookMetadata {
     uint16 variant;
-    uint256 msgValue;
+    uint256 msgValue; 
     uint256 gasLimit;
     address refundAddress;
 }
@@ -32,49 +32,49 @@ struct StandardHookMetadata {
 </TabItem>
 </Tabs>
 
-The `StandardHookMetadata` struct defines the fields required for metadata encoding:
+`StandardHookMetadata` 结构定义了元数据编码所需的字段:
 
-- `variant`: Specifies the metadata format version.
-- `msgValue`: Amount of native token sent with the message.
-- `gasLimit`: Gas limit for the `handle` function on the destination chain. Ensure this matches your simulation results.
-- `refundAddress`: Address to refund unused gas payments.
+- `variant`: 指定元数据格式版本
+- `msgValue`: 随消息发送的原生代币数量
+- `gasLimit`: 目标链上 `handle` 函数的 gas 限制。确保这与你的模拟结果相匹配
+- `refundAddress`: 退还未使用 gas 费用的地址
 
-To encode this metadata, use the `StandardHookMetadata.formatMetadata` library function. Direct encoding of the struct with `abi.encodePacked` is not supported in Solidity.
+要编码此元数据,请使用 `StandardHookMetadata.formatMetadata` 库函数。Solidity 不支持使用 `abi.encodePacked` 直接编码结构体。
 
-#### Example Usage
+#### 使用示例
 
 <Tabs groupId="lang">
 <TabItem value="sol" label="Solidity">
 
 ```solidity
-// Example: Encoding metadata using StandardHookMetadata
+// 示例: 使用 StandardHookMetadata 编码元数据
 bytes memory metadata = StandardHookMetadata.formatMetadata(
-    0,               // ETH message value
-    200000,          // Custom gas limit
-    address(this),   // Refund address
-    bytes("")        // Optional custom metadata
+    0,               // ETH 消息值
+    200000,         // 自定义 gas 限制
+    address(this),   // 退款地址
+    bytes("")        // 可选的自定义元数据
 );
 ```
 
-### Determine and Override the Gas Limit
+### 确定和覆盖 Gas 限制
 
-1. **Simulate and Benchmark Gas Usage**:
+1. **模拟和基准测试 Gas 使用量**:
 
-- Use tools like Tenderly or Foundry to simulate the `handle` function on your message recipient. Ensure the `from` address is set to the Mailbox contract on your chain.
-- If gas usage exceeds `50,000` gas, calculate an appropriate `gasLimit` and update your metadata.
-- Use the [call-to-action in the Hyperlane Explorer](https://github.com/hyperlane-xyz/hyperlane-explorer/blob/03634076049bfce1611b4e41d1aa81910eab2962/src/features/messages/cards/TransactionCard.tsx#L326-L333) to simulate transactions from the message details.
+- 使用 Tenderly 或 Foundry 等工具模拟消息接收者的 `handle` 函数。确保 `from` 地址设置为你链上的 Mailbox 合约。
+- 如果 gas 使用量超过 `50,000`,计算适当的 `gasLimit` 并更新你的元数据。
+- 使用 [Hyperlane Explorer 中的操作按钮](https://github.com/hyperlane-xyz/hyperlane-explorer/blob/03634076049bfce1611b4e41d1aa81910eab2962/src/features/messages/cards/TransactionCard.tsx#L326-L333) 从消息详情模拟交易。
 
-2. **Update Your Metadata**:
+2. **更新你的元数据**:
 
-- Calculate the required `gasLimit` based on the simulation.
-- Pass the updated `gasLimit` in your metadata to ensure the relayer will deliver your message.
+- 根据模拟结果计算所需的 `gasLimit`。
+- 在元数据中传入更新后的 `gasLimit`,确保中继器能够传递你的消息。
 
 </TabItem>
 </Tabs>
 
-## Destination Gas Config
+## 目标 Gas 配置
 
-For each remote domain, the InterchainGasPaymaster sets the domain gas config.
+对于每个远程域,InterchainGasPaymaster 设置域 gas 配置。
 
 ```solidity
 struct DomainGasConfig {
@@ -83,30 +83,30 @@ struct DomainGasConfig {
 }
 ```
 
-### Gas overhead
+### Gas 开销
 
-The gas overhead is set as part of the destination gas configuration. This corresponds to the operational cost of processing a message on the destination chain.
-
-:::info
-
-- You should ensure the `gasOverhead` sufficiently covers the range of ISMs on your destination chain.
-- As you can configure different ISMs for different message types, you may have different gas overheads for each ISM's `verify` function.
-
-:::
-
-## Gas Oracles
-
-Interchain Gas Payment requirements are calculated using oraclized gas prices and exchange rates between the origin and destination chains.
-
-IGP contracts may be configured with gas oracles, which are responsible for tracking remote token gas prices and exchange rates. Developers should use the [`quoteDispatch`](./overview.mdx#quote-dispatch-fees) function on the Mailbox contract to calculate gas fees. The `quoteDispatch` accounts for system-level overhead and ensures accurate fee calculation for the entire `dispatch` process.
+gas 开销是目标 gas 配置的一部分。这对应于在目标链上处理消息的运营成本。
 
 :::info
 
-- Exchange rates and gas prices are up to the relayer to decide. A spread may be charged to account for drift and operating costs.
+- 你应该确保 `gasOverhead` 足以覆盖目标链上的 ISM 范围。
+- 由于你可以为不同的消息类型配置不同的 ISM,每个 ISM 的 `verify` 函数可能有不同的 gas 开销。
 
 :::
 
-Eventually, a relayer will be able to automatically update their gas oracles in order to ensure that their IGP always quotes a fair price for remote gas.
+## Gas 预言机
+
+跨链 Gas 费用要求是使用预言机提供的 gas 价格和原目标链之间的汇率计算的。
+
+IGP 合约可以配置 gas 预言机,负责跟踪远程代币 gas 价格和汇率。开发者应该使用 Mailbox 合约上的 [`quoteDispatch`](./overview.mdx#quote-dispatch-fees) 函数来计算 gas 费用。`quoteDispatch` 考虑了系统级开销,确保整个 `dispatch` 过程的费用计算准确。
+
+:::info
+
+- 汇率和 gas 价格由中继器决定。可能会收取价差以应对价格波动和运营成本。
+
+:::
+
+最终,中继器将能够自动更新其 gas 预言机,以确保其 IGP 始终为远程 gas 报出公平价格。
 
 ### `getExchangeRateAndGasPrice`
 
@@ -117,21 +117,21 @@ Eventually, a relayer will be able to automatically update their gas oracles in 
 
 ```
 
-**Parameters**
+**参数**
 
-- `destinationDomain`: The message's destination domain
+- `destinationDomain`: 消息的目标域
 
-**Returns**
+**返回值**
 
-- `tokenExchangeRate`: The exchange rate between the origin and destination chain's gas tokens
-- `gasPrice`: The gas price for the destination chain
+- `tokenExchangeRate`: 原链和目标链 gas 代币之间的汇率
+- `gasPrice`: 目标链的 gas 价格
 
 </TabItem>
 </Tabs>
 
 ### `quoteGasPayment`
 
-The `quoteGasPayment` function calculates fees for the relayer's anticipated costs.
+`quoteGasPayment` 函数计算中继器预期成本的费用。
 
 <Tabs groupId="lang">
 <TabItem value="sol" label="Solidity">
@@ -140,23 +140,23 @@ The `quoteGasPayment` function calculates fees for the relayer's anticipated cos
 
 ```
 
-**Parameters**
+**参数**
 
-- `destinationDomain`: The message's destination domain
-- `gasLimit`: The gas limit to meter the `handle` call with
+- `destinationDomain`: 消息的目标域
+- `gasLimit`: 用于计量 `handle` 调用的 gas 限制
 
-**Returns**
+**返回值**
 
-- `fee`: The payment required for the `postDispatch` to succeed
+- `fee`: `postDispatch` 成功所需的支付金额
 
 </TabItem>
 </Tabs>
 
-## Retrying
+## 重试
 
-If the `handle` call consumes more gas than quoted, the relayer will not submit a process transaction. This issue often occurs due to insufficient gas payment during the initial `dispatch`.
+如果 `handle` 调用消耗的 gas 超过报价,中继器将不会提交处理交易。这个问题通常是由于初始 `dispatch` 时 gas 支付不足导致的。
 
-In this case, additional gas can be paid for with the `payForGas` function.
+在这种情况下,可以使用 `payForGas` 函数支付额外的 gas。
 
 <Tabs groupId="lang">
 <TabItem value="sol" label="Solidity">
@@ -165,54 +165,54 @@ In this case, additional gas can be paid for with the `payForGas` function.
 
 ```
 
-**Parameters**
+**参数**
 
-- `messageId`: The message identifier returned from `dispatch` call
-- `destinationDomain`: The message's destination domain
-- `gasAmount`: The additional gas amount to pay for
-- `refundAddress`: The address to refund excess payment to
+- `messageId`: 从 `dispatch` 调用返回的消息标识符
+- `destinationDomain`: 消息的目标域
+- `gasAmount`: 要支付的额外 gas 数量
+- `refundAddress`: 退还多余支付的地址
 
 </TabItem>
 </Tabs>
 
-## Using the Hyperlane Explorer for Debugging
+## 使用 Hyperlane Explorer 进行调试
 
-The Hyperlane Explorer is a powerful tool to debug cross-chain message issues, including gas payments and relayer behavior.
+Hyperlane Explorer 是一个强大的工具,可用于调试跨链消息问题,包括 gas 支付和中继器行为。
 
-### Key Features
+### 主要功能
 
-- **Message Status**: View the current status of your message (e.g., "Retry: GasPaymentRequirementNotMet").
-- **Gas Payment Details**: Check the gas amount paid (Origin IGP gas amount) and the amount required by the relayer.
-- **Simulate Calldata**: Use the "View calldata details" option to simulate transactions on tools like Tenderly.
+- **消息状态**: 查看消息的当前状态(例如,"重试: GasPaymentRequirementNotMet")。
+- **Gas 支付详情**: 检查已支付的 gas 数量(原始 IGP gas 数量)和中继器要求的数量。
+- **模拟调用数据**: 使用"查看调用数据详情"选项在 Tenderly 等工具上模拟交易。
 
-## Troubleshooting
+## 故障排除
 
-This section covers common issues developers encounter with Interchain Gas Payments, along with potential solutions.
+本节介绍开发者在处理跨链 Gas 支付时遇到的常见问题及其可能的解决方案。
 
-### `GasPaymentRequirementNotMet` Warning
+### `GasPaymentRequirementNotMet` 警告
 
-- **Reason:** This occurs when the gas payment provided during `dispatch` does not meet the relayer's calculated requirement.
+- **原因:** 当 `dispatch` 期间提供的 gas 支付不满足中继器计算的要求时发生。
 
-- **Solution:**
-  - Use `quoteDispatch` to calculate the aggregate fee required for a `dispatch` call to be successful.
-  - Verify that `msg.value` in your metadata covers the relayer’s quoted fee.
-  - Check the message status in the Hyperlane Explorer. Look for: `Retry(GasPaymentRequirementNotMet)`.
+- **解决方案:**
+  - 使用 `quoteDispatch` 计算使 `dispatch` 调用成功所需的总费用。
+  - 验证元数据中的 `msg.value` 是否覆盖了中继器报价的费用。
+  - 在 Hyperlane Explorer 中检查消息状态。查找: `Retry(GasPaymentRequirementNotMet)`。
 
-### Fallback Routing and Overpayment Warning
+### 回退路由和超额支付警告
 
-- **Reason:** `msg.value` exceeds the required gas payment, triggering the fallback routing hook.
+- **原因:** `msg.value` 超过所需的 gas 支付,触发回退路由钩子。
 
-- **Solution:**
-  - Verify that your quoting logic (`quoteDispatch`) matches the relayer's anticipated fees.
-  - Avoid overestimating `gasLimit` values without first benchmarking the `handle` function.
-  - Simulate the transaction to confirm appropriate payment.
+- **解决方案:**
+  - 验证你的报价逻辑(`quoteDispatch`)是否与中继器的预期费用匹配。
+  - 避免在未先对 `handle` 函数进行基准测试的情况下过度估计 `gasLimit` 值。
+  - 模拟交易以确认适当的支付。
 
-### Unexpectedly Large Gas Quotes
+### 意外的高额 Gas 报价
 
-- **Reason:** A very high `gasLimit` was set, leading to excessively large gas quotes.
+- **原因:** 设置了非常高的 `gasLimit`,导致过高的 gas 报价。
 
-- **Solution:**
+- **解决方案:**
 
-  - Double-check the `gasLimit` specified in your metadata.
-  - Verify that your quoting logic (`quoteDispatch`) matches the relayer's anticipated fees.
-  - Adjust the `gasLimit` to match the estimated gas consumption of your `handle` function.
+  - 仔细检查元数据中指定的 `gasLimit`。
+  - 验证你的报价逻辑(`quoteDispatch`)是否与中继器的预期费用匹配。
+  - 调整 `gasLimit` 以匹配你的 `handle` 函数的估计 gas 消耗。

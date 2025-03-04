@@ -1,10 +1,10 @@
-# Interchain Account Interface
+# 跨链账户接口
 
-Developers can use the **Interchain Account** interface to create and control an account on a remote chain from their local chain.
+开发者可以使用 **跨链账户** 接口从本地链创建和控制远程链上的账户。
 
-Unlike general message passing, which requires recipients to implement a specific interface, Interchain Accounts (ICAs) allow developers to interact with _any_ remote contract.
+与一般的消息传递不同，后者要求接收方实现特定接口，跨链账户（ICA）允许开发者与 _任何_ 远程合约进行交互。
 
-## Overview
+## 概述
 
 ```mermaid
 flowchart TB
@@ -38,23 +38,23 @@ flowchart TB
     style Recipient fill:#FF0099
 ```
 
-Interchain Accounts allow you to make a remote call from **Chain A** to **Chain B** using the router (`InterchainAccountRouter`). Here's how it works:
+跨链账户允许您通过路由器（`InterchainAccountRouter`）从 **链 A** 进行远程调用到 **链 B**。其工作原理如下：
 
-- We use [CREATE2](https://docs.openzeppelin.com/cli/2.8/deploying-with-create2) to compute the deterministic [OwnableMulticall](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/main/solidity/contracts/middleware/libs/OwnableMulticall.sol) contract address for you, which serves as a proxy for your cross-chain calls. You can explore this [here](#example-usage).
+- 我们使用 [CREATE2](https://docs.openzeppelin.com/cli/2.8/deploying-with-create2) 为您计算出确定性的 [OwnableMulticall](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/main/solidity/contracts/middleware/libs/OwnableMulticall.sol) 合约地址，该地址作为您跨链调用的代理。您可以在 [这里](#example-usage) 探索。
 
-- You can encode your call which includes the to address, call data, and the `msg.value` for each call, batched together in an array.
+- 您可以编码您的调用，包括目标地址、调用数据和每个调用的 `msg.value`，并将其批量放入数组中。
 
-- You send the encoded call to the **Chain A** router which gets relayed to the **Chain B** router.
+- 您将编码后的调用发送到 **链 A** 的路由器，该路由器会将其转发到 **链 B** 的路由器。
 
-- After decoding the calls, the **Chain B** router checks if the computed address is already deployed or not. If not, we deploy the _OwnableMulticall_ contract.
+- 在解码调用后，**链 B** 的路由器会检查计算出的地址是否已部署。如果没有，我们将部署 _OwnableMulticall_ 合约。
 
-- The router then performs a multicall on the ICA address, which in turn makes the desired arbitrary call on **Chain B**.
+- 然后，路由器在 ICA 地址上执行多重调用，进而在 **链 B** 上进行所需的任意调用。
 
-The Interchain Account interface assigns every `(uint32 origin, address owner, address remoteRouter, address remoteISM)` tuple a unique ICA address. The sender owns that ICA on the destination chain, and can direct it to make arbitrary function calls via the `InterchainAccountRouter.callRemote()` endpoint.
+跨链账户接口为每个 `(uint32 origin, address owner, address remoteRouter, address remoteISM)` 元组分配一个唯一的 ICA 地址。发送者在目标链上拥有该 ICA，并可以通过 `InterchainAccountRouter.callRemote()` 端点指示它进行任意函数调用。
 
-For core chains supported by Hyperlane, you are able to use the defaults that are set by the owner of the router contract. See the [#overrides](#overrides) section to see how to make calls to _any_ chain.
+对于 Hyperlane 支持的核心链，您可以使用路由器合约所有者设置的默认值。请参阅 [#overrides](#overrides) 部分，了解如何调用 _任何_ 链。
 
-### Interface
+### 接口
 
 ```solidity
 // SPDX-License-Identifier: MIT OR Apache-2.0
@@ -78,19 +78,19 @@ interface IInterchainAccountRouter {
 
 :::tip
 
-- Use `InterchainAccountRouter` out of the box - ICA routers have already been deployed to core chains. Please refer to [addresses](../contract-addresses.mdx#interchainaccountrouter). Try using the `callRemote` method to do a call via your wallet's interchain account.
+- 使用 `InterchainAccountRouter` 开箱即用 - ICA 路由器已经部署到核心链上。请参考 [addresses](../contract-addresses.mdx#interchainaccountrouter)。尝试使用 `callRemote` 方法通过您钱包的跨链账户进行调用。
 
 :::
 
-## Example Usage
+## 示例用法
 
-### Encoding
+### 编码
 
-To use the `callRemote` function, first prepare an array of `Call` structs. `Call.data` can be easily encoded with the `abi.encodeCall` function.
+要使用 `callRemote` 函数，首先准备一个 `Call` 结构的数组。`Call.data` 可以使用 `abi.encodeCall` 函数轻松编码。
 
 ```solidity
 struct Call {
-    bytes32 to; // supporting non EVM targets
+    bytes32 to; // 支持非 EVM 目标
     uint256 value;
     bytes data;
 }
@@ -115,17 +115,17 @@ uint32 ethereumDomain = 1;
 IInterchainAccountRouter(0xabc...).callRemote(ethereumDomain, [swapCall]);
 ```
 
-### Typescript Usage
+### TypeScript 用法
 
-We also have Typescript tooling to easily deploy ICA accounts and call `callRemote` on the origin chain:
+我们还提供了 TypeScript 工具，以便轻松部署 ICA 账户并在源链上调用 `callRemote`：
 
 ```typescript
 const localChain = 'ethereum';
 const signer = <YOUR_SIGNER>;
 const localRouter: InterchainAccountRouter = InterchainAccountRouter__factory.connect(<ICA_ROUTER_ADDRESS>, signer);
-const recipientAddress = <EXAMPLE_ADDRESS>; // use your own address here
-const recipientF = new TestRecipient__factory.connect(recipientAddress, signer); // use your own contract here
-const fooMessage = "Test";
+const recipientAddress = <EXAMPLE_ADDRESS>; // 在此处使用您自己的地址
+const recipientF = new TestRecipient__factory.connect(recipientAddress, signer); // 在此处使用您自己的合约
+const fooMessage = "测试";
 const data = recipient.interface.encodeFunctionData("fooBar", [1, fooMessage]);
 
 const call = {
@@ -145,11 +145,11 @@ const config: AccountConfig = {
 await localRouter.callRemote(localChain, remoteChain, [call], config);
 ```
 
-### Determine addresses
+### 确定地址
 
-It may be useful to know the remote address of your ICA before sending a message. For example, you may want to first fund the address with tokens. The `getRemoteInterchainAccount` function can be used to get the address of an ICA given the destination chain and owner address.
+在发送消息之前，了解您的 ICA 的远程地址可能会很有用。例如，您可能希望首先为该地址提供资金。可以使用 `getRemoteInterchainAccount` 函数根据目标链和所有者地址获取 ICA 的地址。
 
-An example is included below of a contract precomputing its own Interchain Account address.
+下面是一个合约预计算其自身跨链账户地址的示例。
 
 ```solidity
 address myInterchainAccount = IInterchainAccountRouter(...).getRemoteInterchainAccount(
@@ -158,7 +158,7 @@ address myInterchainAccount = IInterchainAccountRouter(...).getRemoteInterchainA
 );
 ```
 
-If you are using [#overrides](#overrides) to specify remote chains, pass those overrides when computing the remote ICA address.
+如果您使用 [#overrides](#overrides) 来指定远程链，请在计算远程 ICA 地址时传递这些覆盖。
 
 ```solidity
 address myRemoteIca = IInterchainAccountRouter(...).getRemoteInterchainAccount(
@@ -168,37 +168,36 @@ address myRemoteIca = IInterchainAccountRouter(...).getRemoteInterchainAccount(
 );
 ```
 
-## Overrides
+## 覆盖
 
-Interchain Accounts allow developers to override the default chains and security models configured in the `InterchainAccountRouter`.
+跨链账户允许开发者覆盖在 `InterchainAccountRouter` 中配置的默认链和安全模型。
 
-These are useful for:
+这些功能对于：
 
-- Calling an ICA on chains not configured in `InterchainAccountRouter`.
-- Using different ISM than the defaults configured in the `InterchainAccountRouter`
-- Adjusting the gas limit for IGP payments or setting other parameters.
+- 在未在 `InterchainAccountRouter` 中配置的链上调用 ICA。
+- 使用与 `InterchainAccountRouter` 中配置的默认值不同的 ISM。
+- 调整 IGP 付款的 gas 限制或设置其他参数。
 
-### Interface
+### 接口
 
-The `callRemoteWithOverrides` function looks similar to the `callRemote` function, but takes three additional arguments.
+`callRemoteWithOverrides` 函数与 `callRemote` 函数类似，但需要三个额外的参数。
 
-First, developers can override `_router`, the address of the `InterchainAccountRouter` on the remote chain. This allows developers to control an ICA on remote chains that have not been configured on the local `InterchainAccountRouter`.
+首先，开发者可以覆盖 `_router`，即远程链上 `InterchainAccountRouter` 的地址。这允许开发者控制未在本地 `InterchainAccountRouter` 上配置的远程链上的 ICA。
 
-Second, developers can override `_ism`, the address of the remote interchain security module (ISM) used to secure their ICA. This ISM will be used to verify the interchain messages passed between the local and remote `InterchainAccountRouters`. This allows developers to use a custom security model that best suits their needs.
+其次，开发者可以覆盖 `_ism`，即用于保护其 ICA 的远程跨链安全模块（ISM）的地址。此 ISM 将用于验证在本地和远程 `InterchainAccountRouters` 之间传递的跨链消息。这允许开发者使用最适合其需求的自定义安全模型。
 
-Third, developers can override `_hookMetadata`, the [StandardHookMetadata](../libraries/hookmetadata.mdx) metadata passed to the message hooks for each ICA call (for example, overriding the gas limit for the IGP payment).
+第三，开发者可以覆盖 `_hookMetadata`，即传递给每个 ICA 调用的消息钩子的 [StandardHookMetadata](../libraries/hookmetadata.mdx) 元数据（例如，覆盖 IGP 付款的 gas 限制）。
 
 ```solidity
     /**
-     * @notice Dispatches a sequence of remote calls to be made by an owner's
-     * interchain account on the destination domain
-     * @dev Recommend using CallLib.build to format the interchain calls
-     * @param _destination The remote domain of the chain to make calls on
-     * @param _router The remote router address
-     * @param _ism The remote ISM address
-     * @param _calls The sequence of calls to make
-     * @param _hookMetadata The hook metadata to override with for the hook set by the owner
-     * @return The Hyperlane message ID
+     * @notice 将一系列远程调用调度到所有者的跨链账户在目标域上进行
+     * @dev 推荐使用 CallLib.build 格式化跨链调用
+     * @param _destination 要进行调用的链的远程域
+     * @param _router 远程路由器地址
+     * @param _ism 远程 ISM 地址
+     * @param _calls 要进行的调用序列
+     * @param _hookMetadata 要覆盖的钩子元数据
+     * @return Hyperlane 消息 ID
      */
     function callRemoteWithOverrides(
         uint32 _destination,

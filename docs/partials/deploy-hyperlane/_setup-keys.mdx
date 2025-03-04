@@ -1,52 +1,49 @@
-There are three keys you must set up and fund.
+您必须设置和资助三个密钥。
 
 :::tip
 
-To get started, you can simplify by using the same hexadecimal key for all three roles.
+要开始，您可以通过为所有三个角色使用相同的十六进制密钥来简化操作。
 
 :::
 
 <table>
   <thead>
     <tr>
-      <th>Key Role</th>
-      <th>Description</th>
-      <th>Funding Needs</th>
+      <th>密钥角色</th>
+      <th>描述</th>
+      <th>资金需求</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td>Contract Deployer</td>
-      <td>32 byte hexadecimal private key</td>
-      <td>Funded on all the chains on which we need to deploy contracts.</td>
+      <td>合约部署者</td>
+      <td>32字节十六进制私钥</td>
+      <td>在我们需要部署合约的所有链上都需要资助。</td>
     </tr>
     <tr>
-      <td>Validator Accounts</td>
+      <td>验证者账户</td>
       <td>
-        A list of validator addresses that will sign outbound messages from your
-        local chain. Just one validator works to get started quickly.
+        一组验证者地址，将签署来自您本地链的出站消息。快速入门时只需一个验证者即可。
       </td>
       <td>
-        A small amount so validators can announce the location of their
-        signatures onchain with a one-time transaction
+        一小笔资金，以便验证者可以通过一次性交易在链上宣布其签名的位置。
       </td>
     </tr>
     <tr>
-      <td>Relayer Accounts</td>
+      <td>中继账户</td>
       <td>
-        The single relayer you will operate requires an account on each chain it
-        will deliver messages to & from
+        您将操作的单个中继器需要在每个它将传递消息的链上都有一个账户。
       </td>
       <td>
-        The relayer must have a balance on all chains it's relaying between.
+        中继器必须在它所中继的所有链上都有余额。
       </td>
     </tr>
   </tbody>
 </table>
 
-For instructions on how to generate keys, see the [agent keys](/docs/operate/set-up-agent-keys) section. Your deployer key **must** be a hexadecimal key, while validator and relayer keys can be hexadecimal or AWS KMS.
+有关如何生成密钥的说明，请参见[代理密钥](/docs/operate/set-up-agent-keys)部分。您的部署者密钥**必须**是十六进制密钥，而验证者和中继器密钥可以是十六进制或AWS KMS。
 
-If deploying on a local network using [Foundry's Anvil](https://github.com/foundry-rs/foundry/tree/master/crates/anvil), use the following command to fund your newly-generated account. It uses one of the pre-funded private keys to transfer 1 ETH to the address in the `$YOUR_TARGET_ADDRESS` environment variable.
+如果在使用[Foundry的Anvil](https://github.com/foundry-rs/foundry/tree/master/crates/anvil)的本地网络上进行部署，请使用以下命令为您新生成的账户提供资金。它使用一个预先资助的私钥将1 ETH转移到环境变量中的`$YOUR_TARGET_ADDRESS`地址。
 
 ```
 cast send $YOUR_TARGET_ADDRESS \
