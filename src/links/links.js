@@ -5,4 +5,5 @@ export default {
   runValidators: "/docs/operate/validators/run-validators",
   contractAddresses: "/docs/reference/contract-addresses",
   intro: "/docs/intro",
+  agents: "/docs/operate/overview-agents",
 };

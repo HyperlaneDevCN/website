@@ -10,15 +10,15 @@
 
 ```solidity
 contract SimpleMessagingTest is Test {
-    // origin and destination domains (recommended to be the chainId)
+    // 源链和目标链域名（建议使用链ID）
     uint32 origin = 1;
     uint32 destination = 2;
 
-    // both mailboxes will be on the same chain but different addresses
+    // 两个邮箱将在同一条链上但地址不同
     MockMailbox originMailbox;
     MockMailbox destinationMailbox;
 
-    // contract which can receive messages
+    // 可以接收消息的合约
     TestRecipient receiver;
 
     function setUp() public {
@@ -49,18 +49,19 @@ contract SimpleMessagingTest is Test {
 
 ```solidity
 contract CrosschainAppTest is Test {
-    // origin and destination domains (recommended to be the chainId)
+    // 源链和目标链域名（建议使用链ID）
     uint32 origin = 1;
     uint32 destination = 2;
 
     function setUp() public {
         environment = new MockHyperlaneEnvironment(origin, destination);
 
-        // your cross-chain app
+        // 你的跨链应用
         TestCrosschainApp originTelephone  = new TestCrosschainApp(environment.mailboxes(origin));
         TestCrosschainApp destinationTelephone  = new TestCrosschainApp(environment.mailboxes(destination));
 
-        // assuming you're inheriting the Router pattern from https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/main/solidity/contracts/client/Router.sol
+        // 假设你正在继承来自以下地址的Router模式
+        // https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/main/solidity/contracts/client/Router.sol
         originTelephone.enrollRemoteRouter(destinationTelephone);
         destinationTelephone.enrollRemoteRouter(originTelephone);
     }
@@ -71,50 +72,48 @@ contract CrosschainAppTest is Test {
 
 ```solidity
     function testRemoteTelephoneCallFromOrigin() public {
-        // check behavior on origin
+        // 检查源链上的行为
         vm.expectEmit(true, true, true, false);
-        emit TelephoneRinging(destination,  TypeCasts.bytes32ToAddress(destinationTelephone), "Hello!"); // example event on origin
+        emit TelephoneRinging(destination,  TypeCasts.bytes32ToAddress(destinationTelephone), "Hello!"); // 源链上的示例事件
         originTelephone.callRemote(destination,  TypeCasts.bytes32ToAddress(destinationTelephone), "Hello!");
 
-        // simulating message delivery origin -> destination
+        // 模拟消息从源链传递到目标链
         environment.processNextPendingMessage();
 
-        // check behavior on destination
+        // 检查目标链上的行为
         assertEq(destinationTelephone.latestMessage(originTelephone) == "Hello!");
     }
 
     function testRemoteTelephoneCallFromDestination() public {
-        // check behavior on destination
+        // 检查目标链上的行为
         vm.expectEmit(true, true, true, false);
-        emit TelephoneRinging(origin,  TypeCasts.bytes32ToAddress(originTelephone), "Howdy!"); // example event on destination
+        emit TelephoneRinging(origin,  TypeCasts.bytes32ToAddress(originTelephone), "Howdy!"); // 目标链上的示例事件
         destinationTelephone.callRemote(origin,  TypeCasts.bytes32ToAddress(originTelephone), "Howdy!");
 
-         // simulating message delivery destination -> origin
+        // 模拟消息从目标链传递到源链
         environment.processNextPendingMessageFromDestination();
 
-        // check behavior on origin
+        // 检查源链上的行为
         assertEq(originTelephone.latestMessage(destinationTelephone) == "Howdy!");
     }
 ```
 
 如果你想为你的应用使用自己的 ISM，你可以通过将其传递给 Router 的 `initialize` 方法来覆盖邮箱提供的 `defaultIsm`，如下所示：
 
-{/* TODO: 代码中的注释翻译成中文 */}
 ```solidity
 contract CrosschainAppTest is Test {
-    // origin and destination domains (recommended to be the chainId)
+    // 源链和目标链域名（建议使用链ID）
     uint32 origin = 1;
     uint32 destination = 2;
 
     function setUp() public {
         ...
 
-        TestIgp igp = new TestIgp(); // example InterchainGasPaymaster passed as the hook
+        TestIgp igp = new TestIgp(); // 作为钩子传递的跨链Gas支付主合约示例
 
-        // deploy your own ISM contracts to verify messages between originTelephone and destinationTelephone
-        TelephoneISM originIsm = new TelephoneISM(); // local ISM for origin
-        TelephoneISM destinationIsm = new TelephoneISM(); // local ISM for destination
-
+        // 部署你自己的ISM合约来验证originTelephone和destinationTelephone之间的消息
+        TelephoneISM originIsm = new TelephoneISM(); // 源链的本地ISM
+        TelephoneISM destinationIsm = new TelephoneISM(); // 目标链的本地ISM
 
         originTelephone.initialize(address(igp), address(originIsm), msg.sender);
         originTelephone.initialize(address(igp), address(destinationIsm), msg.sender);

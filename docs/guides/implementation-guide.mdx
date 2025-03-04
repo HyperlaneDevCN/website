@@ -346,13 +346,13 @@ function validatorsAndThreshold(
 
 :::
 
-### 跨链燃气支付者
+### 跨链 Gas 支付者
 
-燃气支付者用于支付目标链上消息处理所需的燃气。这在中继器愿意补贴消息处理时并不是严格要求的。
+ Gas 支付者用于支付目标链上消息处理所需的 Gas 。这在中继器愿意补贴消息处理时并不是严格要求的。
 
 :::warning
 
-实施对足够燃气支付的强健检查，考虑链特定的代币处理。我们的 Solidity 实现收取本地消息值，但对于其他链，您可能需要收取特定代币，并相应地调整燃气开销和 `tokenExchangeRate`。
+实施对足够 Gas 支付的强健检查，考虑链特定的代币处理。我们的 Solidity 实现收取本地消息值，但对于其他链，您可能需要收取特定代币，并相应地调整 Gas 开销和 `tokenExchangeRate`。
 
 :::
 
@@ -375,7 +375,7 @@ function payForGas(
     bytes32 messageId,
     // 消息目标链的域。
     uint32 destination,
-    // 要支付的目标燃气数量。
+    // 要支付的目标 Gas 数量。
     uint256 gasAmount,
     // 本地地址以退还任何过度支付。
     address refundAddress
@@ -384,7 +384,7 @@ function payForGas(
 
 #### GasPayment
 
-当为消息的燃气费用支付时发出。
+当为消息的 Gas 费用支付时发出。
 
 ```solidity
 event GasPayment(
@@ -397,13 +397,13 @@ event GasPayment(
 
 #### DestinationGasConfigSet
 
-当设置远程域的燃气预言机时发出。
+当设置远程域的 Gas 预言机时发出。
 
 ```solidity
 event DestinationGasConfigSet(
     uint32 remoteDomain, // 远程域
-    address gasOracle,   // 燃气预言机
-    uint96 gasOverhead   // 目标燃气开销
+    address gasOracle,   //  Gas 预言机
+    uint96 gasOverhead   // 目标 Gas 开销
 );
 ```
 
@@ -476,13 +476,13 @@ pub struct CheckpointWithMessageId {
 
 - 消息接收者 ISM 返回未知模块类型
 - 模块类型已知但元数据验证失败
-- 元数据验证通过但干运行（燃气估算）消息处理失败
+- 元数据验证通过但干运行（ Gas 估算）消息处理失败
 
 则消息将被送入指数退避重试队列。中继器依赖于 [邮箱](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/main/rust/main/hyperlane-core/src/traits/mailbox.rs) 和 [ism](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/main/rust/main/hyperlane-core/src/traits/interchain_security_module.rs) 特性的实现来进行这些检查。
 
-#### 燃气支付强制执行
+####  Gas 支付强制执行
 
-中继器还可能要求在处理目标链上的消息之前，先在原链上为特定消息 ID 支付燃气。为此，他们必须部署一个 IGP，并将其地址设置为受益人，并索引燃气支付事件。请参见 [燃气支付强制执行特性](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/main/rust/main/agents/relayer/src/msg/gas_payment/mod.rs)。我们建议从不强制燃气支付政策开始，然后逐渐支持更严格的政策。
+中继器还可能要求在处理目标链上的消息之前，先在原链上为特定消息 ID 支付 Gas 。为此，他们必须部署一个 IGP，并将其地址设置为受益人，并索引 Gas 支付事件。请参见 [ Gas 支付强制执行特性](https://github.com/hyperlane-xyz/hyperlane-monorepo/blob/main/rust/main/agents/relayer/src/msg/gas_payment/mod.rs)。我们建议从不强制 Gas 支付政策开始，然后逐渐支持更严格的政策。
 
 ### 测试
 

@@ -406,12 +406,12 @@ const config = {
         },
         // TODO: 主页顶部栏,需要修改
         items: [
-          {
-            type: "docSidebar",
-            sidebarId: "getstartedSidebar",
-            position: "left",
-            label: "⏩ 快速开始",
-          },
+          // {
+          //   type: "docSidebar",
+          //   sidebarId: "getstartedSidebar",
+          //   position: "left",
+          //   label: "⏩ 快速开始",
+          // },
           /*
           {
             type: "docSidebar",
@@ -425,22 +425,27 @@ const config = {
             position: "left",
             label: "📖 Reference",
           },*/
+          // {
+          //   type: "docSidebar",
+          //   sidebarId: "protocolSidebar",
+          //   position: "left",
+          //   label: "📖 学习",
+          // },
+          // {
+          //   type: "docSidebar",
+          //   sidebarId: "operateSidebar",
+          //   position: "left",
+          //   label: "⚙️  代理操作",
+          // },
           {
-            type: "docSidebar",
-            sidebarId: "protocolSidebar",
-            position: "left",
-            label: "📖 学习",
-          },
-          {
-            type: "docSidebar",
-            sidebarId: "operateSidebar",
-            position: "left",
-            label: "⚙️  代理操作",
-          },
-          {
-            href: "https://github.com/hyperlane-xyz",
-            label: "GitHub",
+            to: "https://linktr.ee/usehyperlane",
             position: "right",
+            label: "⭐ Awesome",
+          },
+          {
+            href: "https://github.com/HyperlaneDevCN/website",
+            position: "right",
+            label: "📦 GitHub",
           },
         ],
       },
@@ -499,9 +504,9 @@ const config = {
             ],
           },
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} Abacus Works, Inc., a core developer team working on Hyperlane
-        <br>
-        Built IRL in New York 🗽 and London 💂🏼‍♂️`,
+        // copyright: `Copyright © ${new Date().getFullYear()} Abacus Works, Inc., a core developer team working on Hyperlane
+        // <br>
+        // Built IRL in New York 🗽 and London 💂🏼‍♂️`,
       },
       prism: {
         additionalLanguages: ["solidity", "diff", "bash"],

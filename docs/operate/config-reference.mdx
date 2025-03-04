@@ -200,7 +200,7 @@ import TabItem from "@theme/TabItem";
 
 ## chains.`<chain_name>`.interchainGasPaymaster
 
-**描述：** 链上跨链燃气支付主合同的地址。另请参见 [合约地址](../reference/contract-addresses.mdx)。
+**描述：** 链上跨链 Gas 支付主合同的地址。另请参见 [合约地址](../reference/contract-addresses.mdx)。
 
 **可选：** 否
 
@@ -603,7 +603,7 @@ import TabItem from "@theme/TabItem";
 **描述：** 如何与提供者通信
 
 - `"single"` 使用基本的 http 连接
-- `"fallback"` 将尝试第一个 URL，然后在连接或其他提供者故障时自动"回退"到下一个提供者；这仅应重试由于提供者导致的调用失败，而不是调用本身的失败；例如，燃气不足错误将不会回退。
+- `"fallback"` 将尝试第一个 URL，然后在连接或其他提供者故障时自动"回退"到下一个提供者；这仅应重试由于提供者导致的调用失败，而不是调用本身的失败；例如， Gas 不足错误将不会回退。
 - `"quorum"` 要求大多数 URL 同意，提交交易的例外情况；如果未指定，将自动协调"最新"区块以减少同步错误。
 
 **要求：** `chains.<chain_name>.protocol = "ethereum" | undefined`
@@ -1846,7 +1846,7 @@ export HYP_DB="postgresql://postgres:password@localhost:5432/dbname"
 
 ## gaspaymentenforcement
 
-**描述：** 按优先级排序的燃气支付强制配置的 JSON 字符串化数组。最后一个策略应为捕获所有策略，处理未匹配到先前策略的任何消息。
+**描述：** 按优先级排序的 Gas 支付强制配置的 JSON 字符串化数组。最后一个策略应为捕获所有策略，处理未匹配到先前策略的任何消息。
 
 **可选：** 默认为不强制执行（`[{"type": "none"}]`）
 
@@ -2043,7 +2043,7 @@ export HYP_BLACKLIST='[{"senderAddress": "0xa441b15fe9a3cf56661190a0b93b9dec7d04
 
 ## transactiongaslimit
 
-**描述：** 中继交易的最大允许燃气。
+**描述：** 中继交易的最大允许 Gas 。
 
 **可选：** 默认为没有限制
 

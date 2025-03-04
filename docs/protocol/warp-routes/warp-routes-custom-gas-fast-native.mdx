@@ -1,17 +1,17 @@
-# Warp Routes: 通过自定义燃气代币实现快速本地转账
+# Warp Routes: 通过自定义 Gas 代币实现快速本地转账
 
-本文将指导您如何使用 Hyperlane 启用通过自定义燃气代币进行快速本地转账到您的 L2 网络。
+本文将指导您如何使用 Hyperlane 启用通过自定义 Gas 代币进行快速本地转账到您的 L2 网络。
 
 ## 主要动机
 
-1. 创建一个自定义燃气代币，以便在您选择的 L2 上使用。
-2. 使用该燃气代币实现快速本地转账，而不是通过规范桥接进行长时间的结算等待。
+1. 创建一个自定义 Gas 代币，以便在您选择的 L2 上使用。
+2. 使用该 Gas 代币实现快速本地转账，而不是通过规范桥接进行长时间的结算等待。
 
 ## 前提条件
 
 要完成以下操作指南，您需要具备以下条件：
 
-1. 一个 L2 网络（"yourchain"），您可以在其上指定一个 [自定义燃气代币](https://docs.arbitrum.io/launch-orbit-chain/how-tos/use-a-custom-gas-token)，并希望启用快速本地转账。
+1. 一个 L2 网络（"yourchain"），您可以在其上指定一个 [自定义 Gas 代币](https://docs.arbitrum.io/launch-orbit-chain/how-tos/use-a-custom-gas-token)，并希望启用快速本地转账。
 2. 一个唯一的部署者或授权所有者，以接收收据代币的铸造（有关该代币的更多信息见下文）。
 3. 安装了 [Hyperlane CLI](https://docs.hyperlane.xyz/docs/reference/cli) 的实例，并且有一个作为 `HYP_KEY` 的钱包私钥，已在所有相关网络上获得资金。
 
@@ -20,13 +20,13 @@
 :::info
 
 - 请注意，下面提到的"收据代币"是一个（一次性）可铸造的"虚拟"代币，用于抵押您链上对应 L1 的传输路线。创建后，您将销毁该代币的铸造权。
-- 此外，根据您的 L2，您自定义燃气代币的代币符号可能与您的收据代币相同。如果在以太坊上部署，您可能希望将符号设置为 `ETH`。
+- 此外，根据您的 L2，您自定义 Gas 代币的代币符号可能与您的收据代币相同。如果在以太坊上部署，您可能希望将符号设置为 `ETH`。
 
 :::
 
 ### 1) 部署收据代币
 
-在以太坊上部署一个 `ETH` 收据代币，以成为您 L2 的自定义燃气代币。
+在以太坊上部署一个 `ETH` 收据代币，以成为您 L2 的自定义 Gas 代币。
 
 1. 例如，您可以通过 [Remix](https://remix.ethereum.org/) 使用一个有资金的钱包和类似下面的合约来部署您的收据代币：
 
@@ -48,10 +48,10 @@
 
 ### 2) 设置自定义 Gas Token
 
-将 yourchain 的自定义燃气代币设置为新部署的 `ETH` ERC20 收据代币。
+将 yourchain 的自定义 Gas 代币设置为新部署的 `ETH` ERC20 收据代币。
 
-1. 使用 OP 堆栈设置自定义燃气代币： https://docs.optimism.io/builders/chain-operators/features/custom-gas-token
-2. 使用 Arbitrum Orbit 设置自定义燃气代币： https://docs.arbitrum.io/launch-orbit-chain/how-tos/use-a-custom-gas-token
+1. 使用 OP 堆栈设置自定义 Gas 代币： https://docs.optimism.io/builders/chain-operators/features/custom-gas-token
+2. 使用 Arbitrum Orbit 设置自定义 Gas 代币： https://docs.arbitrum.io/launch-orbit-chain/how-tos/use-a-custom-gas-token
 
 ### 3) 转移所有收据代币
 
@@ -123,7 +123,7 @@ hyperlane relayer --symbol TOKEN
 :::
 
 :::success
-🎉 恭喜！您现在已通过自定义燃气代币在您的 L2 上启用快速本地转账。
+🎉 恭喜！您现在已通过自定义 Gas 代币在您的 L2 上启用快速本地转账。
 :::
 
 ```mermaid
