@@ -12,11 +12,11 @@
 
 使用的代币类型决定了 Warp 路由类型，因此了解可用的不同 Warp 路由合约非常重要：
 
-- [原生](https://docs.hyperlane.xyz/docs/protocol/warp-routes/warp-routes-types#native-token-warp-routes): 处理原生 Gas 代币的转移（例如 Solana 上的 SOL，Eclipse 上的 ETH）。
-- [抵押品](https://docs.hyperlane.xyz/docs/protocol/warp-routes/warp-routes-types#collateral-backed-erc20-warp-routes): 处理现有的 [Token-2022](https://spl.solana.com/token-2022) 或 [Token](https://spl.solana.com/token) 代币的转移（SVM 上的 ERC20 等价物）。
-- [合成](https://docs.hyperlane.xyz/docs/protocol/warp-routes/warp-routes-types#synthetic-erc20-warp-routes): 处理合成代币，这些代币在通过 Warp 路由转移时被铸造和销毁，以表示来自其源链的代币。在这种情况下，本指南中的工具将部署一个新的 Token-2022 代币，其权限设置为部署者密钥。
+- [原生](https://hyperlanedevcn.github.io/website/docs/protocol/warp-routes/warp-routes-types#native-token-warp-routes): 处理原生 Gas 代币的转移（例如 Solana 上的 SOL，Eclipse 上的 ETH）。
+- [抵押品](https://hyperlanedevcn.github.io/website/docs/protocol/warp-routes/warp-routes-types#collateral-backed-erc20-warp-routes): 处理现有的 [Token-2022](https://spl.solana.com/token-2022) 或 [Token](https://spl.solana.com/token) 代币的转移（SVM 上的 ERC20 等价物）。
+- [合成](https://hyperlanedevcn.github.io/website/docs/protocol/warp-routes/warp-routes-types#synthetic-erc20-warp-routes): 处理合成代币，这些代币在通过 Warp 路由转移时被铸造和销毁，以表示来自其源链的代币。在这种情况下，本指南中的工具将部署一个新的 Token-2022 代币，其权限设置为部署者密钥。
 
-以下是常见的 Warp 路由设置（您可以在 [这里](https://docs.hyperlane.xyz/docs/protocol/warp-routes/warp-routes-example-usage) 找到更多详细信息）：
+以下是常见的 Warp 路由设置（您可以在 [这里](https://hyperlanedevcn.github.io/website/docs/protocol/warp-routes/warp-routes-example-usage) 找到更多详细信息）：
 
 - **原生到合成**: 在源链上锁定原生代币，以在目标链上铸造合成代币。转移回时，合成代币被销毁。这是 Solana 和 Eclipse 之间的 SOL Warp 路由的一个示例。
 - **抵押品到合成**: 在源链上锁定抵押代币，以在目标链上铸造合成代币。转移回时，合成代币被销毁。这是 Solana 和 Eclipse 之间的 USDC Warp 路由的一个示例。
