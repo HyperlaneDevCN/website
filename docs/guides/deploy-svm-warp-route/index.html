@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="generator" content="Docusaurus v3.7.0">
 <title data-rh="true">部署 SVM Warp 路由 | Hyperlane 中文社区</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:image" content="https://hyperlane.cc/img/docusaurus-social-card.jpg"><meta data-rh="true" name="twitter:image" content="https://hyperlane.cc/img/docusaurus-social-card.jpg"><meta data-rh="true" property="og:url" content="https://hyperlane.cc/docs/guides/deploy-svm-warp-route/"><meta data-rh="true" property="og:locale" content="zh_Hans"><meta data-rh="true" name="docusaurus_locale" content="zh-Hans"><meta data-rh="true" name="docsearch:language" content="zh-Hans"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="部署 SVM Warp 路由 | Hyperlane 中文社区"><meta data-rh="true" name="description" content="结果"><meta data-rh="true" property="og:description" content="结果"><link data-rh="true" rel="icon" href="/img/favicon.ico"><link data-rh="true" rel="canonical" href="https://hyperlane.cc/docs/guides/deploy-svm-warp-route/"><link data-rh="true" rel="alternate" href="https://hyperlane.cc/docs/guides/deploy-svm-warp-route/" hreflang="zh-Hans"><link data-rh="true" rel="alternate" href="https://hyperlane.cc/docs/guides/deploy-svm-warp-route/" hreflang="x-default"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.13.24/dist/katex.min.css" integrity="sha384-odtC+0UGzzFL/6PNoE8rX/SPcQDXBJ+uRepguP4QkPCm2LBxH3FA3y+fKSiJ+AmM" crossorigin="anonymous"><link rel="stylesheet" href="/assets/css/styles.91833b4d.css">
-<script src="/assets/js/runtime~main.15b31dd4.js" defer="defer"></script>
+<script src="/assets/js/runtime~main.067ce118.js" defer="defer"></script>
 <script src="/assets/js/main.60ae6345.js" defer="defer"></script>
 </head>
 <body class="navigation-with-keyboard">
@@ -15,14 +15,14 @@
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="warp-路由类型">Warp 路由类型<a href="#warp-路由类型" class="hash-link" aria-label="Warp 路由类型的 直接链接" title="Warp 路由类型的直接链接">​</a></h2>
 <p>使用的代币类型决定了 Warp 路由类型，因此了解可用的不同 Warp 路由合约非常重要：</p>
 <ul>
-<li><a href="https://hyperlanedevcn.github.io/website/docs/protocol/warp-routes/warp-routes-types#native-token-warp-routes" target="_blank" rel="noopener noreferrer">原生</a>: 处理原生 Gas 代币的转移（例如 Solana 上的 SOL，Eclipse 上的 ETH）。</li>
-<li><a href="https://hyperlanedevcn.github.io/website/docs/protocol/warp-routes/warp-routes-types#collateral-backed-erc20-warp-routes" target="_blank" rel="noopener noreferrer">抵押品</a>: 处理现有的 <a href="https://spl.solana.com/token-2022" target="_blank" rel="noopener noreferrer">Token-2022</a> 或 <a href="https://spl.solana.com/token" target="_blank" rel="noopener noreferrer">Token</a> 代币的转移（SVM 上的 ERC20 等价物）。</li>
-<li><a href="https://hyperlanedevcn.github.io/website/docs/protocol/warp-routes/warp-routes-types#synthetic-erc20-warp-routes" target="_blank" rel="noopener noreferrer">合成</a>: 处理合成代币，这些代币在通过 Warp 路由转移时被铸造和销毁，以表示来自其源链的代币。在这种情况下，本指南中的工具将部署一个新的 Token-2022 代币，其权限设置为部署者密钥。</li>
+<li><a href="https://hyperlane.cc/docs/protocol/warp-routes/warp-routes-types#native-token-warp-routes" target="_blank" rel="noopener noreferrer">原生</a>: 处理原生 Gas 代币的转移（例如 Solana 上的 SOL，Eclipse 上的 ETH）。</li>
+<li><a href="https://hyperlane.cc/docs/protocol/warp-routes/warp-routes-types#collateral-backed-erc20-warp-routes" target="_blank" rel="noopener noreferrer">抵押品</a>: 处理现有的 <a href="https://spl.solana.com/token-2022" target="_blank" rel="noopener noreferrer">Token-2022</a> 或 <a href="https://spl.solana.com/token" target="_blank" rel="noopener noreferrer">Token</a> 代币的转移（SVM 上的 ERC20 等价物）。</li>
+<li><a href="https://hyperlane.cc/docs/protocol/warp-routes/warp-routes-types#synthetic-erc20-warp-routes" target="_blank" rel="noopener noreferrer">合成</a>: 处理合成代币，这些代币在通过 Warp 路由转移时被铸造和销毁，以表示来自其源链的代币。在这种情况下，本指南中的工具将部署一个新的 Token-2022 代币，其权限设置为部署者密钥。</li>
 </ul>
-<p>以下是常见的 Warp 路由设置（您可以在 <a href="https://hyperlanedevcn.github.io/website/docs/protocol/warp-routes/warp-routes-example-usage" target="_blank" rel="noopener noreferrer">这里</a> 找到更多详细信息）：</p>
+<p>以下是常见的 Warp 路由设置（您可以在 <a href="https://hyperlane.cc/docs/protocol/warp-routes/warp-routes-example-usage" target="_blank" rel="noopener noreferrer">这里</a> 找到更多详细信息）：</p>
 <ul>
 <li><strong>原生到合成</strong>: 在源链上锁定原生代币，以在目标链上铸造合成代币。转移回时，合成代币被销毁。这是 Solana 和 Eclipse 之间的 SOL Warp 路由的一个示例。</li>
-<li><strong>抵押品到合成</strong>: 在源链上锁定抵押代币，以在目标链上铸造合成代币。转移回时，合成代币被销毁。这是 Solana 和 Eclipse 之间的 USDC Warp 路由的一个示  例。</li>
+<li><strong>抵押品到合成</strong>: 在源链上锁定抵押代币，以在目标链上铸造合成代币。转移回时，合成代币被销毁。这是 Solana 和 Eclipse 之间的 USDC Warp 路由的一个示例。</li>
 <li>其他: <strong>原生到原生</strong>（例如 Optimism 和 Arbitrum 之间的 ETH），以及 <strong>抵押品到抵押品</strong>，如果代币在源链和目标链上都已存在，也可以实现。在这种情况下，重新平衡流动性是一个重要的考虑因素。</li>
 </ul>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="开始之前">开始之前<a href="#开始之前" class="hash-link" aria-label="开始之前的直接链接" title="开始之前的直接链接">​</a></h2>
@@ -43,7 +43,7 @@
 <ol>
 <li>
 <p>构建 <strong>Token</strong> 程序：</p>
-<div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_biex"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token builtin class-name">cd</span><span class="token plain"> hyperlane-sealevel-token</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain"></span><span class="token function" style="color:#d73a49">cargo</span><span class="token plain"> build-sbf</span><br></span></code></pre><div class="buttonGroup__atx"><button type="button" aria-label="复制代码到剪贴板" title="复制" class="clean-btn"><span class="copyButtonIcons_eSgA" aria-hidden="true"><svg viewBox="0 0 24 24" class="copyButtonIcon_y97N"><path fill="currentColor" d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"></path></svg><svg viewBox="0 0 24 24" class="copyButtonSuccessIcon_LjdS"><path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"></path></svg></span></button></div></div></div>
+<div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_biex"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token builtin class-name">cd</span><span class="token plain"> hyperlane-sealevel-token</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain"></span><span class="token function" style="color:#d73a49">cargo</span><span class="token plain"> build-sbf</span><br></span></code></pre><div class="buttonGroup__atx"><button type="button" aria-label="复 制代码到剪贴板" title="复制" class="clean-btn"><span class="copyButtonIcons_eSgA" aria-hidden="true"><svg viewBox="0 0 24 24" class="copyButtonIcon_y97N"><path fill="currentColor" d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"></path></svg><svg viewBox="0 0 24 24" class="copyButtonSuccessIcon_LjdS"><path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"></path></svg></span></button></div></div></div>
 </li>
 <li>
 <p>构建 <strong>Token Collateral</strong> 程序：</p>
@@ -118,7 +118,7 @@
 <ul>
 <li>CLI 标志概述：<!-- -->
 <ul>
-<li><code>--warp-route-name</code>: 应与之前为 Warp 路由选择的目录名称匹 配</li>
+<li><code>--warp-route-name</code>: 应与之前为 Warp 路由选择的目录名称匹配</li>
 <li><code>--environment</code>: 保持为 <code>mainnet3</code></li>
 <li><code>--environments-dir ../environments</code>: 保持为 <code>../environments</code></li>
 <li><code>--built-so-dir</code>: 保持为 <code>../../target/deploy</code>，因为它指向 Warp 路由程序的编译输出目录</li>
@@ -184,7 +184,7 @@
 <p>通过查询铸币账户，查看目标链上接收者的余额：</p>
 <div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_biex"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">spl-token balance </span><span class="token parameter variable" style="color:#36acaa">--owner</span><span class="token plain"> ./warp-route-deployer-key.json </span><span class="token punctuation" style="color:#393A34">\</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain"></span><span class="token parameter variable" style="color:#36acaa">-u</span><span class="token plain"> </span><span class="token operator" style="color:#393A34">&lt;</span><span class="token plain">DESTINATION_CHAIN_RPC_URL</span><span class="token operator" style="color:#393A34">&gt;</span><span class="token plain"> </span><span class="token operator" style="color:#393A34">&lt;</span><span class="token plain">MINT_ACCOUNT_ADDRESS</span><span class="token operator" style="color:#393A34">&gt;</span><br></span></code></pre><div class="buttonGroup__atx"><button type="button" aria-label="复制代码到剪贴板" title="复制" class="clean-btn"><span class="copyButtonIcons_eSgA" aria-hidden="true"><svg viewBox="0 0 24 24" class="copyButtonIcon_y97N"><path fill="currentColor" d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"></path></svg><svg viewBox="0 0 24 24" class="copyButtonSuccessIcon_LjdS"><path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"></path></svg></span></button></div></div></div>
 <ul>
-<li>此处的  最后一个参数是 SPL 代币 ID。因此，如果这是您想要检查余额的合成 Warp 路由，您需要使用之前查询中获得的铸币地址。</li>
+<li>此处的最后一个参数是 SPL 代币 ID。因此，如果这是您想要检查余额的 合成 Warp 路由，您需要使用之前查询中获得的铸币地址。</li>
 <li>您还可以在浏览器中查看接收者账户的最后交易。</li>
 </ul>
 <ol start="4">
