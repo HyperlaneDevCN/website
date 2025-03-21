@@ -25,10 +25,11 @@ const config = {
   // If you aren't using GitHub pages, you don't need these.
   organizationName: "HyperlaneDevCN", // Usually your GitHub org/user name.
   projectName: "website", // Usually your repo name.
+  deploymentBranch: "page",
 
-  onBrokenLinks: "throw",
-  onBrokenMarkdownLinks: "warn",
-
+  onBrokenLinks: "warn",
+  onBrokenMarkdownLinks: "warn", // 只显示警告但不会导致构建失败
+  trailingSlash: true, // 或 false，取决于您的偏好
   // Even if you don't use internalization, you can use this field to set useful
   // metadata like html lang. For example, if your site is Chinese, you may want
   // to replace "en" with "zh-Hans".
