@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+    <channel>
+        <title>Hyperlane 中文社区 Blog</title>
+        <link>https://hyperlane.cc/blog/</link>
+        <description>Hyperlane 中文社区 Blog</description>
+        <lastBuildDate>Sun, 06 Apr 2025 00:00:00 GMT</lastBuildDate>
+        <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
+        <generator>https://github.com/jpmonette/feed</generator>
+        <language>zh-Hans</language>
+        <item>
+            <title><![CDATA[Hyperlane 发币在即，详解空投标准和 HYPER 代币机制]]></title>
+            <link>https://hyperlane.cc/blog/Hyperlane_Airdrop/</link>
+            <guid>https://hyperlane.cc/blog/Hyperlane_Airdrop/</guid>
+            <pubDate>Sun, 06 Apr 2025 00:00:00 GMT</pubDate>
+            <description><![CDATA[Hyperlane 空投机制详解]]></description>
+            <content:encoded><![CDATA[<p><img decoding="async" loading="lazy" src="https://image.yaco.email/hyperlane_airdrop%20(1).png" alt="hyperlane_airdrop (1)" class="img_ev3q"></p>
+<p>我们即将迈入扩张的全新阶段，HYPER 将成为驱动 Hyperlane 网络运转的原生代币。</p>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="变革孕育于希望"><em>变革孕育于希望</em><a href="https://hyperlane.cc/blog/Hyperlane_Airdrop/#%E5%8F%98%E9%9D%A9%E5%AD%95%E8%82%B2%E4%BA%8E%E5%B8%8C%E6%9C%9B" class="hash-link" aria-label="变革孕育于希望的直接链接" title="变革孕育于希望的直接链接">​</a></h2>
+<p>变革的希望。自由的希望。更好未来的希望。</p>
+<p>加密货币曾许下的愿景意义非凡——我们曾被承诺构建开放金融基础设施，以抗衡中心化体系。然而现实却介于理想与妥协之间。尽管无需许可的加密经济蓬勃发展，但随着生态扩张，它们愈发依赖中心化跨链桥与互操作性网络实现连接。</p>
+<p>如今数百条链并存，却大多受困于这些中心化的桎梏。</p>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="hyperlane-承载着全新的希望"><em>Hyperlane 承载着全新的希望</em><a href="https://hyperlane.cc/blog/Hyperlane_Airdrop/#hyperlane-%E6%89%BF%E8%BD%BD%E7%9D%80%E5%85%A8%E6%96%B0%E7%9A%84%E5%B8%8C%E6%9C%9B" class="hash-link" aria-label="hyperlane-承载着全新的希望的直接链接" title="hyperlane-承载着全新的希望的直接链接">​</a></h2>
+<p>若实现无需许可，开放互操作性，我们定能兑现加密行业的承诺。使命清晰而坚定：开放区块链生态，必须以开放互操作性为基石。</p>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="过去的三年hyperlane-在默默地持续扩张"><em>过去的三年，Hyperlane 在默默地持续扩张</em><a href="https://hyperlane.cc/blog/Hyperlane_Airdrop/#%E8%BF%87%E5%8E%BB%E7%9A%84%E4%B8%89%E5%B9%B4hyperlane-%E5%9C%A8%E9%BB%98%E9%BB%98%E5%9C%B0%E6%8C%81%E7%BB%AD%E6%89%A9%E5%BC%A0" class="hash-link" aria-label="过去的三年hyperlane-在默默地持续扩张的直接链接" title="过去的三年hyperlane-在默默地持续扩张的直接链接">​</a></h2>
+<p>凭借有限的资源、忠实社区与坚韧贡献者，Hyperlane 已接入超 140 条区块链，成为互操作领域覆盖最广的网络。基于 Hyperlane 构建的应用程序已实现链间消息传输超 800 万次。</p>
+<p>通过 Warp Routes 桥接的交易量突破 50 亿美元大关，其中许多成为新链唯一的资产入口通道。</p>
+<p>这一成就源于 Hyperlane 开创性的开发架构和使命。作为开放互操作性框架，Hyperlane 赋予任何人扩展、使用、贡献及定制网络的能力。我们拥抱的是一个真正无需许可的平台——开发者可在此轻松、安全地构建跨链应用与代币桥接。</p>
+<!-- -->
+<h1>HYPER 代币机制详解</h1>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="核心运作原理">核心运作原理<a href="https://hyperlane.cc/blog/Hyperlane_Airdrop/#%E6%A0%B8%E5%BF%83%E8%BF%90%E4%BD%9C%E5%8E%9F%E7%90%86" class="hash-link" aria-label="核心运作原理的直接链接" title="核心运作原理的直接链接">​</a></h2>
+<p>Hyperlane 从设计上是一个完全开放且无需许可的系统，任何开发者均可随时部署，以实现其链、资产或应用的互操作性。HYPER 代币作为核心协调机制，旨在激励开放生态中的多方参与者采取安全且符合集体利益的行为。</p>
+<p>HYPER 代币功能包括：</p>
+<ol>
+<li>按使用量计算的奖励（Expansion Rewards）：协议中每发送一条跨链消息，系统将向参与者发放奖励，激励网络使用与生态拓展</li>
+<li>质押奖励（Staking rewards ）：验证者通过安全完成跨链消息传递获得奖励；同时，为<a href="https://medium.com/hyperlane/modular-security-with-hyperlane-553c09411ef3" target="_blank" rel="noopener noreferrer">默认跨链安全模块（ISM）</a>提供经济安全保障的质押者也可获得奖励，需遵循质押/罚没机制。质押者可选择以流动性质押代币（stHYPER）形式领取奖励。
+有关 HYPER 代币及其运行机制的更多细节，请参阅<a href="https://docs.hyperlane.xyz/docs/protocol-economics/intro" target="_blank" rel="noopener noreferrer">Hyperlane 官方文档</a></li>
+</ol>
+<p><img decoding="async" loading="lazy" src="https://image.yaco.email/hyperlane_airdrop%20(2).png" alt="hyperlane_airdrop (2)" class="img_ev3q"></p>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="代币分配原则">代币分配原则<a href="https://hyperlane.cc/blog/Hyperlane_Airdrop/#%E4%BB%A3%E5%B8%81%E5%88%86%E9%85%8D%E5%8E%9F%E5%88%99" class="hash-link" aria-label="代币分配原则的直接链接" title="代币分配原则的直接链接">​</a></h2>
+<p>HYPER 代币的激励是围绕协议安全性、可靠性以及 Hyperlane 作为社区共有的开放互操作性标准的广泛采用。创世代币发行（TGE）将根据持币方过去及未来对网络利用率与生态贡献的权重进行分配。</p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="扩展奖励expansion-rewards">扩展奖励（Expansion Rewards）<a href="https://hyperlane.cc/blog/Hyperlane_Airdrop/#%E6%89%A9%E5%B1%95%E5%A5%96%E5%8A%B1expansion-rewards" class="hash-link" aria-label="扩展奖励（Expansion Rewards）的直接链接" title="扩展奖励（Expansion Rewards）的直接链接">​</a></h3>
+<p>未来四年内，按用户通过协议发送跨链消息的使用量比例，向使用 Hyperlane 发送消息或者代币跨链的用户以及项目方分配代币所有权作为奖励。</p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="追溯空投奖励expansiondrop">追溯空投奖励（ExpansionDrop）<a href="https://hyperlane.cc/blog/Hyperlane_Airdrop/#%E8%BF%BD%E6%BA%AF%E7%A9%BA%E6%8A%95%E5%A5%96%E5%8A%B1expansiondrop" class="hash-link" aria-label="追溯空投奖励（ExpansionDrop）的直接链接" title="追溯空投奖励（ExpansionDrop）的直接链接">​</a></h3>
+<p>TGE 时，将向 Hyperlane 早期用户发放追溯性奖励。此类用户通过截至 2025 年 2 月 28 日 UTC 时间 23:59:59 的快照数据确认，累计发送约 860 万条消息，为 Hyperlane 早期发展奠定基础。</p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="质押奖励staking-rewards">质押奖励（Staking Rewards）<a href="https://hyperlane.cc/blog/Hyperlane_Airdrop/#%E8%B4%A8%E6%8A%BC%E5%A5%96%E5%8A%B1staking-rewards" class="hash-link" aria-label="质押奖励（Staking Rewards）的直接链接" title="质押奖励（Staking Rewards）的直接链接">​</a></h3>
+<p>代币所有权将分配给以下两类参与者：</p>
+<ol>
+<li>验证者：负责验证 Hyperlane 连接链间的跨链消息；</li>
+<li>质押者：为默认跨链安全模块（ISM）提供经济安全保障，其质押/罚没机制遵循协议规则。质押者可选择以流动性质押代币（Staked HYPER, stHYPER）形式领取奖励。</li>
+</ol>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="基金会金库与战略启动资金foundation-treasury--strategic-launch-provision">基金会金库与战略启动资金（Foundation Treasury &amp; Strategic Launch Provision）<a href="https://hyperlane.cc/blog/Hyperlane_Airdrop/#%E5%9F%BA%E9%87%91%E4%BC%9A%E9%87%91%E5%BA%93%E4%B8%8E%E6%88%98%E7%95%A5%E5%90%AF%E5%8A%A8%E8%B5%84%E9%87%91foundation-treasury--strategic-launch-provision" class="hash-link" aria-label="基金会金库与战略启动资金（Foundation Treasury &amp; Strategic Launch Provision）的直接链接" title="基金会金库与战略启动资金（Foundation Treasury &amp; Strategic Launch Provision）的直接链接">​</a></h3>
+<ul>
+<li>
+<p>基金会金库：用于支持协议的长期治理、初始代币流动性提供，以及通过灵活手段（例如增加扩展奖励 Expansion Rewards）加速生态发展和飞轮效应的形成。</p>
+</li>
+<li>
+<p>战略启动资金：部分资金将用来激励有特定交互及消息传输类型交互 Hyperlane 早期用户。</p>
+</li>
+</ul>
+<p>核心团队与早期支持者（Core Team &amp; Early Backers）</p>
+<p>代币所有权将分配给那些为 Hyperlane 核心基础设施构建及采用推广作出关键贡献的成员，以激励其长期致力于提升协议并推动 Hyperlane 成为区块链互操作性领域的先锋。</p>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="扩展奖励-expansion-rewards">扩展奖励 （Expansion Rewards）<a href="https://hyperlane.cc/blog/Hyperlane_Airdrop/#%E6%89%A9%E5%B1%95%E5%A5%96%E5%8A%B1-expansion-rewards" class="hash-link" aria-label="扩展奖励 （Expansion Rewards）的直接链接" title="扩展奖励 （Expansion Rewards）的直接链接">​</a></h2>
+<p>Hyperlane 的扩展奖励将（Expansion Rewards）采用程序化分配模式，每季度发放，持续四年，按应用层消息使用量比例进行发放。默认情况下，分配至项目合作方的奖励中 85%将穿透直达终端用户，剩余 15%由项目合作方团队留存，且项目合作方可根据需求调整项目方和终端用户的比例。</p>
+<p>采用 Hyperlane 作为标准桥或官方桥的区块链合作方，因推动 Hyperlane 成为开放互操作性的行业标准，将获得奖励权重加成。用户及项目合作方若连续持有协议代币 stHYPER，每季度将根据持有时长激活 HYPER 质押的加成倍数（最高达 1.6 倍），自 TGE 起保持最长不间断质押的参与者将享受最大乘数收益。早期通过预申领（Preclaims）选择在 TGE 接收 stHYPER 的用户，可优先实现最高乘数。</p>
+<p>Hyperlane 基金会亦可能通过国库资金动态加速扩展奖励（Expansion Rewards），对符合 Hyperlane 利益的举措（如采用 Hyperlane 作为标准或官方桥、提供流动性支持、在 ISM 中集成独特功能或 hook 开发等）进行奖励加成，以构建高性能、高灵活性的开发者友好型互操作框架。</p>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="质押安全与-sthyper">质押安全与 stHYPER<a href="https://hyperlane.cc/blog/Hyperlane_Airdrop/#%E8%B4%A8%E6%8A%BC%E5%AE%89%E5%85%A8%E4%B8%8E-sthyper" class="hash-link" aria-label="质押安全与 stHYPER的直接链接" title="质押安全与 stHYPER的直接链接">​</a></h2>
+<p>用户可通过质押 HYPER 参与默认跨链安全模块（ISM）的验证者安全保障。质押/罚没机制确保 ISM 验证者仅对有效 Hyperlane 消息进行签名。任何质押罚没收益将用于补偿受害方。
+用户通过托管协议参与经济安全质押时，将获得流动性质押凭证 stHYPER。不同链的质押奖励机制在申领、自动复利等规则上存在差异，具体细节请参阅<a href="https://docs.hyperlane.xyz/docs/protocol-economics/intro" target="_blank" rel="noopener noreferrer">Hyperlane 官方网页</a>。</p>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="女巫机制">女巫机制<a href="https://hyperlane.cc/blog/Hyperlane_Airdrop/#%E5%A5%B3%E5%B7%AB%E6%9C%BA%E5%88%B6" class="hash-link" aria-label="女巫机制的直接链接" title="女巫机制的直接链接">​</a></h2>
+<p>为避免一刀切式封禁钱包，Hyperlane 开发了一套创新的女巫权重系统。合格的钱包地址将根据其被判定为女巫账户的可能性进行评分，若被标记为潜在女巫，则对其扩展空投奖励（Expansion Drop）施加负向乘数。只有与公开混沌实验室（Chaos Labs）女巫检测数据集匹配的地址会被完全排除在扩展空投（Expansion Drop）之外。其他地址的奖励奖励乘数范围为 0.0 至 1.0，具体权重基于以下三个判定因素：</p>
+<ol>
+<li>
+<p>30% [0,1]：地址仅接收来自其他$HYPER 合格地址的交易或交互；</p>
+</li>
+<li>
+<p>30% [0,0.5,1]：地址在 2024 年 1 月 1 日至 2025 年 2 月 28 日期间发送的交易总量（不限于 Hyperlane 交易或交互）分为三档：小于5笔、5-10,000笔 或 大于10,000 笔；</p>
+</li>
+<li>
+<p>40% [0.0–1.0 连续值]：地址与其他 HYPER 合格地址的交互占比（例如：若 5%的交易总量来自其他 HYPER 合格地址，则得分为 0.05，对应 40%权重下奖励减少 2%）</p>
+</li>
+</ol>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="代币分配与激励规则">代币分配与激励规则<a href="https://hyperlane.cc/blog/Hyperlane_Airdrop/#%E4%BB%A3%E5%B8%81%E5%88%86%E9%85%8D%E4%B8%8E%E6%BF%80%E5%8A%B1%E8%A7%84%E5%88%99" class="hash-link" aria-label="代币分配与激励规则的直接链接" title="代币分配与激励规则的直接链接">​</a></h2>
+<p>HYPER 代币将在 TGE 时以锁定与全流通两种形式分配给各参与方，旨在通过长期利益驱动 Hyperlane 生态增长。HYPER 总供应量为 10 亿枚，将于 25 年内逐步释放完毕；TGE 流通供应量为 1.777 亿枚。</p>
+<p><strong>追溯空投奖励（Expansion Drop）</strong></p>
+<p>TGE 阶段将释放总供应量的 7.5%作为追溯空投奖励，资金来源于扩展奖励池（Expansion Rewards）及 Hyperlane 基金会战略启动储备金。下文所述分配比例均基于 HYPER 总供应量计算。</p>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="代币分配细则">代币分配细则<a href="https://hyperlane.cc/blog/Hyperlane_Airdrop/#%E4%BB%A3%E5%B8%81%E5%88%86%E9%85%8D%E7%BB%86%E5%88%99" class="hash-link" aria-label="代币分配细则的直接链接" title="代币分配细则的直接链接">​</a></h2>
+<p><img decoding="async" loading="lazy" src="https://image.yaco.email/hyperlane_airdrop%20(3).png" alt="hyperlane_airdrop (3)" class="img_ev3q"></p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="社区分配占总供应量-5702">社区分配（占总供应量 57.02%）<a href="https://hyperlane.cc/blog/Hyperlane_Airdrop/#%E7%A4%BE%E5%8C%BA%E5%88%86%E9%85%8D%E5%8D%A0%E6%80%BB%E4%BE%9B%E5%BA%94%E9%87%8F-5702" class="hash-link" aria-label="社区分配（占总供应量 57.02%）的直接链接" title="社区分配（占总供应量 57.02%）的直接链接">​</a></h3>
+<ol>
+<li>
+<p>扩展奖励（Expansion Rewards 25.50%）
+a. 按季度基于消息费用向项目合作方及用户分配。
+b.TGE 阶段将释放本池 6.25%作为追溯奖励空投（Expansion Drop），其中 85%穿透至应用终端用户。符合条件的地址需满足：截至快照时支付至少 5 美元等值费用。支持 Hyperlane 基础设施的链、应用及协议终端用户可参与空投，具体名单可在文末查看。</p>
+</li>
+<li>
+<p>战略启动资金（11.52%）
+a. 部分用于启动 HYPER 流动性及早期市场准入，并增强后续季度扩展奖励（Expansion Rewards）中的 OpenUSDT 铸造活动（含追溯激励）。
+b. 追溯奖励空投（Expansion Drop）：</p>
+<ol>
+<li>1.09%：加成以 Hyperlane 为标准桥或官方互操作方案的链（如 Eclipse、Injective EVM 等）；</li>
+<li>0.02%：奖励持有 Celestine Sloth Society 或 Mammoths NFT 的 Hyperlane GMP 地址；</li>
+<li>0.10%：奖励 2024 年 1 月 30 日前在 Manta 或 Arbitrum 提供 TIA LP 流动性的地址（按流动性比例分配）；</li>
+<li>0.04%：奖励 Pilot Academy 顶级贡献者等社区成员。</li>
+</ol>
+</li>
+<li>
+<p>质押奖励（20.00%）
+a. TGE 无流通
+b. 25 年内线性释放，按季度增发。</p>
+</li>
+</ol>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="贡献者以及团队分配4298长期锁定">贡献者以及团队分配（42.98%长期锁定）<a href="https://hyperlane.cc/blog/Hyperlane_Airdrop/#%E8%B4%A1%E7%8C%AE%E8%80%85%E4%BB%A5%E5%8F%8A%E5%9B%A2%E9%98%9F%E5%88%86%E9%85%8D4298%E9%95%BF%E6%9C%9F%E9%94%81%E5%AE%9A" class="hash-link" aria-label="贡献者以及团队分配（42.98%长期锁定）的直接链接" title="贡献者以及团队分配（42.98%长期锁定）的直接链接">​</a></h3>
+<ol>
+<li>
+<p>核心团队（25.00%）
+a. TGE 无流通，12 个月后解锁 25%
+b. 剩余 75%分 24 个月线性释放（总周期 3 年）。</p>
+</li>
+<li>
+<p>Hyperlane 基金会金库（7.11%）
+a. 除通过战略启动资金向社区分配 10.48%外，剩余资金用于长期协议治理、加速生态增长（如 Grants/R&amp;D）。
+b. TGE 无流通,6 个月后开始解锁
+c. 30 个月内线性解锁（总周期 3 年）。</p>
+</li>
+<li>
+<p>早期支持者（10.87%）
+a. TGE 无流通，12 个月后解锁 25%
+b. 剩余 75%分 24 个月线性释放（总周期 3 年）。</p>
+</li>
+</ol>
+<h1>代币发布相关时间表</h1>
+<p><img decoding="async" loading="lazy" src="https://image.yaco.email/hyperlane_airdrop%20(4).png" alt="hyperlane_airdrop (4)" class="img_ev3q"></p>
+<ol>
+<li>2025 年 2 月 28 日：快照</li>
+<li>2025 年 4 月 3 日：通过Hyperlane 基金会网站启动预认领（Preclaim），用户可添加符合条件的地址、选择 HYPER/stHYPER 奖励类型并指定接收网络</li>
+<li>2025 年 4 月 13 日（美东时间）23:59:59：预认领（Preclaim）阶段结束</li>
+<li>2025 年 4 月 20 日 当周：TGE 启动，认领开始（Claim period）</li>
+<li>2025 年 5 月 5 日（美东时间）23:59:59：认领截止</li>
+</ol>
+<p>未在对应阶段完成预认领或认领的追溯奖励空投（ExpansionDrop）将重新分配至未来 Hyperlane 生态激励计划。用户须在指定截止日期前完成预认领，并于 TGE 后认领期内操作方可获得奖励。</p>
+<p>由 Hyperlane 基础设施支持的链、应用及协议（非完整列表）</p>
+<p><strong>Chains：</strong></p>
+<p>Ancient8、Appchain、B Squared、Artela、Cheesechain、Eclipse、Endurance、Flow、Form、Forma、Injective、LogX、Lumia、Mint、Oort、Prom、SonicSVM、SOON、Stride、Superseed、Swell、Treasure、Vana、Viction、Zerion</p>
+<p><strong>Non-chains：</strong></p>
+<p>Amphor、Caldera、Cod3x、Dinero、Eclipse Fi、Elixir、EtherFi、Jito、Kyros、Merkly、Nucleus、Mellow rstETH、Ponder、PumpBTC、Re7、Renzo、Superform、Velodrome</p>]]></content:encoded>
+            <category>hyperlane</category>
+            <category>跨链桥</category>
+            <category>代币机制</category>
+            <category>空投标准</category>
+        </item>
+    </channel>
+</rss>

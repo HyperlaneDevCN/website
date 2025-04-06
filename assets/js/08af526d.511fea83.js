@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkhyperlane_dev_cn_website=self.webpackChunkhyperlane_dev_cn_website||[]).push([[529],{41344:e=>{e.exports=JSON.parse('{"metadata":{"permalink":"/blog","page":1,"postsPerPage":1,"totalPages":1,"totalCount":1,"blogDescription":"Hyperlane \u6700\u65b0\u8d44\u8baf","blogTitle":"Hyperlane \u8d44\u8baf"}}')}}]);
