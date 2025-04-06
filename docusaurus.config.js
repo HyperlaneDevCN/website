@@ -367,6 +367,16 @@ const config = {
       "@docusaurus/preset-classic",
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
+        blog: {
+          blogTitle: 'Hyperlane 资讯',
+          blogDescription: 'Hyperlane 最新资讯',
+          postsPerPage: 'ALL',
+          blogSidebarTitle: '最新资讯',
+          blogSidebarCount: 'ALL',
+          showReadingTime: true, // When set to false, the "x min read" won't be shown
+          readingTime: ({content, frontMatter, defaultReadingTime}) =>
+            defaultReadingTime({content, options: {wordsPerMinute: 300}}),
+        },
         docs: {
           remarkPlugins: [
             [codeImport, { removeRedundantIndentations: true }],
@@ -438,6 +448,11 @@ const config = {
           //   position: "left",
           //   label: "⚙️  代理操作",
           // },
+          {
+            to: 'blog', 
+            label: '资讯', 
+            position: 'left',
+          }, 
           {
             to: "https://linktr.ee/usehyperlane",
             position: "right",
