@@ -1,7 +1,7 @@
 Marcus:
   name: marcus
   title: Hyperlane APEC Lead
-  url: https://hyperlane.cc
+  url: https://x.com/marcus33l
   image_url: https://pbs.twimg.com/profile_images/1645822467255201792/a0-LszDA_400x400.jpg
   socials:
     x: marcus33l
@@ -14,3 +14,12 @@ HyperlaneCC:
   socials:
     x: HyperlaneCC
     github: HyperlaneDevCN
+
+wangeguo:
+  name: 国子
+  title: Author of @AmphitheatreApp / Contributor of @Alux_Network / PMC of @OpenBuildxyz / Compiler Researcher of http://github.com/hummanta / Rustacean 🦀
+  url: https://hyperlane.cc
+  image_url: https://pbs.twimg.com/profile_images/1756464684805550080/1q_bCFPG_400x400.jpg
+  socials:
+    x: https://x.com/wangeguo
+    github: https://github.com/wangeguo
